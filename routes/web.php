@@ -41,6 +41,10 @@ Route::middleware('auth')->group(function () {
     // User Management (Admin only)
     Route::middleware('admin')->group(function () {
         Route::resource('users', App\Http\Controllers\UserController::class);
+
+        // Settings (Admin only)
+        Route::get('settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+        Route::put('settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
     });
 });
 

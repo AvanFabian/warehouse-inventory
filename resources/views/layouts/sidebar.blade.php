@@ -53,12 +53,12 @@
                   class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-primary text-white' : '' }}">
                   User Management
                </a>
+               <a href="{{ route('settings.index') }}"
+                  class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('settings.*') ? 'bg-primary text-white' : '' }}">
+                  Settings
+               </a>
             </div>
          @endif
-
-         <div class="mt-2">
-            <a href="#" class="block py-2 px-3 rounded hover:bg-gray-100">Settings</a>
-         </div>
       </nav>
    </div>
 </aside>
