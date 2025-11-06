@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
+
+        // Add activity logging middleware to web group
+        $middleware->web(append: [
+            \App\Http\Middleware\LogUserActivity::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
