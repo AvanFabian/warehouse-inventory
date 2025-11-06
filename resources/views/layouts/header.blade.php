@@ -3,7 +3,11 @@
       <div class="flex items-center justify-between h-16">
          <div class="flex items-center gap-4">
             <button id="sidebarToggle" class="md:hidden p-2 rounded hover:bg-gray-100">☰</button>
-            <a href="{{ url('/') }}" class="text-xl font-semibold text-primary">{{ config('app.name') }}</a>
+            <a href="{{ url('/') }}" class="flex items-center gap-3">
+               <img src="{{ asset('storage/avandigital-logo-2.png') }}"
+                  alt="Avan Digital Logo" class="h-8 w-8 rounded-full">
+               <span class="text-lg font-semibold text-gray-800">Warehouse Inventory Management</span>
+            </a>
          </div>
 
          <div class="flex items-center gap-4">
