@@ -15,8 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
 
-        // Add activity logging middleware to web group
+        // Add security middleware to web group
         $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\BlockSuspiciousRequests::class,
             \App\Http\Middleware\LogUserActivity::class,
         ]);
     })
