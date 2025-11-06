@@ -14,7 +14,19 @@
 
          <!-- Company Information -->
          <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900">Company Information</h3>
+            <div class="flex items-start justify-between mb-4">
+               <div>
+                  <h3 class="text-lg font-semibold text-gray-900">Company Information</h3>
+                  <p class="text-sm text-gray-500 mt-1">This information will be displayed on PDF reports</p>
+               </div>
+               <div class="flex items-center text-primary">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                     </path>
+                  </svg>
+               </div>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                <div class="md:col-span-2">
                   <label class="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
