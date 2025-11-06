@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Supplier;
+use Illuminate\Http\Request;
+
+class SupplierController extends Controller
+{
+    public function index(Request $request)
+    {
+        $q = $request->query('q');
+        $suppliers = Supplier::when($q, fn($query) => $query->where('name', 'like', "%{$q}%"))
+            ->orderBy('name')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('suppliers.index', compact('suppliers', 'q'));
+    }
+
+    public function create()
+    {
+        return view('suppliers.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'address' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
+            'contact_person' => 'nullable|string',
+        ]);
+
+        Supplier::create($data);
+
+        return redirect()->route('suppliers.index')->with('status', 'Supplier created');
+    }
+
+    public function edit(Supplier $supplier)
+    {
+        return view('suppliers.edit', compact('supplier'));
+    }
+
+    public function update(Request $request, Supplier $supplier)
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'address' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
+            'contact_person' => 'nullable|string',
+        ]);
+
+        $supplier->update($data);
+
+        return redirect()->route('suppliers.index')->with('status', 'Supplier updated');
+    }
+
+    public function destroy(Supplier $supplier)
+    {
+        $supplier->delete();
+        return redirect()->route('suppliers.index')->with('status', 'Supplier deleted');
+    }
+}
