@@ -1,59 +1,328 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📦 Warehouse Inventory Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern, secure, and feature-rich warehouse inventory management system built with Laravel 12 and Tailwind CSS.
 
-## About Laravel
+![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)
+![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 📊 **Core Functionality**
+- **Product Management** - Categories, suppliers, stock tracking
+- **Stock Transactions** - Stock In, Stock Out, Stock Opname
+- **User Management** - Role-based access (Admin, Manager, Staff)
+- **Advanced Reports** - Stock reports, transactions, inventory value, stock cards
+- **PDF Export** - Professional PDF generation for all reports
 
-## Learning Laravel
+### 🔒 **Security Features**
+- DDoS protection with rate limiting
+- Security headers (XSS, Clickjacking, MIME-sniffing protection)
+- Suspicious request blocking
+- Activity & security logging
+- CSRF protection
+- Button spam prevention
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🎨 **User Experience**
+- Clean, responsive design
+- Real-time search & filtering
+- Empty state interfaces
+- Loading indicators
+- Professional error pages (403, 404, 419, 500, 503)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🚀 Quick Start
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### **Prerequisites**
+- PHP 8.2 or higher
+- Composer
+- Node.js & NPM
+- MySQL 5.7+ or MariaDB 10.3+
 
-### Premium Partners
+### **Installation**
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **Clone the repository**
+```bash
+git clone <your-repo-url>
+cd warehouse-inventory
+```
 
-## Contributing
+2. **Install dependencies**
+```bash
+composer install
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Configure environment**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Code of Conduct
+4. **Edit .env file** with your database credentials:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=warehouse_inventory
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. **Run migrations**
+```bash
+php artisan migrate
+```
 
-## Security Vulnerabilities
+6. **Seed default users** (optional)
+```bash
+php artisan db:seed --class=UserSeeder
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+7. **Build assets**
+```bash
+npm run build
+```
 
-## License
+8. **Start development server**
+```bash
+php artisan serve
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+9. **Visit** http://127.0.0.1:8000
+
+---
+
+## 👥 Default Users
+
+| Email | Password | Role |
+|-------|----------|------|
+| admin@warehouse.test | password | Admin |
+| manager@warehouse.test | password | Manager |
+| staff@warehouse.test | password | Staff |
+
+---
+
+## 📁 Project Structure
+
+```
+warehouse-inventory/
+├── app/
+│   ├── Http/Controllers/     # Application controllers
+│   ├── Models/               # Eloquent models
+│   ├── Middleware/           # Custom middleware
+│   └── Exceptions/           # Exception handling
+├── resources/
+│   ├── views/                # Blade templates
+│   ├── js/                   # JavaScript files
+│   └── css/                  # Stylesheets
+├── routes/
+│   └── web.php               # Web routes
+├── database/
+│   ├── migrations/           # Database migrations
+│   └── seeders/              # Database seeders
+└── public/                   # Public assets
+```
+
+---
+
+## 🛠️ Development
+
+### **Run development server**
+```bash
+php artisan serve
+npm run dev
+```
+
+### **Watch for changes**
+```bash
+npm run dev
+```
+
+### **Run tests**
+```bash
+php artisan test
+```
+
+### **Clear cache**
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+---
+
+## 🚢 Deployment
+
+### **Quick Deployment**
+```bash
+# 1. Update .env for production
+APP_ENV=production
+APP_DEBUG=false
+
+# 2. Run deployment script
+bash deploy.sh
+```
+
+### **Manual Deployment**
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+npm run build
+```
+
+📖 **Full deployment guide:** See [DEPLOYMENT.md](DEPLOYMENT.md)
+
+---
+
+## 📚 Documentation
+
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide with 200+ checklist items
+- **[SECURITY.md](SECURITY.md)** - Security features and best practices
+- **[LOGGING.md](LOGGING.md)** - Logging configuration and monitoring
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick reference for common tasks
+
+---
+
+## 🔐 Security
+
+This application includes:
+- ✅ Rate limiting & DDoS protection
+- ✅ CSRF & XSS protection
+- ✅ SQL injection prevention
+- ✅ Security headers
+- ✅ Activity logging
+- ✅ Role-based access control
+
+**Security issues?** Please email: security@yourdomain.com
+
+---
+
+## 🎯 Key Features by Role
+
+### **Admin**
+- Full system access
+- User management
+- System settings
+- All reports & exports
+
+### **Manager**
+- Product management
+- Stock transactions
+- Reports viewing
+- Supplier management
+
+### **Staff**
+- View products
+- Create stock transactions
+- Basic reports
+
+---
+
+## 📊 Available Reports
+
+1. **Stock Report** - Current stock levels with filters
+2. **Transaction Report** - Stock In/Out history
+3. **Inventory Value** - Total inventory valuation by category
+4. **Stock Card** - Product movement history
+
+All reports support **PDF export** with company branding.
+
+---
+
+## 🐛 Troubleshooting
+
+### **Permission errors?**
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data .
+```
+
+### **Assets not loading?**
+```bash
+npm run build
+php artisan storage:link
+```
+
+### **Database connection failed?**
+```bash
+# Check .env database credentials
+# Verify MySQL is running
+php artisan config:clear
+```
+
+### **500 Internal Server Error?**
+```bash
+# Enable debug mode temporarily
+APP_DEBUG=true
+# Check storage/logs/laravel.log
+tail -f storage/logs/laravel.log
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Built With
+
+- **[Laravel 12](https://laravel.com)** - PHP Framework
+- **[Tailwind CSS](https://tailwindcss.com)** - CSS Framework
+- **[Alpine.js](https://alpinejs.dev)** - JavaScript Framework
+- **[DomPDF](https://github.com/dompdf/dompdf)** - PDF Generation
+
+---
+
+## 💼 Developed By
+
+**Avan Digital**
+- Website: [avandigital.id](https://avandigital.id)
+- Email: info@avandigital.id
+
+---
+
+## 🙏 Acknowledgments
+
+- Laravel Community
+- Tailwind CSS Team
+- All contributors and testers
+
+---
+
+## 📞 Support
+
+Need help? 
+
+- 📖 Check [DEPLOYMENT.md](DEPLOYMENT.md) for deployment issues
+- 🔒 Check [SECURITY.md](SECURITY.md) for security questions
+- 📝 Check [LOGGING.md](LOGGING.md) for logging setup
+- 🐛 Open an issue on GitHub
+
+---
+
+**⭐ Star this repo if you find it helpful!**
+
+Made with ❤️ by avandigital.id
