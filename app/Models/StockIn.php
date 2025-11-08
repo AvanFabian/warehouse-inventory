@@ -9,7 +9,12 @@ class StockIn extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['transaction_code', 'date', 'supplier_id', 'total', 'notes'];
+    protected $fillable = ['warehouse_id', 'transaction_code', 'date', 'supplier_id', 'total', 'notes'];
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 
     public function supplier()
     {

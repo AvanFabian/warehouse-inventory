@@ -11,6 +11,7 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'warehouse_id',
         'code',
         'name',
         'category_id',
@@ -23,6 +24,11 @@ class Product extends Model
         'image',
         'status'
     ];
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 
     public function category()
     {

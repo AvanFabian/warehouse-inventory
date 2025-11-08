@@ -33,6 +33,22 @@
 
          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
+               <label class="block text-sm mb-1">Warehouse <span class="text-red-500">*</span></label>
+               <select name="warehouse_id" class="w-full border rounded px-2 py-1" required>
+                  <option value="">-- Select Warehouse --</option>
+                  @foreach ($warehouses as $wh)
+                     <option value="{{ $wh->id }}"
+                        {{ old('warehouse_id', $product->warehouse_id) == $wh->id ? 'selected' : '' }}>
+                        {{ $wh->name }} ({{ $wh->code }})
+                     </option>
+                  @endforeach
+               </select>
+               @error('warehouse_id')
+                  <div class="text-red-600 text-sm">{{ $message }}</div>
+               @enderror
+            </div>
+
+            <div>
                <label class="block text-sm mb-1">Category</label>
                <select name="category_id" class="w-full border rounded px-2 py-1">
                   <option value="">-- Select Category --</option>
@@ -46,12 +62,23 @@
                   <div class="text-red-600 text-sm">{{ $message }}</div>
                @enderror
             </div>
+         </div>
 
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
                <label class="block text-sm mb-1">Unit <span class="text-red-500">*</span></label>
                <input name="unit" value="{{ old('unit', $product->unit) }}" class="w-full border rounded px-2 py-1"
                   required />
                @error('unit')
+                  <div class="text-red-600 text-sm">{{ $message }}</div>
+               @enderror
+            </div>
+
+            <div>
+               <label class="block text-sm mb-1">Rack Location</label>
+               <input name="rack_location" value="{{ old('rack_location', $product->rack_location) }}"
+                  class="w-full border rounded px-2 py-1" />
+               @error('rack_location')
                   <div class="text-red-600 text-sm">{{ $message }}</div>
                @enderror
             </div>

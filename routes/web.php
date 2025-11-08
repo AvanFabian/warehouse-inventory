@@ -23,10 +23,20 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::post('products/import', [App\Http\Controllers\ProductController::class, 'import'])->name('products.import');
     Route::get('products-export', [App\Http\Controllers\ProductController::class, 'export'])->name('products.export');
 
+    // Warehouses
+    Route::resource('warehouses', App\Http\Controllers\WarehouseController::class);
+
     // Transactions
     Route::resource('stock-ins', App\Http\Controllers\StockInController::class)->except(['edit', 'update']);
     Route::resource('stock-outs', App\Http\Controllers\StockOutController::class)->except(['edit', 'update']);
     Route::get('products/{productId}/stock', [App\Http\Controllers\StockOutController::class, 'getProductStock'])->name('products.stock');
+
+    // Inter-Warehouse Transfers
+    Route::resource('transfers', App\Http\Controllers\InterWarehouseTransferController::class)->except(['edit', 'update']);
+    Route::post('transfers/{transfer}/approve', [App\Http\Controllers\InterWarehouseTransferController::class, 'approve'])->name('transfers.approve');
+    Route::post('transfers/{transfer}/reject', [App\Http\Controllers\InterWarehouseTransferController::class, 'reject'])->name('transfers.reject');
+    Route::post('transfers/{transfer}/start-transit', [App\Http\Controllers\InterWarehouseTransferController::class, 'startTransit'])->name('transfers.start-transit');
+    Route::post('transfers/{transfer}/complete', [App\Http\Controllers\InterWarehouseTransferController::class, 'complete'])->name('transfers.complete');
 
     // Stock Opname
     Route::resource('stock-opnames', App\Http\Controllers\StockOpnameController::class)->except(['edit', 'update', 'show']);

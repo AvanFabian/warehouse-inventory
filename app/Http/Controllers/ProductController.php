@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,30 +15,35 @@ class ProductController extends Controller
     {
         $q = $request->query('q');
         $categoryId = $request->query('category_id');
+        $warehouseId = $request->query('warehouse_id');
         $status = $request->query('status');
 
-        $products = Product::with('category')
+        $products = Product::with(['category', 'warehouse'])
             ->when($q, fn($query) => $query->where('name', 'like', "%{$q}%")->orWhere('code', 'like', "%{$q}%"))
             ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
+            ->when($warehouseId, fn($query) => $query->where('warehouse_id', $warehouseId))
             ->when($status !== null, fn($query) => $query->where('status', $status))
             ->orderBy('name')
             ->paginate(20)
             ->withQueryString();
 
         $categories = Category::where('status', true)->orderBy('name')->get();
+        $warehouses = Warehouse::active()->orderBy('name')->get();
 
-        return view('products.index', compact('products', 'categories', 'q', 'categoryId', 'status'));
+        return view('products.index', compact('products', 'categories', 'warehouses', 'q', 'categoryId', 'warehouseId', 'status'));
     }
 
     public function create()
     {
         $categories = Category::where('status', true)->orderBy('name')->get();
-        return view('products.create', compact('categories'));
+        $warehouses = Warehouse::active()->orderBy('name')->get();
+        return view('products.create', compact('categories', 'warehouses'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
+            'warehouse_id' => 'required|exists:warehouses,id',
             'code' => 'required|string|unique:products,code',
             'name' => 'required|string',
             'category_id' => 'nullable|exists:categories,id',
@@ -75,7 +81,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::where('status', true)->orderBy('name')->get();
-        return view('products.edit', compact('product', 'categories'));
+        $warehouses = Warehouse::active()->orderBy('name')->get();
+        return view('products.edit', compact('product', 'categories', 'warehouses'));
     }
 
     public function update(Request $request, Product $product)

@@ -26,7 +26,7 @@ class BlockSuspiciousRequests
 
         // Path traversal
         '/\.\.\//',
-        '/\.\.\\/i',
+        '/\.\.\\\\/i',
 
         // Command injection
         '/;\s*(ls|cat|rm|chmod|wget|curl)/i',

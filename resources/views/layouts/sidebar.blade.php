@@ -8,6 +8,10 @@
 
          <div class="mt-2">
             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Master Data</p>
+            <a href="{{ route('warehouses.index') }}"
+               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('warehouses.*') ? 'bg-primary text-white' : '' }}">
+               Warehouses
+            </a>
             <a href="{{ route('categories.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('categories.*') ? 'bg-primary text-white' : '' }}">
                Categories
@@ -31,6 +35,10 @@
             <a href="{{ route('stock-outs.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-outs.*') ? 'bg-primary text-white' : '' }}">
                Stock Out
+            </a>
+            <a href="{{ route('transfers.index') }}"
+               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('transfers.*') ? 'bg-primary text-white' : '' }}">
+               Warehouse Transfers
             </a>
             <a href="{{ route('stock-opnames.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-opnames.*') ? 'bg-primary text-white' : '' }}">

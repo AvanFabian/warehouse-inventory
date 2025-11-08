@@ -9,7 +9,12 @@ class StockOut extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['transaction_code', 'date', 'customer', 'total', 'notes'];
+    protected $fillable = ['warehouse_id', 'transaction_code', 'date', 'customer', 'total', 'notes'];
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 
     public function details()
     {

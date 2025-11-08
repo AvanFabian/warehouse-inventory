@@ -13,10 +13,19 @@
       </div>
 
       <form method="GET" class="mb-4 bg-white p-4 rounded shadow">
-         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+         <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div>
                <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Search name or code..."
                   class="w-full border rounded px-2 py-1" />
+            </div>
+            <div>
+               <select name="warehouse_id" class="w-full border rounded px-2 py-1">
+                  <option value="">All Warehouses</option>
+                  @foreach ($warehouses as $wh)
+                     <option value="{{ $wh->id }}" {{ $warehouseId == $wh->id ? 'selected' : '' }}>
+                        {{ $wh->name }}</option>
+                  @endforeach
+               </select>
             </div>
             <div>
                <select name="category_id" class="w-full border rounded px-2 py-1">
@@ -47,6 +56,7 @@
                   <tr>
                      <th class="text-left p-3">Code</th>
                      <th class="text-left p-3">Name</th>
+                     <th class="text-left p-3">Warehouse</th>
                      <th class="text-left p-3">Category</th>
                      <th class="text-left p-3">Stock</th>
                      <th class="text-left p-3">Min Stock</th>
@@ -60,6 +70,9 @@
                      <tr class="border-t hover:bg-gray-50 {{ $p->stock < $p->min_stock ? 'bg-red-50' : '' }}">
                         <td class="p-3">{{ $p->code }}</td>
                         <td class="p-3">{{ $p->name }}</td>
+                        <td class="p-3">
+                           <span class="text-sm">{{ $p->warehouse?->name ?? '-' }}</span>
+                        </td>
                         <td class="p-3">{{ $p->category?->name ?? '-' }}</td>
                         <td class="p-3 font-semibold {{ $p->stock < $p->min_stock ? 'text-red-600' : '' }}">
                            {{ $p->stock }}</td>

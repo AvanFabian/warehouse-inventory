@@ -9,7 +9,12 @@ class StockOpname extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'system_qty', 'counted_qty', 'difference', 'reason', 'date', 'user_id'];
+    protected $fillable = ['warehouse_id', 'product_id', 'system_qty', 'counted_qty', 'difference', 'reason', 'date', 'user_id'];
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
 
     public function product()
     {

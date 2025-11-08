@@ -6,6 +6,7 @@ use App\Models\StockIn;
 use App\Models\StockInDetail;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,12 +16,14 @@ class StockInController extends Controller
     {
         $q = $request->query('q');
         $supplierId = $request->query('supplier_id');
+        $warehouseId = $request->query('warehouse_id');
         $dateFrom = $request->query('date_from');
         $dateTo = $request->query('date_to');
 
-        $stockIns = StockIn::with('supplier')
+        $stockIns = StockIn::with(['supplier', 'warehouse'])
             ->when($q, fn($query) => $query->where('transaction_code', 'like', "%{$q}%"))
             ->when($supplierId, fn($query) => $query->where('supplier_id', $supplierId))
+            ->when($warehouseId, fn($query) => $query->where('warehouse_id', $warehouseId))
             ->when($dateFrom, fn($query) => $query->whereDate('date', '>=', $dateFrom))
             ->when($dateTo, fn($query) => $query->whereDate('date', '<=', $dateTo))
             ->orderBy('date', 'desc')
@@ -29,13 +32,15 @@ class StockInController extends Controller
             ->withQueryString();
 
         $suppliers = Supplier::orderBy('name')->get();
+        $warehouses = Warehouse::active()->orderBy('name')->get();
 
-        return view('stock-ins.index', compact('stockIns', 'suppliers', 'q', 'supplierId', 'dateFrom', 'dateTo'));
+        return view('stock-ins.index', compact('stockIns', 'suppliers', 'warehouses', 'q', 'supplierId', 'warehouseId', 'dateFrom', 'dateTo'));
     }
 
     public function create()
     {
         $suppliers = Supplier::orderBy('name')->get();
+        $warehouses = Warehouse::active()->orderBy('name')->get();
         $products = Product::where('status', true)->orderBy('name')->get();
 
         // Generate transaction code
@@ -51,7 +56,7 @@ class StockInController extends Controller
 
         $transactionCode = "IN-{$date}-{$newNumber}";
 
-        return view('stock-ins.create', compact('suppliers', 'products', 'transactionCode'));
+        return view('stock-ins.create', compact('suppliers', 'warehouses', 'products', 'transactionCode'));
     }
 
     public function store(Request $request)
