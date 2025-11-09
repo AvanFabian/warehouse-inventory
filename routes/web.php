@@ -60,6 +60,21 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::get('purchase-orders/{purchaseOrder}/receive', [App\Http\Controllers\PurchaseOrderController::class, 'receive'])->name('purchase-orders.receive');
     Route::post('purchase-orders/{purchaseOrder}/receive', [App\Http\Controllers\PurchaseOrderController::class, 'processReceive'])->name('purchase-orders.process-receive');
 
+    // Sales Management
+    Route::resource('customers', App\Http\Controllers\CustomerController::class);
+    Route::resource('sales-orders', App\Http\Controllers\SalesOrderController::class);
+    Route::post('sales-orders/{salesOrder}/confirm', [App\Http\Controllers\SalesOrderController::class, 'confirm'])->name('sales-orders.confirm');
+    Route::post('sales-orders/{salesOrder}/ship', [App\Http\Controllers\SalesOrderController::class, 'ship'])->name('sales-orders.ship');
+    Route::post('sales-orders/{salesOrder}/deliver', [App\Http\Controllers\SalesOrderController::class, 'deliver'])->name('sales-orders.deliver');
+    Route::post('sales-orders/{salesOrder}/cancel', [App\Http\Controllers\SalesOrderController::class, 'cancel'])->name('sales-orders.cancel');
+    Route::get('sales-orders/{salesOrder}/generate-stock-out', [App\Http\Controllers\SalesOrderController::class, 'generateStockOut'])->name('sales-orders.generate-stock-out');
+    Route::get('sales-orders/{salesOrder}/delivery-order', [App\Http\Controllers\SalesOrderController::class, 'deliveryOrder'])->name('sales-orders.delivery-order');
+
+    Route::resource('invoices', App\Http\Controllers\InvoiceController::class);
+    Route::post('invoices/{invoice}/record-payment', [App\Http\Controllers\InvoiceController::class, 'recordPayment'])->name('invoices.record-payment');
+    Route::get('invoices/{invoice}/pdf', [App\Http\Controllers\InvoiceController::class, 'viewPdf'])->name('invoices.pdf');
+    Route::get('invoices/{invoice}/download', [App\Http\Controllers\InvoiceController::class, 'downloadPdf'])->name('invoices.download');
+
     // Reports
     Route::get('reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/stock', [App\Http\Controllers\ReportController::class, 'stock'])->name('reports.stock');

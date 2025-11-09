@@ -27,7 +27,7 @@
          </div>
 
          <div class="mt-2">
-            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Transaksi</p>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Pembelian</p>
             <a href="{{ route('purchase-orders.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('purchase-orders.*') ? 'bg-primary text-white' : '' }}">
                PO (Pesanan Pembelian)
@@ -36,10 +36,30 @@
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-ins.*') ? 'bg-primary text-white' : '' }}">
                Stok Masuk
             </a>
+         </div>
+
+         <div class="mt-2">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Penjualan</p>
+            <a href="{{ route('customers.index') }}"
+               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('customers.*') ? 'bg-primary text-white' : '' }}">
+               Pelanggan
+            </a>
+            <a href="{{ route('sales-orders.index') }}"
+               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('sales-orders.*') ? 'bg-primary text-white' : '' }}">
+               Pesanan Penjualan
+            </a>
+            <a href="{{ route('invoices.index') }}"
+               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('invoices.*') ? 'bg-primary text-white' : '' }}">
+               Faktur & Pembayaran
+            </a>
             <a href="{{ route('stock-outs.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-outs.*') ? 'bg-primary text-white' : '' }}">
                Stok Keluar
             </a>
+         </div>
+
+         <div class="mt-2">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Gudang</p>
             <a href="{{ route('transfers.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('transfers.*') ? 'bg-primary text-white' : '' }}">
                Transfer Antar Gudang
