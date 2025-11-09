@@ -19,7 +19,7 @@
       <form method="POST" action="{{ route('stock-ins.store') }}" id="stockInForm" class="bg-white p-4 rounded shadow">
          @csrf
 
-         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
                <label class="block text-sm mb-1">Transaction Code</label>
                <input type="text" value="{{ $transactionCode }}" class="w-full border rounded px-2 py-1 bg-gray-100"
@@ -29,6 +29,16 @@
                <label class="block text-sm mb-1">Date <span class="text-red-500">*</span></label>
                <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}"
                   class="w-full border rounded px-2 py-1" required />
+            </div>
+            <div>
+               <label class="block text-sm mb-1">Warehouse <span class="text-red-500">*</span></label>
+               <select name="warehouse_id" class="w-full border rounded px-2 py-1" required>
+                  <option value="">-- Select Warehouse --</option>
+                  @foreach ($warehouses as $warehouse)
+                     <option value="{{ $warehouse->id }}" {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
+                        {{ $warehouse->name }}</option>
+                  @endforeach
+               </select>
             </div>
             <div>
                <label class="block text-sm mb-1">Supplier</label>

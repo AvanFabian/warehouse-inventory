@@ -19,7 +19,7 @@
       <form method="POST" action="{{ route('stock-outs.store') }}" id="stockOutForm" class="bg-white p-4 rounded shadow">
          @csrf
 
-         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
                <label class="block text-sm mb-1">Transaction Code</label>
                <input type="text" value="{{ $transactionCode }}" class="w-full border rounded px-2 py-1 bg-gray-100"
@@ -29,6 +29,17 @@
                <label class="block text-sm mb-1">Date <span class="text-red-500">*</span></label>
                <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}"
                   class="w-full border rounded px-2 py-1" required />
+            </div>
+            <div>
+               <label class="block text-sm mb-1">Warehouse <span class="text-red-500">*</span></label>
+               <select name="warehouse_id" id="warehouseSelect" class="w-full border rounded px-2 py-1"
+                  onchange="loadWarehouseProducts()" required>
+                  <option value="">-- Select Warehouse --</option>
+                  @foreach ($warehouses as $warehouse)
+                     <option value="{{ $warehouse->id }}" {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
+                        {{ $warehouse->name }}</option>
+                  @endforeach
+               </select>
             </div>
             <div>
                <label class="block text-sm mb-1">Customer/Destination</label>
@@ -83,8 +94,32 @@
    </div>
 
    <script>
-      const products = @json($products);
+      let products = [];
       let rowIndex = 0;
+
+      function loadWarehouseProducts() {
+         const warehouseId = document.getElementById('warehouseSelect').value;
+         if (!warehouseId) {
+            products = [];
+            document.getElementById('productRows').innerHTML = '';
+            return;
+         }
+
+         fetch(`/warehouses/${warehouseId}/products`)
+            .then(response => response.json())
+            .then(data => {
+               products = data;
+               // Clear existing rows
+               document.getElementById('productRows').innerHTML = '';
+               rowIndex = 0;
+               // Add first row
+               addProductRow();
+            })
+            .catch(error => {
+               console.error('Error loading products:', error);
+               alert('Failed to load products for selected warehouse');
+            });
+      }
 
       function addProductRow() {
          const tbody = document.getElementById('productRows');
@@ -155,9 +190,12 @@
          calculateGrandTotal();
       }
 
-      // Add initial row
+      // No initial row until warehouse is selected
       document.addEventListener('DOMContentLoaded', () => {
-         addProductRow();
+         const warehouseSelect = document.getElementById('warehouseSelect');
+         if (warehouseSelect.value) {
+            loadWarehouseProducts();
+         }
       });
    </script>
 @endsection

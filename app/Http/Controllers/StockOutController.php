@@ -30,7 +30,7 @@ class StockOutController extends Controller
 
     public function create()
     {
-        $products = Product::where('status', true)->where('stock', '>', 0)->orderBy('name')->get();
+        $warehouses = \App\Models\Warehouse::active()->orderBy('name')->get();
 
         // Generate transaction code
         $date = date('Ymd');
@@ -45,13 +45,14 @@ class StockOutController extends Controller
 
         $transactionCode = "OUT-{$date}-{$newNumber}";
 
-        return view('stock-outs.create', compact('products', 'transactionCode'));
+        return view('stock-outs.create', compact('warehouses', 'transactionCode'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'date' => 'required|date',
+            'warehouse_id' => 'required|exists:warehouses,id',
             'customer' => 'nullable|string',
             'notes' => 'nullable|string',
             'products' => 'required|array|min:1',
@@ -62,9 +63,16 @@ class StockOutController extends Controller
 
         DB::beginTransaction();
         try {
-            // Validate stock availability
+            // Validate stock availability for the specific warehouse
             foreach ($request->products as $item) {
-                $product = Product::find($item['product_id']);
+                $product = Product::where('id', $item['product_id'])
+                    ->where('warehouse_id', $request->warehouse_id)
+                    ->first();
+
+                if (!$product) {
+                    throw new \Exception("Product ID {$item['product_id']} not found in warehouse ID {$request->warehouse_id}");
+                }
+
                 if ($product->stock < $item['quantity']) {
                     throw new \Exception("Insufficient stock for product: {$product->name}. Available: {$product->stock}, Requested: {$item['quantity']}");
                 }
@@ -93,12 +101,13 @@ class StockOutController extends Controller
             $stockOut = StockOut::create([
                 'transaction_code' => $transactionCode,
                 'date' => $request->date,
+                'warehouse_id' => $request->warehouse_id,
                 'customer' => $request->customer,
                 'total' => $total,
                 'notes' => $request->notes,
             ]);
 
-            // Create details and update product stock
+            // Create details and update product stock for the specific warehouse
             foreach ($request->products as $item) {
                 $itemTotal = $item['quantity'] * $item['selling_price'];
 
@@ -110,10 +119,15 @@ class StockOutController extends Controller
                     'total' => $itemTotal,
                 ]);
 
-                // Update product stock
-                $product = Product::find($item['product_id']);
-                $product->stock -= $item['quantity'];
-                $product->save();
+                // Update product stock for the specific warehouse
+                $product = Product::where('id', $item['product_id'])
+                    ->where('warehouse_id', $request->warehouse_id)
+                    ->first();
+
+                if ($product) {
+                    $product->stock -= $item['quantity'];
+                    $product->save();
+                }
             }
 
             DB::commit();
@@ -134,11 +148,16 @@ class StockOutController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Revert product stock
+            // Revert product stock for the specific warehouse
             foreach ($stockOut->details as $detail) {
-                $product = Product::find($detail->product_id);
-                $product->stock += $detail->quantity;
-                $product->save();
+                $product = Product::where('id', $detail->product_id)
+                    ->where('warehouse_id', $stockOut->warehouse_id)
+                    ->first();
+
+                if ($product) {
+                    $product->stock += $detail->quantity;
+                    $product->save();
+                }
             }
 
             $stockOut->delete();
@@ -153,11 +172,26 @@ class StockOutController extends Controller
 
     public function getProductStock($productId)
     {
-        $product = Product::find($productId);
+        $warehouseId = request('warehouse_id');
+        $product = Product::where('id', $productId)
+            ->where('warehouse_id', $warehouseId)
+            ->first();
+
         return response()->json([
             'stock' => $product ? $product->stock : 0,
             'unit' => $product ? $product->unit : '',
             'selling_price' => $product ? $product->selling_price : 0,
         ]);
+    }
+
+    public function getWarehouseProducts($warehouseId)
+    {
+        $products = Product::where('warehouse_id', $warehouseId)
+            ->where('status', true)
+            ->where('stock', '>', 0)
+            ->orderBy('name')
+            ->get(['id', 'code', 'name', 'stock', 'unit', 'selling_price']);
+
+        return response()->json($products);
     }
 }

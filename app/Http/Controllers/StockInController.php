@@ -41,6 +41,9 @@ class StockInController extends Controller
     {
         $suppliers = Supplier::orderBy('name')->get();
         $warehouses = Warehouse::active()->orderBy('name')->get();
+        
+        // Get all active products grouped by warehouse for reference
+        // In the view, we'll filter by selected warehouse
         $products = Product::where('status', true)->orderBy('name')->get();
 
         // Generate transaction code
@@ -63,6 +66,7 @@ class StockInController extends Controller
     {
         $request->validate([
             'date' => 'required|date',
+            'warehouse_id' => 'required|exists:warehouses,id',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'notes' => 'nullable|string',
             'products' => 'required|array|min:1',
@@ -96,12 +100,13 @@ class StockInController extends Controller
             $stockIn = StockIn::create([
                 'transaction_code' => $transactionCode,
                 'date' => $request->date,
+                'warehouse_id' => $request->warehouse_id,
                 'supplier_id' => $request->supplier_id,
                 'total' => $total,
                 'notes' => $request->notes,
             ]);
 
-            // Create details and update product stock
+            // Create details and update product stock for the specific warehouse
             foreach ($request->products as $item) {
                 $itemTotal = $item['quantity'] * $item['purchase_price'];
 
@@ -113,10 +118,18 @@ class StockInController extends Controller
                     'total' => $itemTotal,
                 ]);
 
-                // Update product stock
-                $product = Product::find($item['product_id']);
-                $product->stock += $item['quantity'];
-                $product->save();
+                // Update product stock for the specific warehouse
+                $product = Product::where('id', $item['product_id'])
+                    ->where('warehouse_id', $request->warehouse_id)
+                    ->first();
+
+                if ($product) {
+                    $product->stock += $item['quantity'];
+                    $product->save();
+                } else {
+                    // If product doesn't exist in this warehouse, we might need to handle this
+                    throw new \Exception("Product ID {$item['product_id']} not found in warehouse ID {$request->warehouse_id}");
+                }
             }
 
             DB::commit();
@@ -137,11 +150,16 @@ class StockInController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Revert product stock
+            // Revert product stock for the specific warehouse
             foreach ($stockIn->details as $detail) {
-                $product = Product::find($detail->product_id);
-                $product->stock -= $detail->quantity;
-                $product->save();
+                $product = Product::where('id', $detail->product_id)
+                    ->where('warehouse_id', $stockIn->warehouse_id)
+                    ->first();
+
+                if ($product) {
+                    $product->stock -= $detail->quantity;
+                    $product->save();
+                }
             }
 
             $stockIn->delete();

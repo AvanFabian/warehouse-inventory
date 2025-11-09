@@ -5,12 +5,15 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Supplier;
 use App\Models\Product;
+use App\Models\Warehouse;
 use Illuminate\Database\Seeder;
 
 class MasterDataSeeder extends Seeder
 {
     public function run()
     {
+        // Get warehouses
+        $warehouses = Warehouse::all();
         // Seed Categories
         $categories = [
             ['name' => 'Electronics', 'description' => 'Electronic devices and components', 'status' => true],
@@ -52,8 +55,8 @@ class MasterDataSeeder extends Seeder
             Supplier::create($supplier);
         }
 
-        // Seed Sample Products
-        $products = [
+        // Seed Sample Products for each warehouse
+        $productsTemplate = [
             [
                 'code' => 'ELC-001',
                 'name' => 'Laptop Dell Inspiron 15',
@@ -92,8 +95,16 @@ class MasterDataSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $product) {
-            Product::create($product);
+        // Create products for each warehouse
+        foreach ($warehouses as $warehouse) {
+            foreach ($productsTemplate as $productData) {
+                // Add warehouse-specific code suffix
+                $product = $productData;
+                $product['code'] = $productData['code'] . '-' . $warehouse->code;
+                $product['warehouse_id'] = $warehouse->id;
+
+                Product::create($product);
+            }
         }
     }
 }

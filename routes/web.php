@@ -30,6 +30,14 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::resource('stock-ins', App\Http\Controllers\StockInController::class)->except(['edit', 'update']);
     Route::resource('stock-outs', App\Http\Controllers\StockOutController::class)->except(['edit', 'update']);
     Route::get('products/{productId}/stock', [App\Http\Controllers\StockOutController::class, 'getProductStock'])->name('products.stock');
+    Route::get('warehouses/{warehouseId}/products', [App\Http\Controllers\StockOutController::class, 'getWarehouseProducts'])->name('warehouses.products');
+
+    // Barcode & QR Code
+    Route::get('products/{product}/barcode', [App\Http\Controllers\BarcodeController::class, 'generateBarcode'])->name('products.barcode');
+    Route::get('products/{product}/qrcode', [App\Http\Controllers\BarcodeController::class, 'generateQrCode'])->name('products.qrcode');
+    Route::get('products/{product}/label', [App\Http\Controllers\BarcodeController::class, 'showLabel'])->name('products.label');
+    Route::post('products/print-labels', [App\Http\Controllers\BarcodeController::class, 'printLabels'])->name('products.print-labels');
+    Route::post('barcode/scan', [App\Http\Controllers\BarcodeController::class, 'scan'])->name('barcode.scan');
 
     // Inter-Warehouse Transfers
     Route::resource('transfers', App\Http\Controllers\InterWarehouseTransferController::class)->except(['edit', 'update']);

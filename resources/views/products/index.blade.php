@@ -7,6 +7,15 @@
       <div class="flex items-center justify-between mb-4">
          <h2 class="text-xl font-semibold">Products</h2>
          <div class="flex gap-2">
+            <button onclick="printSelectedLabels()" class="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+               title="Print selected product labels">
+               <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
+                  </path>
+               </svg>
+               Print Labels
+            </button>
             <a href="{{ route('products.export') }}" class="px-3 py-2 bg-success text-white rounded">Export Excel</a>
             <a href="{{ route('products.create') }}" class="px-3 py-2 bg-primary text-white rounded">New Product</a>
          </div>
@@ -54,6 +63,9 @@
             <table class="min-w-full">
                <thead class="bg-gray-50">
                   <tr>
+                     <th class="text-left p-3">
+                        <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
+                     </th>
                      <th class="text-left p-3">Code</th>
                      <th class="text-left p-3">Name</th>
                      <th class="text-left p-3">Warehouse</th>
@@ -68,6 +80,9 @@
                <tbody>
                   @forelse($products as $p)
                      <tr class="border-t hover:bg-gray-50 {{ $p->stock < $p->min_stock ? 'bg-red-50' : '' }}">
+                        <td class="p-3">
+                           <input type="checkbox" class="product-checkbox" value="{{ $p->id }}">
+                        </td>
                         <td class="p-3">{{ $p->code }}</td>
                         <td class="p-3">{{ $p->name }}</td>
                         <td class="p-3">
@@ -84,14 +99,22 @@
                               {{ $p->status ? 'Active' : 'Inactive' }}
                            </span>
                         </td>
-                        <td class="p-3">
-                           <a href="{{ route('products.show', $p) }}" class="text-blue-600 mr-2">View</a>
-                           <a href="{{ route('products.edit', $p) }}" class="text-blue-600 mr-2">Edit</a>
+                        <td class="p-3 space-x-2">
+                           <a href="{{ route('products.show', $p) }}" class="text-blue-600" title="View">View</a>
+                           <a href="{{ route('products.edit', $p) }}" class="text-blue-600" title="Edit">Edit</a>
+                           <a href="{{ route('products.label', $p) }}" class="text-purple-600" title="View Label"
+                              target="_blank">
+                              <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
+                                 </path>
+                              </svg>
+                           </a>
                            <form action="{{ route('products.destroy', $p) }}" method="POST" class="inline-block"
                               onsubmit="return confirm('Delete this product?')">
                               @csrf
                               @method('DELETE')
-                              <button class="text-red-600">Delete</button>
+                              <button class="text-red-600" title="Delete">Delete</button>
                            </form>
                         </td>
                      </tr>
@@ -128,4 +151,40 @@
 
       <div class="mt-4">{{ $products->links() }}</div>
    </div>
+
+   <!-- Hidden form for printing labels -->
+   <form id="printLabelsForm" action="{{ route('products.print-labels') }}" method="POST" style="display: none;">
+      @csrf
+      <div id="selectedProductsContainer"></div>
+   </form>
+
+   <script>
+      function toggleSelectAll(checkbox) {
+         const checkboxes = document.querySelectorAll('.product-checkbox');
+         checkboxes.forEach(cb => cb.checked = checkbox.checked);
+      }
+
+      function printSelectedLabels() {
+         const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+
+         if (checkboxes.length === 0) {
+            alert('Please select at least one product to print labels');
+            return;
+         }
+
+         const form = document.getElementById('printLabelsForm');
+         const container = document.getElementById('selectedProductsContainer');
+         container.innerHTML = '';
+
+         checkboxes.forEach(checkbox => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'product_ids[]';
+            input.value = checkbox.value;
+            container.appendChild(input);
+         });
+
+         form.submit();
+      }
+   </script>
 @endsection
