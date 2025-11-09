@@ -6,6 +6,12 @@
    <div class="max-w-3xl mx-auto">
       <h2 class="text-xl font-semibold mb-4">Edit Gudang</h2>
 
+      @if (session('error'))
+         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ session('error') }}
+         </div>
+      @endif
+
       <form method="POST" action="{{ route('warehouses.update', $warehouse) }}" class="bg-white p-4 rounded shadow">
          @csrf
          @method('PUT')
@@ -86,16 +92,29 @@
             </div>
          </div>
 
-         <div class="mb-3 space-y-2">
-            <label class="inline-flex items-center">
-               <input type="checkbox" name="is_active" class="mr-2"
-                  {{ old('is_active', $warehouse->is_active) ? 'checked' : '' }} /> Active
-            </label>
-            <br>
-            <label class="inline-flex items-center">
-               <input type="checkbox" name="is_default" class="mr-2"
-                  {{ old('is_default', $warehouse->is_default) ? 'checked' : '' }} /> Set as Default Warehouse
-            </label>
+         <div class="mb-3 space-y-3">
+            <div>
+               <label class="inline-flex items-center">
+                  <input type="checkbox" name="is_active" class="mr-2"
+                     {{ old('is_active', $warehouse->is_active) ? 'checked' : '' }}
+                     @if ($warehouse->is_default) onclick="return confirm('Gudang default tidak dapat dinonaktifkan. Ubah gudang default terlebih dahulu.');" @endif />
+                  Aktif
+               </label>
+               <p class="text-xs text-gray-500 ml-6">Gudang aktif dapat digunakan untuk transaksi</p>
+            </div>
+            <div>
+               <label class="inline-flex items-center">
+                  <input type="checkbox" name="is_default" class="mr-2"
+                     {{ old('is_default', $warehouse->is_default) ? 'checked' : '' }} />
+                  Tetapkan sebagai Gudang Default
+               </label>
+               <p class="text-xs text-gray-500 ml-6">Gudang default akan dipilih secara otomatis pada transaksi baru</p>
+               @if ($warehouse->is_default)
+                  <p class="text-xs text-blue-600 ml-6 mt-1">
+                     <strong>Info:</strong> Gudang ini saat ini adalah gudang default
+                  </p>
+               @endif
+            </div>
          </div>
 
          <div class="flex gap-2">
