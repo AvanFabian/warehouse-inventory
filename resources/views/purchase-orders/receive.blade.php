@@ -1,83 +1,86 @@
 @extends('layouts.app')
 
 @section('content')
-   <div class="container-fluid">
-      <div class="row mb-4">
-         <div class="col-md-12">
-            <h1 class="h3 mb-0 text-gray-800">Terima Barang dari PO</h1>
-            <p class="text-muted">{{ $purchaseOrder->po_number }}</p>
-         </div>
+   <div class="max-w-7xl mx-auto p-6">
+      <div class="mb-6">
+         <h1 class="text-3xl font-bold text-gray-800">Terima Barang dari PO</h1>
+         <p class="text-gray-600 mt-1">{{ $purchaseOrder->po_number }}</p>
       </div>
 
       <form action="{{ route('purchase-orders.process-receive', $purchaseOrder) }}" method="POST" id="receiveForm">
          @csrf
 
-         <div class="row">
-            <div class="col-md-8">
-               <div class="card shadow mb-4">
-                  <div class="card-header py-3">
-                     <h6 class="m-0 font-weight-bold text-primary">Informasi Penerimaan</h6>
+         <div class="flex flex-col md:flex-row gap-6">
+            <div class="md:w-2/3">
+               <div class="bg-white rounded shadow mb-6">
+                  <div class="px-6 py-4 border-b border-gray-200">
+                     <h3 class="text-lg font-semibold text-gray-800">Informasi Penerimaan</h3>
                   </div>
-                  <div class="card-body">
+                  <div class="p-6">
                      @if (session('error'))
-                        <div class="alert alert-danger">{{ session('error') }}</div>
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                           {{ session('error') }}
+                        </div>
                      @endif
 
-                     <div class="row mb-3">
-                        <div class="col-md-6">
-                           <strong>Nomor PO:</strong> {{ $purchaseOrder->po_number }}
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                           <span class="font-semibold">Nomor PO:</span> {{ $purchaseOrder->po_number }}
                         </div>
-                        <div class="col-md-6">
-                           <strong>Supplier:</strong> {{ $purchaseOrder->supplier->name }}
+                        <div>
+                           <span class="font-semibold">Supplier:</span> {{ $purchaseOrder->supplier->name }}
                         </div>
                      </div>
 
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="mb-3">
-                              <label class="form-label">Tanggal Penerimaan <span class="text-danger">*</span></label>
-                              <input type="date" name="received_date"
-                                 class="form-control @error('received_date') is-invalid @enderror"
-                                 value="{{ old('received_date', date('Y-m-d')) }}" required>
-                              @error('received_date')
-                                 <div class="invalid-feedback">{{ $message }}</div>
-                              @enderror
-                           </div>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                           <label class="block text-sm font-medium text-gray-700 mb-2">
+                              Tanggal Penerimaan <span class="text-red-600">*</span>
+                           </label>
+                           <input type="date" name="received_date"
+                              class="w-full border rounded px-3 py-2 @error('received_date') border-red-500 @enderror"
+                              value="{{ old('received_date', date('Y-m-d')) }}" required>
+                           @error('received_date')
+                              <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                           @enderror
                         </div>
-                        <div class="col-md-6">
-                           <div class="mb-3">
-                              <label class="form-label">Catatan Penerimaan</label>
-                              <input type="text" name="notes"
-                                 class="form-control @error('notes') is-invalid @enderror" value="{{ old('notes') }}"
-                                 placeholder="Catatan tambahan...">
-                              @error('notes')
-                                 <div class="invalid-feedback">{{ $message }}</div>
-                              @enderror
-                           </div>
+                        <div>
+                           <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Penerimaan</label>
+                           <input type="text" name="notes"
+                              class="w-full border rounded px-3 py-2 @error('notes') border-red-500 @enderror"
+                              value="{{ old('notes') }}" placeholder="Catatan tambahan...">
+                           @error('notes')
+                              <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                           @enderror
                         </div>
                      </div>
                   </div>
                </div>
 
-               <div class="card shadow mb-4">
-                  <div class="card-header py-3">
-                     <h6 class="m-0 font-weight-bold text-primary">Detail Barang yang Diterima</h6>
+               <div class="bg-white rounded shadow mb-6">
+                  <div class="px-6 py-4 border-b border-gray-200">
+                     <h3 class="text-lg font-semibold text-gray-800">Detail Barang yang Diterima</h3>
                   </div>
-                  <div class="card-body">
-                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Masukkan jumlah barang yang diterima. Anda dapat menerima
-                        sebagian atau seluruh barang.
+                  <div class="p-6">
+                     <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4 flex items-start">
+                        <svg class="w-5 h-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                           <path fill-rule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                              clip-rule="evenodd" />
+                        </svg>
+                        <span>Masukkan jumlah barang yang diterima. Anda dapat menerima sebagian atau seluruh
+                           barang.</span>
                      </div>
 
-                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                           <thead class="table-light">
+                     <div class="overflow-x-auto">
+                        <table class="min-w-full border">
+                           <thead class="bg-gray-50">
                               <tr>
-                                 <th>Produk</th>
-                                 <th width="12%">Dipesan</th>
-                                 <th width="12%">Sudah Diterima</th>
-                                 <th width="12%">Sisa</th>
-                                 <th width="18%">Jumlah Terima</th>
+                                 <th class="text-left p-3 font-semibold border-b">Produk</th>
+                                 <th class="text-center p-3 font-semibold border-b w-24">Dipesan</th>
+                                 <th class="text-center p-3 font-semibold border-b w-24">Sudah Diterima</th>
+                                 <th class="text-center p-3 font-semibold border-b w-24">Sisa</th>
+                                 <th class="text-center p-3 font-semibold border-b w-32">Jumlah Terima</th>
                               </tr>
                            </thead>
                            <tbody>
@@ -86,32 +89,35 @@
                                     $remaining = $detail->getRemainingQuantity();
                                  @endphp
                                  @if ($remaining > 0)
-                                    <tr>
-                                       <td>
-                                          <strong>{{ $detail->product->name }}</strong><br>
-                                          <small class="text-muted">{{ $detail->product->product_code }}</small><br>
-                                          <small class="text-muted">Harga: Rp
-                                             {{ number_format($detail->unit_price, 0, ',', '.') }}</small>
+                                    <tr class="border-t">
+                                       <td class="p-3">
+                                          <p class="font-medium">{{ $detail->product->name }}</p>
+                                          <p class="text-sm text-gray-500">{{ $detail->product->code }}</p>
+                                          <p class="text-sm text-gray-500">Harga: Rp
+                                             {{ number_format($detail->unit_price, 0, ',', '.') }}</p>
                                        </td>
-                                       <td class="text-center">
-                                          <span class="badge bg-secondary">{{ $detail->quantity_ordered }}</span>
+                                       <td class="p-3 text-center">
+                                          <span
+                                             class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">{{ $detail->quantity_ordered }}</span>
                                        </td>
-                                       <td class="text-center">
-                                          <span class="badge bg-info">{{ $detail->quantity_received }}</span>
+                                       <td class="p-3 text-center">
+                                          <span
+                                             class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">{{ $detail->quantity_received }}</span>
                                        </td>
-                                       <td class="text-center">
-                                          <span class="badge bg-warning">{{ $remaining }}</span>
+                                       <td class="p-3 text-center">
+                                          <span
+                                             class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">{{ $remaining }}</span>
                                        </td>
-                                       <td>
+                                       <td class="p-3">
                                           <input type="hidden" name="items[{{ $loop->index }}][detail_id]"
                                              value="{{ $detail->id }}">
                                           <input type="number" name="items[{{ $loop->index }}][quantity_received]"
-                                             class="form-control receive-qty @error('items.' . $loop->index . '.quantity_received') is-invalid @enderror"
+                                             class="w-full border rounded px-3 py-2 receive-qty @error('items.' . $loop->index . '.quantity_received') border-red-500 @enderror"
                                              min="0" max="{{ $remaining }}"
                                              value="{{ old('items.' . $loop->index . '.quantity_received', $remaining) }}"
                                              data-remaining="{{ $remaining }}" placeholder="0">
                                           @error('items.' . $loop->index . '.quantity_received')
-                                             <div class="invalid-feedback">{{ $message }}</div>
+                                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                           @enderror
                                        </td>
                                     </tr>
@@ -123,61 +129,110 @@
                   </div>
                </div>
 
-               <div class="mb-4">
-                  <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                     <i class="fas fa-check"></i> Proses Penerimaan
+               <div class="flex gap-3">
+                  <button type="submit"
+                     class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded inline-flex items-center"
+                     id="submitBtn">
+                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                     </svg>
+                     Proses Penerimaan
                   </button>
-                  <a href="{{ route('purchase-orders.show', $purchaseOrder) }}" class="btn btn-secondary btn-lg">
-                     <i class="fas fa-arrow-left"></i> Kembali
+                  <a href="{{ route('purchase-orders.show', $purchaseOrder) }}"
+                     class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded inline-flex items-center">
+                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                           d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                     </svg>
+                     Kembali
                   </a>
                </div>
             </div>
 
-            <div class="col-md-4">
-               <div class="card shadow mb-4">
-                  <div class="card-header py-3">
-                     <h6 class="m-0 font-weight-bold text-primary">Ringkasan Penerimaan</h6>
+            <div class="md:w-1/3">
+               <div class="bg-white rounded shadow mb-6">
+                  <div class="px-6 py-4 border-b border-gray-200">
+                     <h3 class="text-lg font-semibold text-gray-800">Ringkasan Penerimaan</h3>
                   </div>
-                  <div class="card-body">
-                     <div class="mb-3">
-                        <small class="text-muted">Gudang Tujuan</small>
-                        <h5>{{ $purchaseOrder->warehouse->name }}</h5>
+                  <div class="p-6">
+                     <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Gudang Tujuan</p>
+                        <p class="text-xl font-semibold">{{ $purchaseOrder->warehouse->name }}</p>
                      </div>
 
-                     <hr>
+                     <div class="border-t border-gray-200 my-4"></div>
 
-                     <div class="mb-3">
-                        <small class="text-muted">Total Item yang Tersisa</small>
-                        <h4 id="totalItems">
+                     <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Total Item yang Tersisa</p>
+                        <p class="text-2xl font-bold" id="totalItems">
                            {{ $purchaseOrder->details->filter(fn($d) => $d->getRemainingQuantity() > 0)->count() }} Produk
-                        </h4>
+                        </p>
                      </div>
 
-                     <div class="mb-3">
-                        <small class="text-muted">Total yang Akan Diterima</small>
-                        <h4 id="totalReceiving" class="text-success">0 Unit</h4>
+                     <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Total yang Akan Diterima</p>
+                        <p class="text-2xl font-bold text-green-600" id="totalReceiving">0 Unit</p>
                      </div>
 
-                     <hr>
+                     <div class="border-t border-gray-200 my-4"></div>
 
-                     <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <strong>Perhatian:</strong><br>
-                        Penerimaan akan menambah stok produk ke gudang secara otomatis.
+                     <div
+                        class="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded flex items-start">
+                        <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                           <path fill-rule="evenodd"
+                              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                              clip-rule="evenodd" />
+                        </svg>
+                        <div>
+                           <p class="font-semibold">Perhatian:</p>
+                           <p class="text-sm">Penerimaan akan menambah stok produk ke gudang secara otomatis.</p>
+                        </div>
                      </div>
                   </div>
                </div>
 
-               <div class="card shadow">
-                  <div class="card-header py-3">
-                     <h6 class="m-0 font-weight-bold text-primary">Tips</h6>
+               <div class="bg-white rounded shadow">
+                  <div class="px-6 py-4 border-b border-gray-200">
+                     <h3 class="text-lg font-semibold text-gray-800">Tips</h3>
                   </div>
-                  <div class="card-body">
-                     <ul class="mb-0 ps-3">
-                        <li class="mb-2">Periksa kondisi barang sebelum menerima</li>
-                        <li class="mb-2">Anda dapat menerima barang secara bertahap</li>
-                        <li class="mb-2">Pastikan jumlah sesuai dengan fisik barang</li>
-                        <li>Status PO akan berubah otomatis setelah penerimaan</li>
+                  <div class="p-6">
+                     <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                           <svg class="w-5 h-5 mr-2 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor"
+                              viewBox="0 0 20 20">
+                              <path fill-rule="evenodd"
+                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                 clip-rule="evenodd" />
+                           </svg>
+                           <span>Periksa kondisi barang sebelum menerima</span>
+                        </li>
+                        <li class="flex items-start">
+                           <svg class="w-5 h-5 mr-2 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor"
+                              viewBox="0 0 20 20">
+                              <path fill-rule="evenodd"
+                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                 clip-rule="evenodd" />
+                           </svg>
+                           <span>Anda dapat menerima barang secara bertahap</span>
+                        </li>
+                        <li class="flex items-start">
+                           <svg class="w-5 h-5 mr-2 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor"
+                              viewBox="0 0 20 20">
+                              <path fill-rule="evenodd"
+                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                 clip-rule="evenodd" />
+                           </svg>
+                           <span>Pastikan jumlah sesuai dengan fisik barang</span>
+                        </li>
+                        <li class="flex items-start">
+                           <svg class="w-5 h-5 mr-2 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor"
+                              viewBox="0 0 20 20">
+                              <path fill-rule="evenodd"
+                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                 clip-rule="evenodd" />
+                           </svg>
+                           <span>Status PO akan berubah otomatis setelah penerimaan</span>
+                        </li>
                      </ul>
                   </div>
                </div>
@@ -189,29 +244,32 @@
 
 @push('scripts')
    <script>
-      $(document).ready(function() {
+      document.addEventListener('DOMContentLoaded', function() {
          calculateTotal();
 
          // Calculate total when quantity changes
-         $('.receive-qty').on('input', function() {
-            let value = parseInt($(this).val()) || 0;
-            let max = parseInt($(this).attr('max'));
+         const receiveQtyInputs = document.querySelectorAll('.receive-qty');
+         receiveQtyInputs.forEach(input => {
+            input.addEventListener('input', function() {
+               let value = parseInt(this.value) || 0;
+               let max = parseInt(this.getAttribute('max'));
 
-            if (value > max) {
-               $(this).val(max);
-            }
+               if (value > max) {
+                  this.value = max;
+               }
 
-            calculateTotal();
+               calculateTotal();
+            });
          });
 
          // Form validation
-         $('#receiveForm').submit(function(e) {
+         const receiveForm = document.getElementById('receiveForm');
+         receiveForm.addEventListener('submit', function(e) {
             let hasQuantity = false;
 
-            $('.receive-qty').each(function() {
-               if (parseInt($(this).val()) > 0) {
+            receiveQtyInputs.forEach(input => {
+               if (parseInt(input.value) > 0) {
                   hasQuantity = true;
-                  return false;
                }
             });
 
@@ -221,7 +279,10 @@
                return false;
             }
 
-            return confirm('Proses penerimaan barang? Stok akan bertambah secara otomatis.');
+            if (!confirm('Proses penerimaan barang? Stok akan bertambah secara otomatis.')) {
+               e.preventDefault();
+               return false;
+            }
          });
       });
 
@@ -229,18 +290,19 @@
          let total = 0;
          let itemCount = 0;
 
-         $('.receive-qty').each(function() {
-            let qty = parseInt($(this).val()) || 0;
+         const receiveQtyInputs = document.querySelectorAll('.receive-qty');
+         receiveQtyInputs.forEach(input => {
+            let qty = parseInt(input.value) || 0;
             if (qty > 0) {
                total += qty;
                itemCount++;
             }
          });
 
-         $('#totalReceiving').text(total + ' Unit');
+         document.getElementById('totalReceiving').textContent = total + ' Unit';
 
          // Enable/disable submit button
-         $('#submitBtn').prop('disabled', total === 0);
+         document.getElementById('submitBtn').disabled = total === 0;
       }
    </script>
 @endpush

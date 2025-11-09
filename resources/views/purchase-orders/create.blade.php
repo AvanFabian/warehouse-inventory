@@ -1,207 +1,199 @@
 @extends('layouts.app')
 
+@section('title', 'Buat Purchase Order')
+
 @section('content')
-   <div class="container-fluid">
-      <div class="row mb-4">
-         <div class="col-md-12">
-            <h1 class="h3 mb-0 text-gray-800">{{ isset($purchaseOrder) ? 'Edit' : 'Buat' }} Purchase Order</h1>
-            <p class="text-muted">{{ isset($purchaseOrder) ? 'Ubah data' : 'Tambah' }} purchase order baru</p>
-         </div>
+   <div class="max-w-7xl mx-auto p-6">
+      <div class="mb-6">
+         <h2 class="text-2xl font-semibold text-gray-800">Buat PO (Pesanan Pembelian)</h2>
+         <p class="text-gray-600">Tambah PO (Pesanan Pembelian) baru</p>
       </div>
 
-      <form
-         action="{{ isset($purchaseOrder) ? route('purchase-orders.update', $purchaseOrder) : route('purchase-orders.store') }}"
-         method="POST" id="poForm">
+      <form action="{{ route('purchase-orders.store') }}" method="POST" id="poForm">
          @csrf
-         @if (isset($purchaseOrder))
-            @method('PUT')
-         @endif
 
-         <div class="card shadow mb-4">
-            <div class="card-header py-3">
-               <h6 class="m-0 font-weight-bold text-primary">Informasi PO</h6>
+         <!-- PO Information Card -->
+         <div class="bg-white rounded shadow mb-6">
+            <div class="px-6 py-4 border-b border-gray-200">
+               <h3 class="text-lg font-semibold text-gray-800">Informasi PO</h3>
             </div>
-            <div class="card-body">
+            <div class="p-6">
                @if (session('error'))
-                  <div class="alert alert-danger">{{ session('error') }}</div>
+                  <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                     {{ session('error') }}
+                  </div>
                @endif
 
-               <div class="row">
-                  <div class="col-md-6">
-                     <div class="mb-3">
-                        <label class="form-label">Gudang <span class="text-danger">*</span></label>
-                        <select name="warehouse_id" class="form-control @error('warehouse_id') is-invalid @enderror"
-                           required>
-                           <option value="">Pilih Gudang</option>
-                           @foreach ($warehouses as $warehouse)
-                              <option value="{{ $warehouse->id }}"
-                                 {{ old('warehouse_id', $purchaseOrder->warehouse_id ?? '') == $warehouse->id ? 'selected' : '' }}>
-                                 {{ $warehouse->name }}
-                              </option>
-                           @endforeach
-                        </select>
-                        @error('warehouse_id')
-                           <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                     </div>
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Gudang <span class="text-red-600">*</span>
+                     </label>
+                     <select name="warehouse_id"
+                        class="w-full border rounded px-3 py-2 @error('warehouse_id') border-red-500 @enderror" required>
+                        <option value="">Pilih Gudang</option>
+                        @foreach ($warehouses as $warehouse)
+                           <option value="{{ $warehouse->id }}"
+                              {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
+                              {{ $warehouse->name }}
+                           </option>
+                        @endforeach
+                     </select>
+                     @error('warehouse_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                     @enderror
                   </div>
-                  <div class="col-md-6">
-                     <div class="mb-3">
-                        <label class="form-label">Supplier <span class="text-danger">*</span></label>
-                        <select name="supplier_id" class="form-control @error('supplier_id') is-invalid @enderror"
-                           required>
-                           <option value="">Pilih Supplier</option>
-                           @foreach ($suppliers as $supplier)
-                              <option value="{{ $supplier->id }}"
-                                 {{ old('supplier_id', $purchaseOrder->supplier_id ?? '') == $supplier->id ? 'selected' : '' }}>
-                                 {{ $supplier->name }}
-                              </option>
-                           @endforeach
-                        </select>
-                        @error('supplier_id')
-                           <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                     </div>
+
+                  <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Supplier <span class="text-red-600">*</span>
+                     </label>
+                     <select name="supplier_id"
+                        class="w-full border rounded px-3 py-2 @error('supplier_id') border-red-500 @enderror" required>
+                        <option value="">Pilih Supplier</option>
+                        @foreach ($suppliers as $supplier)
+                           <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                              {{ $supplier->name }}
+                           </option>
+                        @endforeach
+                     </select>
+                     @error('supplier_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                     @enderror
+                  </div>
+
+                  <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Tanggal Order <span class="text-red-600">*</span>
+                     </label>
+                     <input type="date" name="order_date"
+                        class="w-full border rounded px-3 py-2 @error('order_date') border-red-500 @enderror"
+                        value="{{ old('order_date', date('Y-m-d')) }}" required>
+                     @error('order_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                     @enderror
+                  </div>
+
+                  <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Tanggal Pengiriman Diharapkan
+                     </label>
+                     <input type="date" name="expected_delivery_date"
+                        class="w-full border rounded px-3 py-2 @error('expected_delivery_date') border-red-500 @enderror"
+                        value="{{ old('expected_delivery_date') }}">
+                     @error('expected_delivery_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                     @enderror
                   </div>
                </div>
 
-               <div class="row">
-                  <div class="col-md-6">
-                     <div class="mb-3">
-                        <label class="form-label">Tanggal Order <span class="text-danger">*</span></label>
-                        <input type="date" name="order_date"
-                           class="form-control @error('order_date') is-invalid @enderror"
-                           value="{{ old('order_date', isset($purchaseOrder) ? $purchaseOrder->order_date->format('Y-m-d') : date('Y-m-d')) }}"
-                           required>
-                        @error('order_date')
-                           <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                     </div>
-                  </div>
-                  <div class="col-md-6">
-                     <div class="mb-3">
-                        <label class="form-label">Tanggal Pengiriman Diharapkan</label>
-                        <input type="date" name="expected_delivery_date"
-                           class="form-control @error('expected_delivery_date') is-invalid @enderror"
-                           value="{{ old('expected_delivery_date', isset($purchaseOrder) ? ($purchaseOrder->expected_delivery_date ? $purchaseOrder->expected_delivery_date->format('Y-m-d') : '') : '') }}">
-                        @error('expected_delivery_date')
-                           <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                     </div>
-                  </div>
-               </div>
-
-               <div class="mb-3">
-                  <label class="form-label">Catatan</label>
-                  <textarea name="notes" class="form-control @error('notes') is-invalid @enderror" rows="3">{{ old('notes', $purchaseOrder->notes ?? '') }}</textarea>
+               <div class="mt-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                  <textarea name="notes" class="w-full border rounded px-3 py-2 @error('notes') border-red-500 @enderror" rows="3"
+                     placeholder="Catatan tambahan (opsional)">{{ old('notes') }}</textarea>
                   @error('notes')
-                     <div class="invalid-feedback">{{ $message }}</div>
+                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                   @enderror
                </div>
             </div>
          </div>
 
-         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-               <h6 class="m-0 font-weight-bold text-primary">Detail Produk</h6>
-               <button type="button" class="btn btn-sm btn-success" id="addProductBtn">
-                  <i class="fas fa-plus"></i> Tambah Produk
+         <!-- Product Details Card -->
+         <div class="bg-white rounded shadow mb-6">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+               <h3 class="text-lg font-semibold text-gray-800">Detail Produk</h3>
+               <button type="button" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  id="addProductBtn">
+                  <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  Tambah Produk
                </button>
             </div>
-            <div class="card-body">
-               <div class="table-responsive">
-                  <table class="table table-bordered" id="productsTable">
-                     <thead class="table-light">
+            <div class="p-6">
+               <div class="overflow-x-auto">
+                  <table class="min-w-full border" id="productsTable">
+                     <thead class="bg-gray-50">
                         <tr>
-                           <th width="40%">Produk</th>
-                           <th width="15%">Jumlah</th>
-                           <th width="20%">Harga Satuan</th>
-                           <th width="20%">Subtotal</th>
-                           <th width="5%">Aksi</th>
+                           <th class="text-left p-3 font-semibold border-b">Produk</th>
+                           <th class="text-left p-3 font-semibold border-b w-32">Jumlah</th>
+                           <th class="text-left p-3 font-semibold border-b w-40">Harga Satuan</th>
+                           <th class="text-left p-3 font-semibold border-b w-40">Subtotal</th>
+                           <th class="text-left p-3 font-semibold border-b w-20">Aksi</th>
                         </tr>
                      </thead>
-                     <tbody id="productRows">
-                        @if (isset($purchaseOrder))
-                           @foreach ($purchaseOrder->details as $index => $detail)
-                              <tr class="product-row">
-                                 <td>
-                                    <input type="hidden" name="products[{{ $index }}][product_id]"
-                                       value="{{ $detail->product_id }}">
-                                    <input type="text" class="form-control" value="{{ $detail->product->name }}"
-                                       readonly>
-                                 </td>
-                                 <td>
-                                    <input type="number" name="products[{{ $index }}][quantity]"
-                                       class="form-control quantity" value="{{ $detail->quantity_ordered }}"
-                                       min="1" required>
-                                 </td>
-                                 <td>
-                                    <input type="number" name="products[{{ $index }}][unit_price]"
-                                       class="form-control unit-price" value="{{ $detail->unit_price }}" min="0"
-                                       step="0.01" required>
-                                 </td>
-                                 <td>
-                                    <input type="text" class="form-control subtotal"
-                                       value="{{ number_format($detail->subtotal, 0, ',', '.') }}" readonly>
-                                 </td>
-                                 <td>
-                                    <button type="button" class="btn btn-sm btn-danger remove-product">
-                                       <i class="fas fa-trash"></i>
-                                    </button>
-                                 </td>
-                              </tr>
-                           @endforeach
-                        @endif
-                     </tbody>
-                     <tfoot>
+                     <tbody id="productRows"></tbody>
+                     <tfoot class="bg-gray-50">
                         <tr>
-                           <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                           <td colspan="2">
-                              <input type="text" id="totalAmount" class="form-control" readonly>
+                           <td colspan="3" class="text-right p-3 font-bold border-t">Total:</td>
+                           <td colspan="2" class="p-3 border-t">
+                              <input type="text" id="totalAmount" class="w-full border rounded px-3 py-2 bg-gray-100"
+                                 readonly>
                            </td>
                         </tr>
                      </tfoot>
                   </table>
                </div>
+               <div class="mt-4 text-sm text-gray-600">
+                  <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  Klik tombol "Tambah Produk" untuk menambahkan produk ke dalam PO
+               </div>
             </div>
          </div>
 
-         <div class="mb-4">
-            <button type="submit" class="btn btn-primary">
-               <i class="fas fa-save"></i> Simpan
+         <!-- Action Buttons -->
+         <div class="flex gap-3 mb-6">
+            <button type="submit" class="px-6 py-2 bg-primary text-white rounded hover:bg-blue-700">
+               <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
+                  </path>
+               </svg>
+               Simpan
             </button>
-            <a href="{{ route('purchase-orders.index') }}" class="btn btn-secondary">
-               <i class="fas fa-arrow-left"></i> Kembali
+            <a href="{{ route('purchase-orders.index') }}"
+               class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+               <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                  </path>
+               </svg>
+               Kembali
             </a>
          </div>
       </form>
    </div>
 
    <!-- Product Selection Modal -->
-   <div class="modal fade" id="productModal" tabindex="-1">
-      <div class="modal-dialog modal-lg">
-         <div class="modal-content">
-            <div class="modal-header">
-               <h5 class="modal-title">Pilih Produk</h5>
-               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+   <div id="productModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
+         <div class="flex justify-between items-center pb-3 border-b">
+            <h3 class="text-xl font-semibold">Pilih Produk</h3>
+            <button type="button" class="text-gray-400 hover:text-gray-600" onclick="closeProductModal()">
+               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+               </svg>
+            </button>
+         </div>
+         <div class="mt-4">
+            <div class="mb-4">
+               <input type="text" class="w-full border rounded px-3 py-2" id="searchProduct"
+                  placeholder="Cari produk berdasarkan kode atau nama...">
             </div>
-            <div class="modal-body">
-               <div class="mb-3">
-                  <input type="text" class="form-control" id="searchProduct" placeholder="Cari produk...">
-               </div>
-               <div class="table-responsive">
-                  <table class="table table-hover">
-                     <thead>
-                        <tr>
-                           <th>Kode</th>
-                           <th>Nama</th>
-                           <th>Kategori</th>
-                           <th>Aksi</th>
-                        </tr>
-                     </thead>
-                     <tbody id="productList"></tbody>
-                  </table>
-               </div>
+            <div class="overflow-x-auto max-h-96">
+               <table class="min-w-full">
+                  <thead class="bg-gray-50 sticky top-0">
+                     <tr>
+                        <th class="text-left p-3 font-semibold">Kode</th>
+                        <th class="text-left p-3 font-semibold">Nama</th>
+                        <th class="text-left p-3 font-semibold">Kategori</th>
+                        <th class="text-left p-3 font-semibold">Aksi</th>
+                     </tr>
+                  </thead>
+                  <tbody id="productList"></tbody>
+               </table>
             </div>
          </div>
       </div>
@@ -211,30 +203,33 @@
 
 @push('scripts')
    <script>
-      let productIndex = {{ isset($purchaseOrder) ? count($purchaseOrder->details) : 0 }};
+      let productIndex = 0;
       let allProducts = [];
 
       // Load products on page load
-      $(document).ready(function() {
+      document.addEventListener('DOMContentLoaded', function() {
          loadProducts();
          calculateTotal();
       });
 
       // Add product button
-      $('#addProductBtn').click(function() {
-         $('#productModal').modal('show');
+      document.getElementById('addProductBtn').addEventListener('click', function() {
+         document.getElementById('productModal').classList.remove('hidden');
       });
+
+      // Close modal function
+      function closeProductModal() {
+         document.getElementById('productModal').classList.add('hidden');
+      }
 
       // Load all products
       function loadProducts() {
-         $.ajax({
-            url: '/api/products',
-            method: 'GET',
-            success: function(response) {
-               allProducts = response;
+         fetch('/api/products')
+            .then(response => response.json())
+            .then(data => {
+               allProducts = data;
                displayProducts(allProducts);
-            }
-         });
+            });
       }
 
       // Display products in modal
@@ -242,12 +237,12 @@
          let html = '';
          products.forEach(function(product) {
             html += `
-            <tr>
-                <td>${product.product_code}</td>
-                <td>${product.name}</td>
-                <td>${product.category ? product.category.name : '-'}</td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-primary select-product" 
+            <tr class="border-t hover:bg-gray-50">
+                <td class="p-3">${product.code}</td>
+                <td class="p-3">${product.name}</td>
+                <td class="p-3">${product.category ? product.category.name : '-'}</td>
+                <td class="p-3">
+                    <button type="button" class="px-3 py-1 bg-primary text-white rounded hover:bg-blue-700 select-product" 
                         data-id="${product.id}" 
                         data-name="${product.name}"
                         data-price="${product.purchase_price || 0}">
@@ -257,94 +252,104 @@
             </tr>
         `;
          });
-         $('#productList').html(html);
+         document.getElementById('productList').innerHTML = html;
       }
 
       // Search products
-      $('#searchProduct').on('keyup', function() {
-         let search = $(this).val().toLowerCase();
+      document.getElementById('searchProduct').addEventListener('keyup', function() {
+         let search = this.value.toLowerCase();
          let filtered = allProducts.filter(function(product) {
-            return product.product_code.toLowerCase().includes(search) ||
+            return product.code.toLowerCase().includes(search) ||
                product.name.toLowerCase().includes(search);
          });
          displayProducts(filtered);
       });
 
       // Select product
-      $(document).on('click', '.select-product', function() {
-         let productId = $(this).data('id');
-         let productName = $(this).data('name');
-         let productPrice = $(this).data('price');
+      document.addEventListener('click', function(e) {
+         if (e.target.classList.contains('select-product') || e.target.closest('.select-product')) {
+            const btn = e.target.classList.contains('select-product') ? e.target : e.target.closest(
+               '.select-product');
+            const productId = btn.dataset.id;
+            const productName = btn.dataset.name;
+            const productPrice = btn.dataset.price;
 
-         // Check if product already added
-         let exists = false;
-         $('.product-row').each(function() {
-            if ($(this).find('input[name*="[product_id]"]').val() == productId) {
-               exists = true;
-               return false;
+            // Check if product already added
+            const existingProducts = document.querySelectorAll('.product-row input[name*="[product_id]"]');
+            let exists = false;
+            existingProducts.forEach(input => {
+               if (input.value == productId) {
+                  exists = true;
+               }
+            });
+
+            if (exists) {
+               alert('Produk sudah ditambahkan');
+               return;
             }
-         });
 
-         if (exists) {
-            alert('Produk sudah ditambahkan');
-            return;
+            const row = `
+            <tr class="product-row border-t">
+                <td class="p-3">
+                    <input type="hidden" name="products[${productIndex}][product_id]" value="${productId}">
+                    <input type="text" class="w-full border rounded px-3 py-2 bg-gray-100" value="${productName}" readonly>
+                </td>
+                <td class="p-3">
+                    <input type="number" name="products[${productIndex}][quantity]" class="w-full border rounded px-3 py-2 quantity" value="1" min="1" required>
+                </td>
+                <td class="p-3">
+                    <input type="number" name="products[${productIndex}][unit_price]" class="w-full border rounded px-3 py-2 unit-price" value="${productPrice}" min="0" step="0.01" required>
+                </td>
+                <td class="p-3">
+                    <input type="text" class="w-full border rounded px-3 py-2 bg-gray-100 subtotal" value="0" readonly>
+                </td>
+                <td class="p-3">
+                    <button type="button" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 remove-product">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                </td>
+            </tr>
+        `;
+
+            document.getElementById('productRows').insertAdjacentHTML('beforeend', row);
+            productIndex++;
+            calculateTotal();
+            closeProductModal();
          }
 
-         let row = `
-        <tr class="product-row">
-            <td>
-                <input type="hidden" name="products[${productIndex}][product_id]" value="${productId}">
-                <input type="text" class="form-control" value="${productName}" readonly>
-            </td>
-            <td>
-                <input type="number" name="products[${productIndex}][quantity]" class="form-control quantity" value="1" min="1" required>
-            </td>
-            <td>
-                <input type="number" name="products[${productIndex}][unit_price]" class="form-control unit-price" value="${productPrice}" min="0" step="0.01" required>
-            </td>
-            <td>
-                <input type="text" class="form-control subtotal" value="0" readonly>
-            </td>
-            <td>
-                <button type="button" class="btn btn-sm btn-danger remove-product">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    `;
-
-         $('#productRows').append(row);
-         productIndex++;
-         calculateTotal();
-         $('#productModal').modal('hide');
-      });
-
-      // Remove product
-      $(document).on('click', '.remove-product', function() {
-         $(this).closest('tr').remove();
-         calculateTotal();
+         // Remove product
+         if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
+            const btn = e.target.classList.contains('remove-product') ? e.target : e.target.closest(
+               '.remove-product');
+            btn.closest('tr').remove();
+            calculateTotal();
+         }
       });
 
       // Calculate subtotal when quantity or price changes
-      $(document).on('input', '.quantity, .unit-price', function() {
-         let row = $(this).closest('tr');
-         let quantity = parseFloat(row.find('.quantity').val()) || 0;
-         let price = parseFloat(row.find('.unit-price').val()) || 0;
-         let subtotal = quantity * price;
+      document.addEventListener('input', function(e) {
+         if (e.target.classList.contains('quantity') || e.target.classList.contains('unit-price')) {
+            const row = e.target.closest('tr');
+            const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+            const price = parseFloat(row.querySelector('.unit-price').value) || 0;
+            const subtotal = quantity * price;
 
-         row.find('.subtotal').val(formatNumber(subtotal));
-         calculateTotal();
+            row.querySelector('.subtotal').value = formatNumber(subtotal);
+            calculateTotal();
+         }
       });
 
       // Calculate total
       function calculateTotal() {
          let total = 0;
-         $('.product-row').each(function() {
-            let quantity = parseFloat($(this).find('.quantity').val()) || 0;
-            let price = parseFloat($(this).find('.unit-price').val()) || 0;
+         document.querySelectorAll('.product-row').forEach(function(row) {
+            const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+            const price = parseFloat(row.querySelector('.unit-price').value) || 0;
             total += quantity * price;
          });
-         $('#totalAmount').val('Rp ' + formatNumber(total));
+         document.getElementById('totalAmount').value = 'Rp ' + formatNumber(total);
       }
 
       // Format number
@@ -353,8 +358,8 @@
       }
 
       // Form validation
-      $('#poForm').submit(function(e) {
-         if ($('.product-row').length === 0) {
+      document.getElementById('poForm').addEventListener('submit', function(e) {
+         if (document.querySelectorAll('.product-row').length === 0) {
             e.preventDefault();
             alert('Minimal harus ada 1 produk');
             return false;

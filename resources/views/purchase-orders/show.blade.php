@@ -1,193 +1,228 @@
 @extends('layouts.app')
 
+@section('title', 'Detail Purchase Order')
+
 @section('content')
-   <div class="container-fluid">
-      <div class="row mb-4">
-         <div class="col-md-6">
-            <h1 class="h3 mb-0 text-gray-800">Detail Purchase Order</h1>
-            <p class="text-muted">{{ $purchaseOrder->po_number }}</p>
+   <div class="max-w-7xl mx-auto p-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+         <div>
+            <h2 class="text-2xl font-semibold text-gray-800">Detail PO (Pesanan Pembelian)</h2>
+            <p class="text-gray-600 text-lg font-semibold">{{ $purchaseOrder->po_number }}</p>
          </div>
-         <div class="col-md-6 text-end">
-            <a href="{{ route('purchase-orders.index') }}" class="btn btn-secondary">
-               <i class="fas fa-arrow-left"></i> Kembali
+         <div class="flex flex-wrap gap-2">
+            <a href="{{ route('purchase-orders.index') }}"
+               class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+               <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                  </path>
+               </svg>
+               Kembali
             </a>
 
             @if ($purchaseOrder->canBeEdited())
-               <a href="{{ route('purchase-orders.edit', $purchaseOrder) }}" class="btn btn-warning">
-                  <i class="fas fa-edit"></i> Edit
+               <a href="{{ route('purchase-orders.edit', $purchaseOrder) }}"
+                  class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                  <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                     </path>
+                  </svg>
+                  Edit
                </a>
             @endif
 
             @if ($purchaseOrder->status === 'draft')
-               <form action="{{ route('purchase-orders.submit', $purchaseOrder) }}" method="POST" class="d-inline"
+               <form action="{{ route('purchase-orders.submit', $purchaseOrder) }}" method="POST" class="inline-block"
                   onsubmit="return confirm('Ajukan PO untuk persetujuan?')">
                   @csrf
-                  <button type="submit" class="btn btn-primary">
-                     <i class="fas fa-paper-plane"></i> Ajukan
+                  <button type="submit" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700">
+                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                           d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                     </svg>
+                     Ajukan
                   </button>
                </form>
             @endif
 
             @if ($purchaseOrder->canBeApproved())
-               <form action="{{ route('purchase-orders.approve', $purchaseOrder) }}" method="POST" class="d-inline"
+               <form action="{{ route('purchase-orders.approve', $purchaseOrder) }}" method="POST" class="inline-block"
                   onsubmit="return confirm('Setujui PO ini?')">
                   @csrf
-                  <button type="submit" class="btn btn-success">
-                     <i class="fas fa-check"></i> Setujui
+                  <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                     </svg>
+                     Setujui
                   </button>
                </form>
-               <form action="{{ route('purchase-orders.reject', $purchaseOrder) }}" method="POST" class="d-inline"
+               <form action="{{ route('purchase-orders.reject', $purchaseOrder) }}" method="POST" class="inline-block"
                   onsubmit="return confirm('Tolak PO ini?')">
                   @csrf
-                  <button type="submit" class="btn btn-danger">
-                     <i class="fas fa-times"></i> Tolak
+                  <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                     </svg>
+                     Tolak
                   </button>
                </form>
             @endif
 
             @if ($purchaseOrder->canBeReceived())
-               <a href="{{ route('purchase-orders.receive', $purchaseOrder) }}" class="btn btn-info">
-                  <i class="fas fa-box"></i> Terima Barang
+               <a href="{{ route('purchase-orders.receive', $purchaseOrder) }}"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                  <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                  </svg>
+                  Terima Barang
                </a>
             @endif
          </div>
       </div>
 
       @if (session('success'))
-         <div class="alert alert-success">{{ session('success') }}</div>
+         <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            {{ session('success') }}
+         </div>
       @endif
       @if (session('error'))
-         <div class="alert alert-danger">{{ session('error') }}</div>
+         <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            {{ session('error') }}
+         </div>
       @endif
 
-      <div class="row">
-         <div class="col-md-8">
-            <div class="card shadow mb-4">
-               <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Informasi PO</h6>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+         <div class="lg:col-span-2">
+            <div class="bg-white rounded shadow mb-6">
+               <div class="px-6 py-4 border-b border-gray-200">
+                  <h3 class="text-lg font-semibold text-gray-800">Informasi PO</h3>
                </div>
-               <div class="card-body">
-                  <div class="row mb-3">
-                     <div class="col-md-6">
-                        <strong>Nomor PO:</strong><br>
-                        <span class="text-primary fs-5">{{ $purchaseOrder->po_number }}</span>
+               <div class="p-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                     <div>
+                        <p class="text-sm text-gray-600 mb-1">Nomor PO:</p>
+                        <p class="text-xl font-semibold text-blue-600">{{ $purchaseOrder->po_number }}</p>
                      </div>
-                     <div class="col-md-6">
-                        <strong>Status:</strong><br>
+                     <div>
+                        <p class="text-sm text-gray-600 mb-1">Status:</p>
                         @if ($purchaseOrder->status === 'draft')
-                           <span class="badge bg-secondary fs-6">Draft</span>
+                           <span class="px-3 py-1 text-sm rounded bg-gray-100 text-gray-700">Draft</span>
                         @elseif($purchaseOrder->status === 'pending')
-                           <span class="badge bg-warning fs-6">Pending</span>
+                           <span class="px-3 py-1 text-sm rounded bg-yellow-100 text-yellow-700">Pending</span>
                         @elseif($purchaseOrder->status === 'approved')
-                           <span class="badge bg-success fs-6">Disetujui</span>
+                           <span class="px-3 py-1 text-sm rounded bg-green-100 text-green-700">Disetujui</span>
                         @elseif($purchaseOrder->status === 'partially_received')
-                           <span class="badge bg-info fs-6">Sebagian Diterima</span>
+                           <span class="px-3 py-1 text-sm rounded bg-blue-100 text-blue-700">Sebagian Diterima</span>
                         @elseif($purchaseOrder->status === 'completed')
-                           <span class="badge bg-primary fs-6">Selesai</span>
+                           <span class="px-3 py-1 text-sm rounded bg-purple-100 text-purple-700">Selesai</span>
                         @elseif($purchaseOrder->status === 'cancelled')
-                           <span class="badge bg-danger fs-6">Dibatalkan</span>
+                           <span class="px-3 py-1 text-sm rounded bg-red-100 text-red-700">Dibatalkan</span>
                         @endif
                      </div>
                   </div>
 
-                  <hr>
+                  <div class="border-t pt-4 mb-4"></div>
 
-                  <div class="row mb-3">
-                     <div class="col-md-6">
-                        <strong>Gudang:</strong><br>
-                        {{ $purchaseOrder->warehouse->name }}
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                     <div>
+                        <p class="text-sm text-gray-600 mb-1">Gudang:</p>
+                        <p class="font-medium">{{ $purchaseOrder->warehouse->name }}</p>
                      </div>
-                     <div class="col-md-6">
-                        <strong>Supplier:</strong><br>
-                        {{ $purchaseOrder->supplier->name }}<br>
-                        <small class="text-muted">{{ $purchaseOrder->supplier->phone }}</small>
+                     <div>
+                        <p class="text-sm text-gray-600 mb-1">Supplier:</p>
+                        <p class="font-medium">{{ $purchaseOrder->supplier->name }}</p>
+                        <p class="text-sm text-gray-500">{{ $purchaseOrder->supplier->phone }}</p>
                      </div>
                   </div>
 
-                  <div class="row mb-3">
-                     <div class="col-md-6">
-                        <strong>Tanggal Order:</strong><br>
-                        {{ $purchaseOrder->order_date->format('d/m/Y') }}
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                     <div>
+                        <p class="text-sm text-gray-600 mb-1">Tanggal Order:</p>
+                        <p class="font-medium">{{ $purchaseOrder->order_date->format('d/m/Y') }}</p>
                      </div>
-                     <div class="col-md-6">
-                        <strong>Tanggal Pengiriman Diharapkan:</strong><br>
-                        {{ $purchaseOrder->expected_delivery_date ? $purchaseOrder->expected_delivery_date->format('d/m/Y') : '-' }}
+                     <div>
+                        <p class="text-sm text-gray-600 mb-1">Tanggal Pengiriman Diharapkan:</p>
+                        <p class="font-medium">
+                           {{ $purchaseOrder->expected_delivery_date ? $purchaseOrder->expected_delivery_date->format('d/m/Y') : '-' }}
+                        </p>
                      </div>
                   </div>
 
                   @if ($purchaseOrder->notes)
-                     <div class="row mb-3">
-                        <div class="col-md-12">
-                           <strong>Catatan:</strong><br>
-                           {{ $purchaseOrder->notes }}
-                        </div>
+                     <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-1">Catatan:</p>
+                        <p class="text-gray-700">{{ $purchaseOrder->notes }}</p>
                      </div>
                   @endif
 
-                  <hr>
+                  <div class="border-t pt-4"></div>
 
-                  <div class="row">
-                     <div class="col-md-6">
-                        <strong>Dibuat Oleh:</strong><br>
-                        {{ $purchaseOrder->createdBy->name }}<br>
-                        <small class="text-muted">{{ $purchaseOrder->created_at->format('d/m/Y H:i') }}</small>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                     <div>
+                        <p class="text-sm text-gray-600 mb-1">Dibuat Oleh:</p>
+                        <p class="font-medium">{{ $purchaseOrder->createdBy->name }}</p>
+                        <p class="text-sm text-gray-500">{{ $purchaseOrder->created_at->format('d/m/Y H:i') }}</p>
                      </div>
                      @if ($purchaseOrder->approvedBy)
-                        <div class="col-md-6">
-                           <strong>Disetujui Oleh:</strong><br>
-                           {{ $purchaseOrder->approvedBy->name }}<br>
-                           <small class="text-muted">{{ $purchaseOrder->approved_at->format('d/m/Y H:i') }}</small>
+                        <div>
+                           <p class="text-sm text-gray-600 mb-1">Disetujui Oleh:</p>
+                           <p class="font-medium">{{ $purchaseOrder->approvedBy->name }}</p>
+                           <p class="text-sm text-gray-500">{{ $purchaseOrder->approved_at->format('d/m/Y H:i') }}</p>
                         </div>
                      @endif
                   </div>
                </div>
             </div>
 
-            <div class="card shadow mb-4">
-               <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Detail Produk</h6>
+            <div class="bg-white rounded shadow">
+               <div class="px-6 py-4 border-b border-gray-200">
+                  <h3 class="text-lg font-semibold text-gray-800">Detail Produk</h3>
                </div>
-               <div class="card-body">
-                  <div class="table-responsive">
-                     <table class="table table-bordered">
-                        <thead class="table-light">
+               <div class="p-6">
+                  <div class="overflow-x-auto">
+                     <table class="min-w-full border">
+                        <thead class="bg-gray-50">
                            <tr>
-                              <th>Produk</th>
-                              <th width="12%">Dipesan</th>
-                              <th width="12%">Diterima</th>
-                              <th width="12%">Sisa</th>
-                              <th width="18%">Harga Satuan</th>
-                              <th width="20%">Subtotal</th>
+                              <th class="text-left p-3 font-semibold border-b">Produk</th>
+                              <th class="text-center p-3 font-semibold border-b w-24">Dipesan</th>
+                              <th class="text-center p-3 font-semibold border-b w-24">Diterima</th>
+                              <th class="text-center p-3 font-semibold border-b w-24">Sisa</th>
+                              <th class="text-right p-3 font-semibold border-b w-32">Harga Satuan</th>
+                              <th class="text-right p-3 font-semibold border-b w-32">Subtotal</th>
                            </tr>
                         </thead>
                         <tbody>
                            @foreach ($purchaseOrder->details as $detail)
-                              <tr>
-                                 <td>
-                                    <strong>{{ $detail->product->name }}</strong><br>
-                                    <small class="text-muted">{{ $detail->product->product_code }}</small>
+                              <tr class="border-t">
+                                 <td class="p-3">
+                                    <p class="font-medium">{{ $detail->product->name }}</p>
+                                    <p class="text-sm text-gray-500">{{ $detail->product->code }}</p>
                                  </td>
-                                 <td class="text-center">{{ $detail->quantity_ordered }}</td>
-                                 <td class="text-center">
-                                    <span class="badge bg-info">{{ $detail->quantity_received }}</span>
+                                 <td class="p-3 text-center">{{ $detail->quantity_ordered }}</td>
+                                 <td class="p-3 text-center">
+                                    <span
+                                       class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">{{ $detail->quantity_received }}</span>
                                  </td>
-                                 <td class="text-center">
+                                 <td class="p-3 text-center">
                                     @if ($detail->getRemainingQuantity() > 0)
-                                       <span class="badge bg-warning">{{ $detail->getRemainingQuantity() }}</span>
+                                       <span
+                                          class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">{{ $detail->getRemainingQuantity() }}</span>
                                     @else
-                                       <span class="badge bg-success">0</span>
+                                       <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">0</span>
                                     @endif
                                  </td>
-                                 <td class="text-end">Rp {{ number_format($detail->unit_price, 0, ',', '.') }}</td>
-                                 <td class="text-end">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                                 <td class="p-3 text-right">Rp {{ number_format($detail->unit_price, 0, ',', '.') }}</td>
+                                 <td class="p-3 text-right">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
                               </tr>
                            @endforeach
                         </tbody>
-                        <tfoot>
-                           <tr class="table-light">
-                              <td colspan="5" class="text-end"><strong>Total:</strong></td>
-                              <td class="text-end"><strong>Rp
-                                    {{ number_format($purchaseOrder->total_amount, 0, ',', '.') }}</strong></td>
+                        <tfoot class="bg-gray-50">
+                           <tr class="border-t-2">
+                              <td colspan="5" class="p-3 text-right font-bold">Total:</td>
+                              <td class="p-3 text-right font-bold">Rp
+                                 {{ number_format($purchaseOrder->total_amount, 0, ',', '.') }}</td>
                            </tr>
                         </tfoot>
                      </table>
@@ -196,63 +231,77 @@
             </div>
          </div>
 
-         <div class="col-md-4">
-            <div class="card shadow mb-4">
-               <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Ringkasan</h6>
+         <div class="md:w-1/3">
+            <div class="bg-white rounded shadow mb-6">
+               <div class="px-6 py-4 border-b border-gray-200">
+                  <h3 class="text-lg font-semibold text-gray-800">Ringkasan</h3>
                </div>
-               <div class="card-body">
-                  <div class="mb-3">
-                     <small class="text-muted">Total Item</small>
-                     <h4>{{ $purchaseOrder->details->count() }} Produk</h4>
+               <div class="p-6">
+                  <div class="mb-4">
+                     <p class="text-sm text-gray-600 mb-1">Total Item</p>
+                     <p class="text-2xl font-bold">{{ $purchaseOrder->details->count() }} Produk</p>
                   </div>
 
-                  <div class="mb-3">
-                     <small class="text-muted">Total Jumlah Dipesan</small>
-                     <h4>{{ $purchaseOrder->details->sum('quantity_ordered') }} Unit</h4>
+                  <div class="mb-4">
+                     <p class="text-sm text-gray-600 mb-1">Total Jumlah Dipesan</p>
+                     <p class="text-2xl font-bold">{{ $purchaseOrder->details->sum('quantity_ordered') }} Unit</p>
                   </div>
 
-                  <div class="mb-3">
-                     <small class="text-muted">Total Diterima</small>
-                     <h4>{{ $purchaseOrder->details->sum('quantity_received') }} Unit</h4>
+                  <div class="mb-4">
+                     <p class="text-sm text-gray-600 mb-1">Total Diterima</p>
+                     <p class="text-2xl font-bold">{{ $purchaseOrder->details->sum('quantity_received') }} Unit</p>
                   </div>
 
-                  <hr>
+                  <div class="border-t border-gray-200 my-4"></div>
 
-                  <div class="mb-3">
-                     <small class="text-muted">Total Nilai PO</small>
-                     <h3 class="text-primary">Rp {{ number_format($purchaseOrder->total_amount, 0, ',', '.') }}</h3>
+                  <div class="mb-4">
+                     <p class="text-sm text-gray-600 mb-1">Total Nilai PO</p>
+                     <p class="text-3xl font-bold text-blue-600">Rp
+                        {{ number_format($purchaseOrder->total_amount, 0, ',', '.') }}</p>
                   </div>
 
                   @if ($purchaseOrder->canBeReceived())
-                     <div class="progress mb-2" style="height: 25px;">
-                        @php
-                           $totalOrdered = $purchaseOrder->details->sum('quantity_ordered');
-                           $totalReceived = $purchaseOrder->details->sum('quantity_received');
-                           $percentage = $totalOrdered > 0 ? ($totalReceived / $totalOrdered) * 100 : 0;
-                        @endphp
-                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ $percentage }}%"
-                           aria-valuenow="{{ $percentage }}" aria-valuemin="0" aria-valuemax="100">
-                           {{ number_format($percentage, 1) }}%
+                     @php
+                        $totalOrdered = $purchaseOrder->details->sum('quantity_ordered');
+                        $totalReceived = $purchaseOrder->details->sum('quantity_received');
+                        $percentage = $totalOrdered > 0 ? ($totalReceived / $totalOrdered) * 100 : 0;
+                     @endphp
+                     <div class="mb-2">
+                        <div class="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
+                           <div
+                              class="bg-blue-500 h-6 text-white text-xs flex items-center justify-center font-medium rounded-full"
+                              style="width: {{ $percentage }}%">
+                              {{ number_format($percentage, 1) }}%
+                           </div>
                         </div>
                      </div>
-                     <small class="text-muted">Progress Penerimaan</small>
+                     <p class="text-sm text-gray-600">Progress Penerimaan</p>
                   @endif
                </div>
             </div>
 
             @if ($purchaseOrder->canBeEdited())
-               <div class="card shadow border-warning">
-                  <div class="card-body">
-                     <h6 class="text-warning mb-3">
-                        <i class="fas fa-exclamation-triangle"></i> Tindakan
-                     </h6>
+               <div class="bg-white rounded shadow border-l-4 border-yellow-500">
+                  <div class="p-6">
+                     <h4 class="text-yellow-600 font-semibold mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                           <path fill-rule="evenodd"
+                              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                              clip-rule="evenodd" />
+                        </svg>
+                        Tindakan
+                     </h4>
                      <form action="{{ route('purchase-orders.destroy', $purchaseOrder) }}" method="POST"
                         onsubmit="return confirm('Yakin ingin menghapus PO ini?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger w-100">
-                           <i class="fas fa-trash"></i> Hapus PO
+                        <button type="submit"
+                           class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded flex items-center justify-center">
+                           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                           </svg>
+                           Hapus PO
                         </button>
                      </form>
                   </div>

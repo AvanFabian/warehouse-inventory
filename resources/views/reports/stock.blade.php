@@ -1,16 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Stock Report')
+@section('title', 'Laporan Stok Barang')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
-         <h2 class="text-xl font-semibold">Current Stock Report</h2>
+         <h2 class="text-xl font-semibold">Laporan Stok Barang Saat Ini</h2>
          <div class="flex gap-2">
-            <a href="{{ route('reports.index') }}" class="px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Back to
-               Reports</a>
+            <a href="{{ route('reports.index') }}" class="px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Kembali
+               ke
+               Laporan</a>
             <a href="{{ route('reports.stock', array_merge(request()->query(), ['export' => 'pdf'])) }}"
-               class="px-3 py-2 bg-danger text-white rounded hover:bg-red-700">Export PDF</a>
+               class="px-3 py-2 bg-danger text-white rounded hover:bg-red-700">Ekspor PDF</a>
          </div>
       </div>
 
@@ -18,7 +19,7 @@
          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
                <select name="category_id" class="w-full border rounded px-2 py-1">
-                  <option value="">All Categories</option>
+                  <option value="">Semua Kategori</option>
                   @foreach ($categories as $cat)
                      <option value="{{ $cat->id }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>
                         {{ $cat->name }}</option>
@@ -28,7 +29,7 @@
             <div>
                <label class="inline-flex items-center">
                   <input type="checkbox" name="low_stock" value="1" {{ $lowStock ? 'checked' : '' }} class="mr-2" />
-                  Show Low Stock Only
+                  Tampilkan Stok Rendah Saja
                </label>
             </div>
             <div>
@@ -43,13 +44,13 @@
             <table class="min-w-full text-sm">
                <thead class="bg-gray-50">
                   <tr>
-                     <th class="text-left p-3">Code</th>
-                     <th class="text-left p-3">Product Name</th>
-                     <th class="text-left p-3">Category</th>
-                     <th class="text-right p-3">Stock</th>
-                     <th class="text-right p-3">Min Stock</th>
-                     <th class="text-left p-3">Unit</th>
-                     <th class="text-left p-3">Location</th>
+                     <th class="text-left p-3">Kode</th>
+                     <th class="text-left p-3">Nama Produk</th>
+                     <th class="text-left p-3">Kategori</th>
+                     <th class="text-right p-3">Stok</th>
+                     <th class="text-right p-3">Stok Min</th>
+                     <th class="text-left p-3">Satuan</th>
+                     <th class="text-left p-3">Lokasi</th>
                      <th class="text-left p-3">Status</th>
                   </tr>
                </thead>
@@ -66,9 +67,9 @@
                         <td class="p-3">{{ $p->rack_location ?? '-' }}</td>
                         <td class="p-3">
                            @if ($p->stock < $p->min_stock)
-                              <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded">Low</span>
+                              <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded">Rendah</span>
                            @elseif($p->stock == 0)
-                              <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Empty</span>
+                              <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Kosong</span>
                            @else
                               <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">OK</span>
                            @endif
@@ -83,14 +84,14 @@
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
-                              <h3 class="mt-2 text-sm font-medium text-gray-900">No products found</h3>
+                              <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada produk ditemukan</h3>
                               <p class="mt-1 text-sm text-gray-500">
                                  @if ($lowStock)
-                                    No products with low stock at the moment.
+                                    Tidak ada produk dengan stok rendah saat ini.
                                  @elseif($categoryId)
-                                    No products in this category.
+                                    Tidak ada produk dalam kategori ini.
                                  @else
-                                    Create some products to start tracking inventory.
+                                    Buat beberapa produk untuk mulai melacak persediaan.
                                  @endif
                               </p>
                            </div>

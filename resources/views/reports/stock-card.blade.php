@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Stock Card Report')
+@section('title', 'Laporan Kartu Stok')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="flex justify-between items-center mb-6">
-         <h1 class="text-2xl font-bold text-gray-800">Stock Card Report</h1>
+         <h1 class="text-2xl font-bold text-gray-800">Laporan Kartu Stok</h1>
          <a href="{{ route('reports.index') }}"
             class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
-            Back to Reports
+            Kembali ke Laporan
          </a>
       </div>
 
@@ -17,9 +17,9 @@
       <div class="bg-white rounded-lg shadow-md p-6 mb-6">
          <form method="GET" action="{{ route('reports.stock-card') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="md:col-span-4">
-               <label class="block text-sm font-medium text-gray-700 mb-2">Select Product *</label>
+               <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Produk *</label>
                <select name="product_id" class="w-full border-gray-300 rounded-lg" required>
-                  <option value="">-- Choose Product --</option>
+                  <option value="">-- Pilih Produk --</option>
                   @foreach ($products as $prod)
                      <option value="{{ $prod->id }}" {{ request('product_id') == $prod->id ? 'selected' : '' }}>
                         {{ $prod->code }} - {{ $prod->name }}
@@ -29,19 +29,19 @@
             </div>
 
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
+               <label class="block text-sm font-medium text-gray-700 mb-2">Dari Tanggal</label>
                <input type="date" name="from" value="{{ request('from') }}"
                   class="w-full border-gray-300 rounded-lg">
             </div>
 
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
+               <label class="block text-sm font-medium text-gray-700 mb-2">Sampai Tanggal</label>
                <input type="date" name="to" value="{{ request('to') }}" class="w-full border-gray-300 rounded-lg">
             </div>
 
             <div class="md:col-span-2 flex gap-2 items-end">
                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition">
-                  Generate Report
+                  Buat Laporan
                </button>
                <a href="{{ route('reports.stock-card') }}"
                   class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
@@ -50,7 +50,7 @@
                @if (request('product_id'))
                   <a href="{{ route('reports.stock-card', array_merge(request()->all(), ['export' => 'pdf'])) }}"
                      class="ml-auto px-4 py-2 bg-danger text-white rounded-lg hover:bg-red-700 transition">
-                     Export PDF
+                     Ekspor PDF
                   </a>
                @endif
             </div>
@@ -60,18 +60,18 @@
       @if (request('product_id') && $product)
          <!-- Product Info -->
          <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Product Information</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Informasi Produk</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                <div>
-                  <p class="text-sm text-gray-600">Product Code</p>
+                  <p class="text-sm text-gray-600">Kode Produk</p>
                   <p class="font-semibold text-gray-800">{{ $product->code }}</p>
                </div>
                <div>
-                  <p class="text-sm text-gray-600">Product Name</p>
+                  <p class="text-sm text-gray-600">Nama Produk</p>
                   <p class="font-semibold text-gray-800">{{ $product->name }}</p>
                </div>
                <div>
-                  <p class="text-sm text-gray-600">Current Stock</p>
+                  <p class="text-sm text-gray-600">Stok Saat Ini</p>
                   <p class="font-semibold text-gray-800">{{ $product->stock }} {{ $product->unit }}</p>
                </div>
             </div>
@@ -82,7 +82,7 @@
             <div class="bg-white rounded-lg shadow-md p-6">
                <div class="flex items-center justify-between">
                   <div>
-                     <p class="text-sm text-gray-600">Beginning Balance</p>
+                     <p class="text-sm text-gray-600">Saldo Awal</p>
                      <p class="text-2xl font-bold text-gray-800">{{ $beginningBalance }}</p>
                   </div>
                   <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
@@ -97,7 +97,7 @@
             <div class="bg-white rounded-lg shadow-md p-6">
                <div class="flex items-center justify-between">
                   <div>
-                     <p class="text-sm text-gray-600">Total In</p>
+                     <p class="text-sm text-gray-600">Total Masuk</p>
                      <p class="text-2xl font-bold text-success">+{{ $totalIn }}</p>
                   </div>
                   <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -112,7 +112,7 @@
             <div class="bg-white rounded-lg shadow-md p-6">
                <div class="flex items-center justify-between">
                   <div>
-                     <p class="text-sm text-gray-600">Total Out</p>
+                     <p class="text-sm text-gray-600">Total Keluar</p>
                      <p class="text-2xl font-bold text-danger">-{{ $totalOut }}</p>
                   </div>
                   <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
@@ -128,24 +128,24 @@
          <!-- Movement History Table -->
          <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-               <h2 class="text-xl font-bold text-gray-800">Movement History</h2>
+               <h2 class="text-xl font-bold text-gray-800">Riwayat Pergerakan</h2>
             </div>
             <div class="overflow-x-auto">
                <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                      <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                           Transaction</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type
+                           Transaksi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis
                         </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">In
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Masuk
                         </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Out
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Keluar
                         </th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                           Balance</th>
+                           Saldo</th>
                      </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-200">
@@ -155,7 +155,7 @@
                            {{ request('from') ? \Carbon\Carbon::parse(request('from'))->format('d M Y') : '-' }}
                         </td>
                         <td colspan="2" class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                           Beginning Balance
+                           Saldo Awal
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">-</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">-</td>
@@ -180,12 +180,12 @@
                               @if ($move->type === 'in')
                                  <span
                                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    Stock In
+                                    Barang Masuk
                                  </span>
                               @elseif($move->type === 'out')
                                  <span
                                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                    Stock Out
+                                    Barang Keluar
                                  </span>
                               @else
                                  <span
@@ -213,9 +213,9 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                  </svg>
-                                 <h3 class="mt-2 text-sm font-medium text-gray-900">No movements found</h3>
-                                 <p class="mt-1 text-sm text-gray-500">There are no stock movements for this product in
-                                    the selected period.</p>
+                                 <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada pergerakan ditemukan</h3>
+                                 <p class="mt-1 text-sm text-gray-500">Tidak ada pergerakan stok untuk produk ini dalam
+                                    periode yang dipilih.</p>
                               </div>
                            </td>
                         </tr>
@@ -224,7 +224,7 @@
                      <!-- Ending Balance Row -->
                      <tr class="bg-gray-50 font-bold">
                         <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                           Ending Balance
+                           Saldo Akhir
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-success text-right">
                            {{ $totalIn }}
@@ -247,7 +247,7 @@
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                </path>
             </svg>
-            <p class="text-gray-600 text-lg">Please select a product to view stock card</p>
+            <p class="text-gray-600 text-lg">Silakan pilih produk untuk melihat kartu stok</p>
          </div>
       @endif
    </div>

@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Transaction Report')
+@section('title', 'Laporan Transaksi')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <!-- Header -->
       <div class="flex justify-between items-center mb-6">
-         <h1 class="text-2xl font-bold text-gray-800">Transaction Report</h1>
+         <h1 class="text-2xl font-bold text-gray-800">Laporan Transaksi</h1>
          <a href="{{ route('reports.index') }}"
             class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
-            Back to Reports
+            Kembali ke Laporan
          </a>
       </div>
 
@@ -17,29 +17,29 @@
       <div class="bg-white rounded-lg shadow-md p-6 mb-6">
          <form method="GET" action="{{ route('reports.transactions') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
+               <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Transaksi</label>
                <select name="type" class="w-full border-gray-300 rounded-lg">
-                  <option value="">All Types</option>
-                  <option value="in" {{ request('type') === 'in' ? 'selected' : '' }}>Stock In</option>
-                  <option value="out" {{ request('type') === 'out' ? 'selected' : '' }}>Stock Out</option>
+                  <option value="">Semua Jenis</option>
+                  <option value="in" {{ request('type') === 'in' ? 'selected' : '' }}>Barang Masuk</option>
+                  <option value="out" {{ request('type') === 'out' ? 'selected' : '' }}>Barang Keluar</option>
                </select>
             </div>
 
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
+               <label class="block text-sm font-medium text-gray-700 mb-2">Dari Tanggal</label>
                <input type="date" name="from" value="{{ request('from') }}"
                   class="w-full border-gray-300 rounded-lg">
             </div>
 
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
+               <label class="block text-sm font-medium text-gray-700 mb-2">Sampai Tanggal</label>
                <input type="date" name="to" value="{{ request('to') }}" class="w-full border-gray-300 rounded-lg">
             </div>
 
             <div>
                <label class="block text-sm font-medium text-gray-700 mb-2">Supplier</label>
                <select name="supplier_id" class="w-full border-gray-300 rounded-lg">
-                  <option value="">All Suppliers</option>
+                  <option value="">Semua Supplier</option>
                   @foreach ($suppliers as $supplier)
                      <option value="{{ $supplier->id }}" {{ request('supplier_id') == $supplier->id ? 'selected' : '' }}>
                         {{ $supplier->name }}
@@ -58,7 +58,7 @@
                </a>
                <a href="{{ route('reports.transactions', array_merge(request()->all(), ['export' => 'pdf'])) }}"
                   class="ml-auto px-4 py-2 bg-danger text-white rounded-lg hover:bg-red-700 transition">
-                  Export PDF
+                  Ekspor PDF
                </a>
             </div>
          </form>
@@ -69,7 +69,7 @@
          <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                <div>
-                  <p class="text-sm text-gray-600">Total Stock In</p>
+                  <p class="text-sm text-gray-600">Total Barang Masuk</p>
                   <p class="text-2xl font-bold text-success">{{ $stats['total_in'] }}</p>
                </div>
                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -84,7 +84,7 @@
          <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                <div>
-                  <p class="text-sm text-gray-600">Total Stock Out</p>
+                  <p class="text-sm text-gray-600">Total Barang Keluar</p>
                   <p class="text-2xl font-bold text-danger">{{ $stats['total_out'] }}</p>
                </div>
                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
@@ -99,7 +99,7 @@
          <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between">
                <div>
-                  <p class="text-sm text-gray-600">Total Value</p>
+                  <p class="text-sm text-gray-600">Total Nilai</p>
                   <p class="text-2xl font-bold text-primary">Rp {{ number_format($stats['total_value']) }}</p>
                </div>
                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -119,20 +119,20 @@
             <table class="min-w-full divide-y divide-gray-200">
                <thead class="bg-gray-50">
                   <tr>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal
                      </th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode
                      </th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis
                      </th>
                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Supplier/Customer</th>
+                        Supplier/Pelanggan</th>
                      <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total
-                        Items</th>
+                        Item</th>
                      <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Grand
                         Total</th>
                      <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions</th>
+                        Aksi</th>
                   </tr>
                </thead>
                <tbody class="bg-white divide-y divide-gray-200">
@@ -148,12 +148,12 @@
                            @if ($txn->type === 'in')
                               <span
                                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                 Stock In
+                                 Barang Masuk
                               </span>
                            @else
                               <span
                                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                 Stock Out
+                                 Barang Keluar
                               </span>
                            @endif
                         </td>
@@ -173,11 +173,11 @@
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                            @if ($txn->type === 'in')
                               <a href="{{ route('stock-ins.show', $txn->id) }}" class="text-primary hover:text-blue-900">
-                                 View Details
+                                 Lihat Detail
                               </a>
                            @else
                               <a href="{{ route('stock-outs.show', $txn->id) }}" class="text-primary hover:text-blue-900">
-                                 View Details
+                                 Lihat Detail
                               </a>
                            @endif
                         </td>
@@ -191,9 +191,9 @@
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                               </svg>
-                              <h3 class="mt-2 text-sm font-medium text-gray-900">No transactions found</h3>
-                              <p class="mt-1 text-sm text-gray-500">Try adjusting your filters or date range to see
-                                 more results.</p>
+                              <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada transaksi ditemukan</h3>
+                              <p class="mt-1 text-sm text-gray-500">Coba sesuaikan filter atau rentang tanggal Anda untuk
+                                 melihat lebih banyak hasil.</p>
                            </div>
                         </td>
                      </tr>
