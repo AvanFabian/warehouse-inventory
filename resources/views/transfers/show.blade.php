@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Transfer Detail')
 
@@ -11,12 +11,12 @@
                <form action="{{ route('transfers.approve', $transfer) }}" method="POST" class="inline-block">
                   @csrf
                   <button type="submit" class="px-3 py-2 bg-success text-white rounded"
-                     onclick="return confirm('Approve this transfer?')">Approve</button>
+                     onclick="return confirm('Setujui transfer ini?')">Setujui</button>
                </form>
                <form action="{{ route('transfers.reject', $transfer) }}" method="POST" class="inline-block">
                   @csrf
                   <button type="submit" class="px-3 py-2 bg-danger text-white rounded"
-                     onclick="return confirm('Reject this transfer?')">Reject</button>
+                     onclick="return confirm('Tolak transfer ini?')">Tolak</button>
                </form>
             @endif
 
@@ -24,7 +24,7 @@
                <form action="{{ route('transfers.start-transit', $transfer) }}" method="POST" class="inline-block">
                   @csrf
                   <button type="submit" class="px-3 py-2 bg-primary text-white rounded"
-                     onclick="return confirm('Set transfer to In Transit?')">Start Transit</button>
+                     onclick="return confirm('Set transfer to In Transit?')">Mulai Transit</button>
                </form>
             @endif
 
@@ -130,9 +130,9 @@
                <thead class="bg-gray-50">
                   <tr>
                      <th class="text-left p-3">Code</th>
-                     <th class="text-left p-3">Product</th>
+                     <th class="text-left p-3">Produk</th>
                      <th class="text-left p-3">Category</th>
-                     <th class="text-right p-3">Quantity</th>
+                     <th class="text-left p-3">Jumlah</th>
                      <th class="text-left p-3">Notes</th>
                   </tr>
                </thead>

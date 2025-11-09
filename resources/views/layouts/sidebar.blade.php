@@ -3,67 +3,71 @@
       <nav class="flex flex-col gap-2">
          <a href="{{ route('dashboard') }}"
             class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('dashboard') ? 'bg-primary text-white' : '' }}">
-            Dashboard
+            Dasbor
          </a>
 
          <div class="mt-2">
-            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Master Data</p>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Data Master</p>
             <a href="{{ route('warehouses.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('warehouses.*') ? 'bg-primary text-white' : '' }}">
-               Warehouses
+               Gudang
             </a>
             <a href="{{ route('categories.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('categories.*') ? 'bg-primary text-white' : '' }}">
-               Categories
+               Kategori
             </a>
             <a href="{{ route('suppliers.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('suppliers.*') ? 'bg-primary text-white' : '' }}">
-               Suppliers
+               Pemasok
             </a>
             <a href="{{ route('products.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('products.*') ? 'bg-primary text-white' : '' }}">
-               Products
+               Produk
             </a>
          </div>
 
          <div class="mt-2">
-            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Transactions</p>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Transaksi</p>
+            <a href="{{ route('purchase-orders.index') }}"
+               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('purchase-orders.*') ? 'bg-primary text-white' : '' }}">
+               Purchase Order
+            </a>
             <a href="{{ route('stock-ins.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-ins.*') ? 'bg-primary text-white' : '' }}">
-               Stock In
+               Stok Masuk
             </a>
             <a href="{{ route('stock-outs.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-outs.*') ? 'bg-primary text-white' : '' }}">
-               Stock Out
+               Stok Keluar
             </a>
             <a href="{{ route('transfers.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('transfers.*') ? 'bg-primary text-white' : '' }}">
-               Warehouse Transfers
+               Transfer Antar Gudang
             </a>
             <a href="{{ route('stock-opnames.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-opnames.*') ? 'bg-primary text-white' : '' }}">
-               Stock Opname
+               Stok Opname
             </a>
          </div>
 
          <div class="mt-2">
-            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Reports</p>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Laporan</p>
             <a href="{{ route('reports.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('reports.*') ? 'bg-primary text-white' : '' }}">
-               All Reports
+               Semua Laporan
             </a>
          </div>
 
          @if (auth()->user()->isAdmin())
             <div class="mt-2">
-               <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Administration</p>
+               <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Administrasi</p>
                <a href="{{ route('users.index') }}"
                   class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-primary text-white' : '' }}">
-                  User Management
+                  Manajemen Pengguna
                </a>
                <a href="{{ route('settings.index') }}"
                   class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('settings.*') ? 'bg-primary text-white' : '' }}">
-                  Settings
+                  Pengaturan
                </a>
             </div>
          @endif

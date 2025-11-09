@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 <head>
@@ -27,35 +27,49 @@
       }
 
       .product-name {
-         font-size: 12pt;
+         font-size: 11pt;
          font-weight: bold;
          margin-bottom: 2mm;
          text-align: center;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap;
       }
 
       .product-code {
-         font-size: 10pt;
+         font-size: 9pt;
          text-align: center;
          margin-bottom: 2mm;
+         font-family: 'Courier New', monospace;
       }
 
       .barcode-section {
          text-align: center;
          margin: 3mm 0;
+         overflow: hidden;
       }
 
       .barcode-section img {
-         height: 40px;
+         max-width: 100%;
+         height: 30px;
+         object-fit: contain;
       }
 
       .qr-section {
          text-align: center;
-         margin: 3mm 0;
+         margin: 1mm 0;
+         padding: 0;
+         overflow: hidden;
+         display: flex;
+         justify-content: center;
+         align-items: center;
       }
 
-      .qr-section img {
-         width: 80px;
-         height: 80px;
+      .qr-section svg {
+         max-width: 100%;
+         max-height: 100%;
+         width: auto !important;
+         height: 70px !important;
       }
 
       .product-info {
@@ -74,19 +88,22 @@
       .flex-container {
          display: table;
          width: 100%;
+         table-layout: fixed;
       }
 
       .flex-left {
          display: table-cell;
-         width: 60%;
+         width: 65%;
          vertical-align: top;
+         padding-right: 2mm;
       }
 
       .flex-right {
          display: table-cell;
-         width: 40%;
+         width: 35%;
          text-align: center;
          vertical-align: top;
+         padding-left: 2mm;
       }
    </style>
 </head>
@@ -123,14 +140,14 @@
 
             <div class="flex-right">
                <div class="qr-section">
-                  {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->generate(
-                      json_encode([
-                          'id' => $product->id,
-                          'code' => $product->code,
-                          'name' => $product->name,
-                          'price' => $product->selling_price,
-                      ]),
-                  ) !!}
+                  {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(150)->margin(0)->generate(
+                          json_encode([
+                              'id' => $product->id,
+                              'code' => $product->code,
+                              'name' => $product->name,
+                              'price' => $product->selling_price,
+                          ]),
+                      ) !!}
                </div>
             </div>
          </div>

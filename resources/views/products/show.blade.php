@@ -1,14 +1,14 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Product Detail')
+@section('title', 'Detail Produk')
 
 @section('content')
    <div class="max-w-4xl mx-auto">
       <div class="flex items-center justify-between mb-4">
-         <h2 class="text-xl font-semibold">Product Detail</h2>
+         <h2 class="text-xl font-semibold">Detail Produk</h2>
          <div class="flex gap-2">
             <a href="{{ route('products.edit', $product) }}" class="px-3 py-2 bg-primary text-white rounded">Edit</a>
-            <a href="{{ route('products.index') }}" class="px-3 py-2 border rounded">Back</a>
+            <a href="{{ route('products.index') }}" class="px-3 py-2 border rounded">Kembali</a>
          </div>
       </div>
 

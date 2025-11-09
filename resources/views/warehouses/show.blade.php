@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Warehouse Details')
 
@@ -8,7 +8,7 @@
          <h2 class="text-xl font-semibold">Warehouse Details</h2>
          <div class="space-x-2">
             <a href="{{ route('warehouses.edit', $warehouse) }}" class="px-3 py-2 bg-primary text-white rounded">Edit</a>
-            <a href="{{ route('warehouses.index') }}" class="px-3 py-2 border rounded">Back</a>
+            <a href="{{ route('warehouses.index') }}" class="px-3 py-2 border rounded">Kembali</a>
          </div>
       </div>
 
@@ -116,8 +116,8 @@
             <table class="min-w-full">
                <thead class="bg-gray-50">
                   <tr>
-                     <th class="text-left p-3">Code</th>
-                     <th class="text-left p-3">Name</th>
+                     <th class="text-left p-3">Kode</th>
+                     <th class="text-left p-3">Nama</th>
                      <th class="text-left p-3">Category</th>
                      <th class="text-left p-3">Stock</th>
                      <th class="text-left p-3">Unit</th>

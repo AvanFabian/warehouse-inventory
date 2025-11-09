@@ -1,12 +1,12 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Stock Opname')
+@section('title', 'Stok Opname')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
          <h2 class="text-xl font-semibold">Stock Opname History</h2>
-         <a href="{{ route('stock-opnames.create') }}" class="px-3 py-2 bg-warning text-white rounded">New Stock Opname</a>
+         <a href="{{ route('stock-opnames.create') }}" class="px-3 py-2 bg-warning text-white rounded">Stok Opname Baru</a>
       </div>
 
       <form method="GET" class="mb-4 bg-white p-4 rounded shadow">
@@ -39,14 +39,14 @@
             <table class="min-w-full text-sm">
                <thead class="bg-gray-50">
                   <tr>
-                     <th class="text-left p-3">Date</th>
-                     <th class="text-left p-3">Product</th>
+                     <th class="text-left p-3">Tanggal</th>
+                     <th class="text-left p-3">Produk</th>
                      <th class="text-right p-3">System Qty</th>
                      <th class="text-right p-3">Counted Qty</th>
-                     <th class="text-right p-3">Difference</th>
+                     <th class="text-left p-3">Selisih</th>
                      <th class="text-left p-3">Reason</th>
                      <th class="text-left p-3">User</th>
-                     <th class="text-left p-3">Actions</th>
+                     <th class="text-left p-3">Aksi</th>
                   </tr>
                </thead>
                <tbody>
@@ -67,7 +67,7 @@
                               onsubmit="return confirm('Delete this opname record?')">
                               @csrf
                               @method('DELETE')
-                              <button class="text-red-600">Delete</button>
+                              <button class="text-red-600">Hapus</button>
                            </form>
                         </td>
                      </tr>
@@ -81,7 +81,7 @@
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                               </svg>
                               <h3 class="mt-2 text-sm font-medium text-gray-900">No stock opname records</h3>
-                              <p class="mt-1 text-sm text-gray-500">Get started by creating a new stock opname to count
+                              <p class="mt-1 text-sm text-gray-500">Get started by creating a Stok Opname Baru to count
                                  your inventory.</p>
                               <div class="mt-6">
                                  <a href="{{ route('stock-opnames.create') }}"
@@ -91,7 +91,7 @@
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 4v16m8-8H4" />
                                     </svg>
-                                    New Stock Opname
+                                    Stok Opname Baru
                                  </a>
                               </div>
                            </div>

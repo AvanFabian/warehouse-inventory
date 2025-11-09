@@ -16,6 +16,9 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy')->middleware('throttle:sensitive');
 
+    // API endpoints for AJAX
+    Route::get('/api/products', [App\Http\Controllers\ProductController::class, 'getAll'])->name('api.products');
+
     // Master data
     Route::resource('categories', App\Http\Controllers\CategoryController::class);
     Route::resource('suppliers', App\Http\Controllers\SupplierController::class);
@@ -48,6 +51,14 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
 
     // Stock Opname
     Route::resource('stock-opnames', App\Http\Controllers\StockOpnameController::class)->except(['edit', 'update', 'show']);
+
+    // Purchase Orders
+    Route::resource('purchase-orders', App\Http\Controllers\PurchaseOrderController::class);
+    Route::post('purchase-orders/{purchaseOrder}/submit', [App\Http\Controllers\PurchaseOrderController::class, 'submit'])->name('purchase-orders.submit');
+    Route::post('purchase-orders/{purchaseOrder}/approve', [App\Http\Controllers\PurchaseOrderController::class, 'approve'])->name('purchase-orders.approve');
+    Route::post('purchase-orders/{purchaseOrder}/reject', [App\Http\Controllers\PurchaseOrderController::class, 'reject'])->name('purchase-orders.reject');
+    Route::get('purchase-orders/{purchaseOrder}/receive', [App\Http\Controllers\PurchaseOrderController::class, 'receive'])->name('purchase-orders.receive');
+    Route::post('purchase-orders/{purchaseOrder}/receive', [App\Http\Controllers\PurchaseOrderController::class, 'processReceive'])->name('purchase-orders.process-receive');
 
     // Reports
     Route::get('reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');

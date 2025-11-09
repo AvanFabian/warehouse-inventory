@@ -142,4 +142,21 @@ class ProductController extends Controller
         // TODO: Implement Excel export using maatwebsite/excel
         return back()->with('status', 'Export feature coming soon');
     }
+
+    public function getAll(Request $request)
+    {
+        $warehouseId = $request->query('warehouse_id');
+
+        $query = Product::with('category')
+            ->where('status', true)
+            ->orderBy('name');
+
+        if ($warehouseId) {
+            $query->where('warehouse_id', $warehouseId);
+        }
+
+        $products = $query->get();
+
+        return response()->json($products);
+    }
 }

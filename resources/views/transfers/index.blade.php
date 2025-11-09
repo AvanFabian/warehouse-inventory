@@ -1,12 +1,12 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Inter-Warehouse Transfers')
+@section('title', 'Transfer Antar Gudang')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
-         <h2 class="text-xl font-semibold">Inter-Warehouse Transfers</h2>
-         <a href="{{ route('transfers.create') }}" class="px-3 py-2 bg-primary text-white rounded">New Transfer</a>
+         <h2 class="text-xl font-semibold">Inter-Transfer Antar Gudang</h2>
+         <a href="{{ route('transfers.create') }}" class="px-3 py-2 bg-primary text-white rounded">Transfer Baru</a>
       </div>
 
       <form method="GET" class="mb-4 bg-white p-4 rounded shadow">
@@ -54,13 +54,13 @@
             <thead class="bg-gray-50">
                <tr>
                   <th class="text-left p-3">Transfer No.</th>
-                  <th class="text-left p-3">Date</th>
+                  <th class="text-left p-3">Tanggal</th>
                   <th class="text-left p-3">From</th>
                   <th class="text-left p-3">To</th>
                   <th class="text-left p-3">Items</th>
                   <th class="text-left p-3">Status</th>
                   <th class="text-left p-3">Created By</th>
-                  <th class="text-left p-3">Actions</th>
+                  <th class="text-left p-3">Aksi</th>
                </tr>
             </thead>
             <tbody>
@@ -89,10 +89,10 @@
                         <a href="{{ route('transfers.show', $transfer) }}" class="text-blue-600 mr-2">View</a>
                         @if ($transfer->status === 'pending')
                            <form action="{{ route('transfers.destroy', $transfer) }}" method="POST" class="inline-block"
-                              onsubmit="return confirm('Delete this transfer?')">
+                              onsubmit="return confirm('Hapus transfer ini?')">
                               @csrf
                               @method('DELETE')
-                              <button class="text-red-600">Delete</button>
+                              <button class="text-red-600">Hapus</button>
                            </form>
                         @endif
                      </td>
@@ -115,7 +115,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                        d="M12 4v16m8-8H4" />
                                  </svg>
-                                 New Transfer
+                                 Transfer Baru
                               </a>
                            </div>
                         </div>

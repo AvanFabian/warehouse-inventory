@@ -1,11 +1,11 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Products')
+@section('title', 'Produk')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
-         <h2 class="text-xl font-semibold">Products</h2>
+         <h2 class="text-xl font-semibold">Produk</h2>
          <div class="flex gap-2">
             <button onclick="printSelectedLabels()" class="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
                title="Print selected product labels">
@@ -14,22 +14,22 @@
                      d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z">
                   </path>
                </svg>
-               Print Labels
+               Cetak Label
             </button>
-            <a href="{{ route('products.export') }}" class="px-3 py-2 bg-success text-white rounded">Export Excel</a>
-            <a href="{{ route('products.create') }}" class="px-3 py-2 bg-primary text-white rounded">New Product</a>
+            <a href="{{ route('products.export') }}" class="px-3 py-2 bg-success text-white rounded">Ekspor Excel</a>
+            <a href="{{ route('products.create') }}" class="px-3 py-2 bg-primary text-white rounded">Produk Baru</a>
          </div>
       </div>
 
       <form method="GET" class="mb-4 bg-white p-4 rounded shadow">
          <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div>
-               <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Search name or code..."
+               <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Cari nama atau kode..."
                   class="w-full border rounded px-2 py-1" />
             </div>
             <div>
                <select name="warehouse_id" class="w-full border rounded px-2 py-1">
-                  <option value="">All Warehouses</option>
+                  <option value="">Semua Gudang</option>
                   @foreach ($warehouses as $wh)
                      <option value="{{ $wh->id }}" {{ $warehouseId == $wh->id ? 'selected' : '' }}>
                         {{ $wh->name }}</option>
@@ -38,7 +38,7 @@
             </div>
             <div>
                <select name="category_id" class="w-full border rounded px-2 py-1">
-                  <option value="">All Categories</option>
+                  <option value="">Semua Kategori</option>
                   @foreach ($categories as $cat)
                      <option value="{{ $cat->id }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>
                         {{ $cat->name }}</option>
@@ -47,9 +47,9 @@
             </div>
             <div>
                <select name="status" class="w-full border rounded px-2 py-1">
-                  <option value="">All Status</option>
-                  <option value="1" {{ $status === '1' ? 'selected' : '' }}>Active</option>
-                  <option value="0" {{ $status === '0' ? 'selected' : '' }}>Inactive</option>
+                  <option value="">Semua Status</option>
+                  <option value="1" {{ $status === '1' ? 'selected' : '' }}>Aktif</option>
+                  <option value="0" {{ $status === '0' ? 'selected' : '' }}>Tidak Aktif</option>
                </select>
             </div>
             <div>
@@ -66,15 +66,15 @@
                      <th class="text-left p-3">
                         <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)">
                      </th>
-                     <th class="text-left p-3">Code</th>
-                     <th class="text-left p-3">Name</th>
-                     <th class="text-left p-3">Warehouse</th>
-                     <th class="text-left p-3">Category</th>
-                     <th class="text-left p-3">Stock</th>
-                     <th class="text-left p-3">Min Stock</th>
-                     <th class="text-left p-3">Unit</th>
+                     <th class="text-left p-3">Kode</th>
+                     <th class="text-left p-3">Nama</th>
+                     <th class="text-left p-3">Gudang</th>
+                     <th class="text-left p-3">Kategori</th>
+                     <th class="text-left p-3">Stok</th>
+                     <th class="text-left p-3">Stok Minimum</th>
+                     <th class="text-left p-3">Satuan</th>
                      <th class="text-left p-3">Status</th>
-                     <th class="text-left p-3">Actions</th>
+                     <th class="text-left p-3">Aksi</th>
                   </tr>
                </thead>
                <tbody>
@@ -100,7 +100,7 @@
                            </span>
                         </td>
                         <td class="p-3 space-x-2">
-                           <a href="{{ route('products.show', $p) }}" class="text-blue-600" title="View">View</a>
+                           <a href="{{ route('products.show', $p) }}" class="text-blue-600" title="Lihat">Lihat</a>
                            <a href="{{ route('products.edit', $p) }}" class="text-blue-600" title="Edit">Edit</a>
                            <a href="{{ route('products.label', $p) }}" class="text-purple-600" title="View Label"
                               target="_blank">
@@ -114,7 +114,7 @@
                               onsubmit="return confirm('Delete this product?')">
                               @csrf
                               @method('DELETE')
-                              <button class="text-red-600" title="Delete">Delete</button>
+                              <button class="text-red-600" title="Hapus">Hapus</button>
                            </form>
                         </td>
                      </tr>
@@ -128,7 +128,7 @@
                                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                               </svg>
                               <h3 class="mt-2 text-sm font-medium text-gray-900">No products</h3>
-                              <p class="mt-1 text-sm text-gray-500">Get started by creating a new product.</p>
+                              <p class="mt-1 text-sm text-gray-500">Get started by creating a Produk Baru.</p>
                               <div class="mt-6">
                                  <a href="{{ route('products.create') }}"
                                     class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
@@ -137,7 +137,7 @@
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 4v16m8-8H4" />
                                     </svg>
-                                    New Product
+                                    Produk Baru
                                  </a>
                               </div>
                            </div>
@@ -168,7 +168,7 @@
          const checkboxes = document.querySelectorAll('.product-checkbox:checked');
 
          if (checkboxes.length === 0) {
-            alert('Please select at least one product to print labels');
+            alert('Please select at least one product to Cetak Label');
             return;
          }
 

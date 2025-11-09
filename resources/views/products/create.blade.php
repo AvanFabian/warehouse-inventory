@@ -1,10 +1,10 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Create Product')
+@section('title', 'Buat Produk')
 
 @section('content')
    <div class="max-w-4xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4">Create Product</h2>
+      <h2 class="text-xl font-semibold mb-4">Buat Produk</h2>
 
       <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data"
          class="bg-white p-4 rounded shadow">
@@ -32,7 +32,7 @@
             <div>
                <label class="block text-sm mb-1">Warehouse <span class="text-red-500">*</span></label>
                <select name="warehouse_id" class="w-full border rounded px-2 py-1" required>
-                  <option value="">-- Select Warehouse --</option>
+                  <option value="">-- Pilih Gudang --</option>
                   @foreach ($warehouses as $wh)
                      <option value="{{ $wh->id }}" {{ old('warehouse_id') == $wh->id ? 'selected' : '' }}>
                         {{ $wh->name }} ({{ $wh->code }})</option>
@@ -46,7 +46,7 @@
             <div>
                <label class="block text-sm mb-1">Category</label>
                <select name="category_id" class="w-full border rounded px-2 py-1">
-                  <option value="">-- Select Category --</option>
+                  <option value="">-- Pilih Kategori --</option>
                   @foreach ($categories as $cat)
                      <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
                         {{ $cat->name }}</option>
@@ -125,13 +125,13 @@
 
          <div class="mt-4">
             <label class="inline-flex items-center">
-               <input type="checkbox" name="status" class="mr-2" checked /> Active
+               <input type="checkbox" name="status" class="mr-2" checked /> Aktif
             </label>
          </div>
 
          <div class="flex gap-2 mt-6">
             <button type="submit" class="px-4 py-2 bg-primary text-white rounded">Save Product</button>
-            <a href="{{ route('products.index') }}" class="px-4 py-2 border rounded">Cancel</a>
+            <a href="{{ route('products.index') }}" class="px-4 py-2 border rounded">Batal</a>
          </div>
       </form>
    </div>

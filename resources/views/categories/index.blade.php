@@ -1,41 +1,41 @@
 @extends('layouts.app')
 
-@section('title', 'Categories')
+@section('title', 'Kategori')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
-         <h2 class="text-xl font-semibold">Categories</h2>
-         <a href="{{ route('categories.create') }}" class="px-3 py-2 bg-primary text-white rounded">New Category</a>
+         <h2 class="text-xl font-semibold">Kategori</h2>
+         <a href="{{ route('categories.create') }}" class="px-3 py-2 bg-primary text-white rounded">Kategori Baru</a>
       </div>
 
       <form method="GET" class="mb-4">
-         <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Search..."
+         <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Cari..."
             class="border rounded px-2 py-1" />
-         <button class="ml-2 px-3 py-1 bg-secondary text-white rounded">Search</button>
+         <button class="ml-2 px-3 py-1 bg-secondary text-white rounded">Cari</button>
       </form>
 
       <div class="bg-white rounded shadow overflow-hidden">
          <table class="min-w-full">
             <thead class="bg-gray-50">
                <tr>
-                  <th class="text-left p-3">Name</th>
+                  <th class="text-left p-3">Nama</th>
                   <th class="text-left p-3">Status</th>
-                  <th class="text-left p-3">Actions</th>
+                  <th class="text-left p-3">Aksi</th>
                </tr>
             </thead>
             <tbody>
                @forelse($categories as $cat)
                   <tr class="border-t hover:bg-gray-50">
                      <td class="p-3">{{ $cat->name }}</td>
-                     <td class="p-3">{{ $cat->status ? 'Active' : 'Inactive' }}</td>
+                     <td class="p-3">{{ $cat->status ? 'Aktif' : 'Tidak Aktif' }}</td>
                      <td class="p-3">
                         <a href="{{ route('categories.edit', $cat) }}" class="text-blue-600 mr-2">Edit</a>
                         <form action="{{ route('categories.destroy', $cat) }}" method="POST" class="inline-block"
-                           onsubmit="return confirm('Delete?')">
+                           onsubmit="return confirm('Hapus kategori ini?')">
                            @csrf
                            @method('DELETE')
-                           <button class="text-red-600">Delete</button>
+                           <button class="text-red-600">Hapus</button>
                         </form>
                      </td>
                   </tr>
@@ -48,8 +48,8 @@
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                            </svg>
-                           <h3 class="mt-2 text-sm font-medium text-gray-900">No categories</h3>
-                           <p class="mt-1 text-sm text-gray-500">Get started by creating a new category.</p>
+                           <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada kategori</h3>
+                           <p class="mt-1 text-sm text-gray-500">Mulai dengan membuat kategori baru.</p>
                            <div class="mt-6">
                               <a href="{{ route('categories.create') }}"
                                  class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
@@ -57,7 +57,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                        d="M12 4v16m8-8H4" />
                                  </svg>
-                                 New Category
+                                 Kategori Baru
                               </a>
                            </div>
                         </div>

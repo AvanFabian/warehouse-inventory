@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
    <x-slot name="header">
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
          {{ __('Product Label') }} - {{ $product->name }}
@@ -11,30 +11,30 @@
             <div class="p-6 text-gray-900">
                <!-- Product Info -->
                <div class="mb-6">
-                  <h3 class="text-lg font-semibold mb-4">Product Information</h3>
+                  <h3 class="text-lg font-semibold mb-4">Informasi Produk</h3>
                   <div class="grid grid-cols-2 gap-4">
                      <div>
-                        <p class="text-sm text-gray-600">Code</p>
+                        <p class="text-sm text-gray-600">Kode</p>
                         <p class="font-semibold">{{ $product->code }}</p>
                      </div>
                      <div>
-                        <p class="text-sm text-gray-600">Name</p>
+                        <p class="text-sm text-gray-600">Nama</p>
                         <p class="font-semibold">{{ $product->name }}</p>
                      </div>
                      <div>
-                        <p class="text-sm text-gray-600">Category</p>
+                        <p class="text-sm text-gray-600">Kategori</p>
                         <p class="font-semibold">{{ $product->category->name ?? '-' }}</p>
                      </div>
                      <div>
-                        <p class="text-sm text-gray-600">Warehouse</p>
+                        <p class="text-sm text-gray-600">Gudang</p>
                         <p class="font-semibold">{{ $product->warehouse->name ?? '-' }}</p>
                      </div>
                      <div>
-                        <p class="text-sm text-gray-600">Price</p>
+                        <p class="text-sm text-gray-600">Harga</p>
                         <p class="font-semibold">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</p>
                      </div>
                      <div>
-                        <p class="text-sm text-gray-600">Stock</p>
+                        <p class="text-sm text-gray-600">Stok</p>
                         <p class="font-semibold">{{ $product->stock }} {{ $product->unit }}</p>
                      </div>
                   </div>
@@ -61,7 +61,7 @@
                      <img src="{{ route('products.qrcode', $product->id) }}" alt="QR Code" class="border rounded p-2"
                         style="width: 250px; height: 250px;">
                   </div>
-                  <p class="text-xs text-gray-500 mt-2">Scan to view product details</p>
+                  <p class="text-xs text-gray-500 mt-2">Pindai untuk melihat detail produk</p>
                </div>
 
                <!-- Action Buttons -->

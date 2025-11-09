@@ -1,32 +1,32 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Warehouses')
+@section('title', 'Gudang')
 
 @section('content')
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
-         <h2 class="text-xl font-semibold">Warehouses</h2>
-         <a href="{{ route('warehouses.create') }}" class="px-3 py-2 bg-primary text-white rounded">New Warehouse</a>
+         <h2 class="text-xl font-semibold">Gudang</h2>
+         <a href="{{ route('warehouses.create') }}" class="px-3 py-2 bg-primary text-white rounded">Gudang Baru</a>
       </div>
 
       <form method="GET" class="mb-4">
          <input type="text" name="q" value="{{ $q ?? '' }}" placeholder="Search warehouses..."
             class="border rounded px-2 py-1" />
-         <button class="ml-2 px-3 py-1 bg-secondary text-white rounded">Search</button>
+         <button class="ml-2 px-3 py-1 bg-secondary text-white rounded">Cari</button>
       </form>
 
       <div class="bg-white rounded shadow overflow-hidden">
          <table class="min-w-full">
             <thead class="bg-gray-50">
                <tr>
-                  <th class="text-left p-3">Code</th>
-                  <th class="text-left p-3">Name</th>
+                  <th class="text-left p-3">Kode</th>
+                  <th class="text-left p-3">Nama</th>
                   <th class="text-left p-3">Location</th>
                   <th class="text-left p-3">Products</th>
                   <th class="text-left p-3">Stock Ins</th>
                   <th class="text-left p-3">Stock Outs</th>
                   <th class="text-left p-3">Status</th>
-                  <th class="text-left p-3">Actions</th>
+                  <th class="text-left p-3">Aksi</th>
                </tr>
             </thead>
             <tbody>
@@ -59,13 +59,13 @@
                         @endif
                      </td>
                      <td class="p-3">
-                        <a href="{{ route('warehouses.show', $warehouse) }}" class="text-blue-600 mr-2">View</a>
+                        <a href="{{ route('warehouses.show', $warehouse) }}" class="text-blue-600">Lihat</a>
                         <a href="{{ route('warehouses.edit', $warehouse) }}" class="text-blue-600 mr-2">Edit</a>
                         <form action="{{ route('warehouses.destroy', $warehouse) }}" method="POST" class="inline-block"
                            onsubmit="return confirm('Delete this warehouse?')">
                            @csrf
                            @method('DELETE')
-                           <button class="text-red-600">Delete</button>
+                           <button class="text-red-600">Hapus</button>
                         </form>
                      </td>
                   </tr>
@@ -78,7 +78,7 @@
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                               </svg>
-                              <h3 class="mt-2 text-sm font-medium text-gray-900">No warehouses</h3>
+                              <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada gudang</h3>
                               <p class="mt-1 text-sm text-gray-500">Get started by creating your first warehouse.</p>
                               <div class="mt-6">
                                  <a href="{{ route('warehouses.create') }}"
@@ -87,7 +87,7 @@
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 4v16m8-8H4" />
                                     </svg>
-                                    New Warehouse
+                                    Gudang Baru
                                  </a>
                               </div>
                            </div>

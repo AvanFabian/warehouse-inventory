@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Create Inter-Warehouse Transfer')
 
@@ -66,7 +66,7 @@
                <table class="min-w-full" id="itemTable">
                   <thead class="bg-gray-50">
                      <tr>
-                        <th class="text-left p-2">Product</th>
+                        <th class="text-left p-3">Produk</th>
                         <th class="text-left p-2 w-24">Available</th>
                         <th class="text-right p-2 w-24">Qty</th>
                         <th class="text-left p-2">Notes</th>
@@ -82,7 +82,7 @@
 
          <div class="flex gap-2 mt-6">
             <button type="submit" class="px-4 py-2 bg-primary text-white rounded">Create Transfer</button>
-            <a href="{{ route('transfers.index') }}" class="px-4 py-2 border rounded">Cancel</a>
+            <a href="{{ route('transfers.index') }}" class="px-4 py-2 border rounded">Batal</a>
          </div>
       </form>
    </div>
@@ -127,7 +127,7 @@
          row.innerHTML = `
             <td class="p-2">
                <select name="items[${rowIndex}][product_id]" class="w-full border rounded px-2 py-1" onchange="updateStock(this, ${rowIndex})" required>
-                  <option value="">-- Select Product --</option>
+                  <option value="">-- Pilih Produk --</option>
                   ${availableProducts.map(p => `<option value="${p.id}" data-stock="${p.stock}">${p.code} - ${p.name}</option>`).join('')}
                </select>
             </td>

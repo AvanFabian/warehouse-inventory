@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Stock Out Transactions')
 
@@ -6,7 +6,7 @@
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
          <h2 class="text-xl font-semibold">Stock Out Transactions</h2>
-         <a href="{{ route('stock-outs.create') }}" class="px-3 py-2 bg-danger text-white rounded">New Stock Out</a>
+         <a href="{{ route('stock-outs.create') }}" class="px-3 py-2 bg-danger text-white rounded">Stok Keluar Baru</a>
       </div>
 
       <form method="GET" class="mb-4 bg-white p-4 rounded shadow">
@@ -36,10 +36,10 @@
                <thead class="bg-gray-50">
                   <tr>
                      <th class="text-left p-3">Code</th>
-                     <th class="text-left p-3">Date</th>
-                     <th class="text-left p-3">Customer</th>
-                     <th class="text-right p-3">Total</th>
-                     <th class="text-left p-3">Actions</th>
+                     <th class="text-left p-3">Tanggal</th>
+                     <th class="text-left p-3">Pelanggan</th>
+                     <th class="text-left p-3">Total</th>
+                     <th class="text-left p-3">Aksi</th>
                   </tr>
                </thead>
                <tbody>
@@ -55,7 +55,7 @@
                               onsubmit="return confirm('Delete this transaction? Stock will be reverted.')">
                               @csrf
                               @method('DELETE')
-                              <button class="text-red-600">Delete</button>
+                              <button class="text-red-600">Hapus</button>
                            </form>
                         </td>
                      </tr>
@@ -69,7 +69,7 @@
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                               <h3 class="mt-2 text-sm font-medium text-gray-900">No stock out transactions</h3>
-                              <p class="mt-1 text-sm text-gray-500">Get started by creating a new stock out transaction.
+                              <p class="mt-1 text-sm text-gray-500">Get started by creating a Stok Keluar Baru transaction.
                               </p>
                               <div class="mt-6">
                                  <a href="{{ route('stock-outs.create') }}"
@@ -79,7 +79,7 @@
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 4v16m8-8H4" />
                                     </svg>
-                                    New Stock Out
+                                    Stok Keluar Baru
                                  </a>
                               </div>
                            </div>

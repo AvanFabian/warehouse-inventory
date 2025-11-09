@@ -1,10 +1,10 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
-@section('title', 'Create Stock Opname')
+@section('title', 'Buat Stok Opname')
 
 @section('content')
    <div class="max-w-4xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4">Record Stock Opname</h2>
+      <h2 class="text-xl font-semibold mb-4">Record Stok Opname</h2>
 
       @if ($errors->any())
          <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
@@ -74,7 +74,7 @@
 
          <div class="flex gap-2 mt-6">
             <button type="submit" class="px-4 py-2 bg-warning text-white rounded">Record Opname</button>
-            <a href="{{ route('stock-opnames.index') }}" class="px-4 py-2 border rounded">Cancel</a>
+            <a href="{{ route('stock-opnames.index') }}" class="px-4 py-2 border rounded">Batal</a>
          </div>
       </form>
    </div>

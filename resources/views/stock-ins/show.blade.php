@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Stock In Detail')
 
@@ -55,11 +55,11 @@
                <thead class="bg-gray-50">
                   <tr>
                      <th class="text-left p-3">Code</th>
-                     <th class="text-left p-3">Product</th>
+                     <th class="text-left p-3">Produk</th>
                      <th class="text-left p-3">Category</th>
                      <th class="text-right p-3">Qty</th>
-                     <th class="text-right p-3">Price</th>
-                     <th class="text-right p-3">Subtotal</th>
+                     <th class="text-left p-3">Harga</th>
+                     <th class="text-left p-3">Subtotal</th>
                   </tr>
                </thead>
                <tbody>
