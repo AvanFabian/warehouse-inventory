@@ -32,14 +32,16 @@ class StockOpnameController extends Controller
 
     public function create()
     {
+        $warehouses = \App\Models\Warehouse::active()->orderBy('name')->get();
         $products = Product::where('status', true)->orderBy('name')->get();
-        return view('stock-opnames.create', compact('products'));
+        return view('stock-opnames.create', compact('products', 'warehouses'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
+            'warehouse_id' => 'required|exists:warehouses,id',
             'counted_qty' => 'required|integer|min:0',
             'reason' => 'required|string',
             'date' => 'required|date',
@@ -47,14 +49,17 @@ class StockOpnameController extends Controller
 
         DB::beginTransaction();
         try {
-            $product = Product::find($request->product_id);
-            $systemQty = $product->stock;
+            $product = Product::findOrFail($request->product_id);
+            
+            // Get current stock from pivot table for the specified warehouse
+            $systemQty = $product->getStockInWarehouse($request->warehouse_id);
             $countedQty = $request->counted_qty;
             $difference = $countedQty - $systemQty;
 
             // Create opname record
             StockOpname::create([
                 'product_id' => $request->product_id,
+                'warehouse_id' => $request->warehouse_id,
                 'system_qty' => $systemQty,
                 'counted_qty' => $countedQty,
                 'difference' => $difference,
@@ -63,9 +68,20 @@ class StockOpnameController extends Controller
                 'user_id' => Auth::id(),
             ]);
 
-            // Update product stock
-            $product->stock = $countedQty;
-            $product->save();
+            // Update product stock in pivot table for the warehouse
+            if ($product->warehouses()->where('warehouse_id', $request->warehouse_id)->exists()) {
+                // Update existing
+                $product->warehouses()->updateExistingPivot($request->warehouse_id, [
+                    'stock' => $countedQty
+                ]);
+            } else {
+                // Attach if not exists
+                $product->warehouses()->attach($request->warehouse_id, [
+                    'stock' => $countedQty,
+                    'rack_location' => null,
+                    'min_stock' => null
+                ]);
+            }
 
             DB::commit();
             return redirect()->route('stock-opnames.index')->with('status', 'Stock Opname recorded successfully');

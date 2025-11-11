@@ -40,12 +40,14 @@ class Warehouse extends Model
 
         // Prevent deletion if warehouse has transactions
         static::deleting(function ($warehouse) {
-            if ($warehouse->products()->count() > 0 ||
+            if (
+                $warehouse->products()->count() > 0 ||
                 $warehouse->stockIns()->count() > 0 ||
                 $warehouse->stockOuts()->count() > 0 ||
                 $warehouse->stockOpnames()->count() > 0 ||
                 $warehouse->transfersFrom()->count() > 0 ||
-                $warehouse->transfersTo()->count() > 0) {
+                $warehouse->transfersTo()->count() > 0
+            ) {
                 throw new \Exception('Cannot delete warehouse with existing transactions or products.');
             }
         });
@@ -54,9 +56,17 @@ class Warehouse extends Model
     /**
      * Relationships
      */
+
+    /**
+     * Many-to-Many relationship with Product through pivot table
+     * Access: $warehouse->products
+     * Pivot data: $warehouse->products->first()->pivot->stock
+     */
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class, 'product_warehouse')
+            ->withPivot(['stock', 'rack_location', 'min_stock'])
+            ->withTimestamps();
     }
 
     public function stockIns()
@@ -112,11 +122,22 @@ class Warehouse extends Model
      */
     public function getTotalStockValue()
     {
-        return $this->products()->sum(DB::raw('stock * purchase_price'));
+        // Sum value of all products in this warehouse
+        return $this->products()->get()->sum(function ($product) {
+            return $product->pivot->stock * $product->purchase_price;
+        });
     }
 
     public function getProductCount()
     {
         return $this->products()->count();
+    }
+
+    /**
+     * Get total stock units in this warehouse
+     */
+    public function getTotalStock()
+    {
+        return $this->products()->sum('product_warehouse.stock');
     }
 }

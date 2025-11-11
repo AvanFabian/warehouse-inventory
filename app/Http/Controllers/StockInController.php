@@ -41,7 +41,7 @@ class StockInController extends Controller
     {
         $suppliers = Supplier::orderBy('name')->get();
         $warehouses = Warehouse::active()->orderBy('name')->get();
-        
+
         // Get all active products grouped by warehouse for reference
         // In the view, we'll filter by selected warehouse
         $products = Product::where('status', true)->orderBy('name')->get();
@@ -118,17 +118,22 @@ class StockInController extends Controller
                     'total' => $itemTotal,
                 ]);
 
-                // Update product stock for the specific warehouse
-                $product = Product::where('id', $item['product_id'])
-                    ->where('warehouse_id', $request->warehouse_id)
-                    ->first();
+                // Update product stock in the pivot table for the specific warehouse
+                $product = Product::findOrFail($item['product_id']);
 
-                if ($product) {
-                    $product->stock += $item['quantity'];
-                    $product->save();
+                // Check if product is already assigned to this warehouse
+                if ($product->warehouses()->where('warehouse_id', $request->warehouse_id)->exists()) {
+                    // Update existing stock using DB::raw to prevent race conditions
+                    $product->warehouses()->updateExistingPivot($request->warehouse_id, [
+                        'stock' => DB::raw('stock + ' . (int)$item['quantity'])
+                    ]);
                 } else {
-                    // If product doesn't exist in this warehouse, we might need to handle this
-                    throw new \Exception("Product ID {$item['product_id']} not found in warehouse ID {$request->warehouse_id}");
+                    // Attach product to warehouse with initial stock
+                    $product->warehouses()->attach($request->warehouse_id, [
+                        'stock' => $item['quantity'],
+                        'rack_location' => null,
+                        'min_stock' => null
+                    ]);
                 }
             }
 
@@ -150,15 +155,15 @@ class StockInController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Revert product stock for the specific warehouse
+            // Revert product stock in the pivot table for the specific warehouse
             foreach ($stockIn->details as $detail) {
-                $product = Product::where('id', $detail->product_id)
-                    ->where('warehouse_id', $stockIn->warehouse_id)
-                    ->first();
+                $product = Product::find($detail->product_id);
 
-                if ($product) {
-                    $product->stock -= $detail->quantity;
-                    $product->save();
+                if ($product && $product->warehouses()->where('warehouse_id', $stockIn->warehouse_id)->exists()) {
+                    // Decrease stock using DB::raw
+                    $product->warehouses()->updateExistingPivot($stockIn->warehouse_id, [
+                        'stock' => DB::raw('stock - ' . (int)$detail->quantity)
+                    ]);
                 }
             }
 

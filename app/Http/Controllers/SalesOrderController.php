@@ -70,7 +70,7 @@ class SalesOrderController extends Controller
     {
         $customers = Customer::where('is_active', true)->orderBy('name')->get();
         $warehouses = Warehouse::where('is_active', true)->orderBy('name')->get();
-        $products = Product::with('category')->where('is_active', true)->orderBy('name')->get();
+        $products = Product::with('category')->where('status', true)->orderBy('name')->get();
 
         $selectedCustomer = $request->customer_id ? Customer::find($request->customer_id) : null;
 
@@ -177,7 +177,7 @@ class SalesOrderController extends Controller
         $salesOrder->load(['items.product']);
         $customers = Customer::where('is_active', true)->orderBy('name')->get();
         $warehouses = Warehouse::where('is_active', true)->orderBy('name')->get();
-        $products = Product::with('category')->where('is_active', true)->orderBy('name')->get();
+        $products = Product::with('category')->where('status', true)->orderBy('name')->get();
 
         return view('sales-orders.edit', compact('salesOrder', 'customers', 'warehouses', 'products'));
     }
@@ -286,15 +286,14 @@ class SalesOrderController extends Controller
             return back()->with('error', 'Hanya pesanan dengan status draft yang dapat dikonfirmasi.');
         }
 
-        // Validate stock availability
+        // Validate stock availability in the pivot table
         foreach ($salesOrder->items as $item) {
-            $stock = DB::table('products')
-                ->where('id', $item->product_id)
-                ->where('warehouse_id', $salesOrder->warehouse_id)
-                ->value('stock');
+            $product = Product::find($item->product_id);
+
+            // Get stock from pivot table for the specified warehouse
+            $stock = $product->getStockInWarehouse($salesOrder->warehouse_id);
 
             if ($stock < $item->quantity) {
-                $product = Product::find($item->product_id);
                 return back()->with('error', "Stok tidak mencukupi untuk produk: {$product->name}. Stok tersedia: {$stock}, dibutuhkan: {$item->quantity}");
             }
         }
@@ -383,7 +382,7 @@ class SalesOrderController extends Controller
                 'updated_by' => Auth::id(),
             ]);
 
-            // Create Stock Out Details and update product stock
+            // Create Stock Out Details and update product stock in pivot table
             foreach ($salesOrder->items as $item) {
                 StockOutDetail::create([
                     'stock_out_id' => $stockOut->id,
@@ -391,13 +390,14 @@ class SalesOrderController extends Controller
                     'quantity' => $item->quantity,
                 ]);
 
-                // Update product stock
-                $product = Product::where('id', $item->product_id)
-                    ->where('warehouse_id', $salesOrder->warehouse_id)
-                    ->first();
+                // Update product stock in pivot table for the warehouse
+                $product = Product::findOrFail($item->product_id);
 
-                if ($product) {
-                    $product->decrement('stock', $item->quantity);
+                if ($product->warehouses()->where('warehouse_id', $salesOrder->warehouse_id)->exists()) {
+                    // Decrease stock using DB::raw to prevent race conditions
+                    $product->warehouses()->updateExistingPivot($salesOrder->warehouse_id, [
+                        'stock' => DB::raw('stock - ' . (int)$item->quantity)
+                    ]);
                 }
             }
 

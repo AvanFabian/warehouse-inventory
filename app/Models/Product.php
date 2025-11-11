@@ -11,7 +11,6 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'warehouse_id',
         'code',
         'name',
         'category_id',
@@ -19,15 +18,20 @@ class Product extends Model
         'min_stock',
         'purchase_price',
         'selling_price',
-        'stock',
-        'rack_location',
         'image',
         'status'
     ];
 
-    public function warehouse()
+    /**
+     * Many-to-Many relationship with Warehouse through pivot table
+     * Access: $product->warehouses
+     * Pivot data: $product->warehouses->first()->pivot->stock
+     */
+    public function warehouses()
     {
-        return $this->belongsTo(Warehouse::class);
+        return $this->belongsToMany(Warehouse::class, 'product_warehouse')
+            ->withPivot(['stock', 'rack_location', 'min_stock'])
+            ->withTimestamps();
     }
 
     public function category()
@@ -43,5 +47,30 @@ class Product extends Model
     public function stockOutDetails()
     {
         return $this->hasMany(StockOutDetail::class);
+    }
+
+    /**
+     * Get total stock across all warehouses
+     */
+    public function getTotalStockAttribute()
+    {
+        return $this->warehouses()->sum('product_warehouse.stock');
+    }
+
+    /**
+     * Get stock in a specific warehouse
+     */
+    public function getStockInWarehouse($warehouseId)
+    {
+        $warehouse = $this->warehouses()->where('warehouse_id', $warehouseId)->first();
+        return $warehouse ? $warehouse->pivot->stock : 0;
+    }
+
+    /**
+     * Check if product has stock in a specific warehouse
+     */
+    public function hasStockInWarehouse($warehouseId, $quantity = 1)
+    {
+        return $this->getStockInWarehouse($warehouseId) >= $quantity;
     }
 }

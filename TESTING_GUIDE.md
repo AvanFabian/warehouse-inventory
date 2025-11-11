@@ -51,11 +51,21 @@ Active: ✓ Checked
 - ✅ Customer appears in customers list
 
 **Test Cases:**
-- [ ] Create customer with all fields
-- [ ] Create customer with only required fields (Name)
-- [ ] Try creating duplicate customer (should work - no uniqueness)
-- [ ] Search for customer in list
-- [ ] Filter by active/inactive status
+- [ ] ✅ Create customer with all fields
+- [ ] ✅ Create customer with required fields only (Name, Address, Phone)
+- [ ] ❌ Try creating duplicate customer name (should show error: "The name has already been taken")
+- [ ] ❌ Try creating without phone (browser blocks: "Please fill out this field")
+- [ ] ❌ Try creating without address (browser blocks: "Please fill out this field")
+- [ ] ✅ Create customer without email (email is optional)
+- [ ] ✅ Search for customer in list
+- [ ] ✅ Filter by active/inactive status
+
+**⚠️ Important Validation Rules:**
+- **Name** = REQUIRED + UNIQUE (no duplicates allowed)
+- **Address** = REQUIRED (needed for delivery/Surat Jalan)
+- **Phone** = REQUIRED (needed for order confirmation)
+- **Email** = OPTIONAL (not all companies have email)
+- **NPWP** = OPTIONAL (only for tax-registered companies)
 
 ---
 

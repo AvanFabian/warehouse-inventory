@@ -74,17 +74,16 @@ class InterWarehouseTransferController extends Controller
 
             // Create transfer items
             foreach ($data['items'] as $item) {
-                // Validate stock availability
-                $product = Product::where('id', $item['product_id'])
-                    ->where('warehouse_id', $data['from_warehouse_id'])
-                    ->first();
+                // Validate stock availability in pivot table
+                $product = Product::findOrFail($item['product_id']);
 
-                if (!$product) {
-                    throw new \Exception("Product not found in source warehouse");
+                if (!$product->warehouses()->where('warehouse_id', $data['from_warehouse_id'])->exists()) {
+                    throw new \Exception("Product {$product->name} not found in source warehouse");
                 }
 
-                if ($product->stock < $item['quantity']) {
-                    throw new \Exception("Insufficient stock for product: {$product->name}. Available: {$product->stock}");
+                $stock = $product->getStockInWarehouse($data['from_warehouse_id']);
+                if ($stock < $item['quantity']) {
+                    throw new \Exception("Insufficient stock for product: {$product->name}. Available: {$stock}");
                 }
 
                 InterWarehouseTransferItem::create([

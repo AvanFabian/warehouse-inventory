@@ -15,9 +15,20 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Inventory KPIs
+        // Inventory KPIs - Now using pivot table
         $totalProducts = Product::count();
-        $lowStockCount = Product::whereColumn('stock', '<', 'min_stock')->count();
+
+        // Get products with low stock in any warehouse
+        $lowStockProducts = Product::with(['category', 'warehouses'])
+            ->whereHas('warehouses', function ($query) {
+                $query->whereRaw('product_warehouse.stock < products.min_stock');
+            })
+            ->get()
+            ->take(5);
+
+        $lowStockCount = Product::whereHas('warehouses', function ($query) {
+            $query->whereRaw('product_warehouse.stock < products.min_stock');
+        })->count();
 
         $transactionsThisMonth = StockIn::whereYear('date', date('Y'))
             ->whereMonth('date', date('m'))
@@ -25,12 +36,6 @@ class DashboardController extends Controller
             StockOut::whereYear('date', date('Y'))
             ->whereMonth('date', date('m'))
             ->count();
-
-        $lowStockProducts = Product::whereColumn('stock', '<', 'min_stock')
-            ->with('category')
-            ->orderBy('stock')
-            ->limit(5)
-            ->get();
 
         // Sales KPIs
         $totalCustomers = Customer::where('is_active', true)->count();

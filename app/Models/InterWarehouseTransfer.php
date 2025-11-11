@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class InterWarehouseTransfer extends Model
 {
@@ -173,32 +174,31 @@ class InterWarehouseTransfer extends Model
 
     public function complete($userId)
     {
-        // Update stock for each item
+        // Update stock for each item in pivot table
         foreach ($this->items as $item) {
-            // Get the product
             $product = Product::find($item->product_id);
 
             if ($product) {
-                // Reduce stock from source warehouse
-                if ($product->warehouse_id == $this->from_warehouse_id) {
-                    $product->stock -= $item->quantity;
-                    $product->save();
+                // Reduce stock from source warehouse in pivot table
+                if ($product->warehouses()->where('warehouse_id', $this->from_warehouse_id)->exists()) {
+                    $product->warehouses()->updateExistingPivot($this->from_warehouse_id, [
+                        'stock' => DB::raw('stock - ' . (int)$item->quantity)
+                    ]);
                 }
 
-                // Create/update product in destination warehouse
-                $destProduct = Product::where('code', $product->code)
-                    ->where('warehouse_id', $this->to_warehouse_id)
-                    ->first();
-
-                if ($destProduct) {
-                    $destProduct->stock += $item->quantity;
-                    $destProduct->save();
+                // Add stock to destination warehouse in pivot table
+                if ($product->warehouses()->where('warehouse_id', $this->to_warehouse_id)->exists()) {
+                    // Product already exists in destination warehouse - just add stock
+                    $product->warehouses()->updateExistingPivot($this->to_warehouse_id, [
+                        'stock' => DB::raw('stock + ' . (int)$item->quantity)
+                    ]);
                 } else {
-                    // Create new product entry for destination warehouse
-                    $newProduct = $product->replicate();
-                    $newProduct->warehouse_id = $this->to_warehouse_id;
-                    $newProduct->stock = $item->quantity;
-                    $newProduct->save();
+                    // Product doesn't exist in destination warehouse - attach it
+                    $product->warehouses()->attach($this->to_warehouse_id, [
+                        'stock' => $item->quantity,
+                        'rack_location' => null,
+                        'min_stock' => null
+                    ]);
                 }
             }
         }

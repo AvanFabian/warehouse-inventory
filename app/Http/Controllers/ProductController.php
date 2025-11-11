@@ -18,10 +18,12 @@ class ProductController extends Controller
         $warehouseId = $request->query('warehouse_id');
         $status = $request->query('status');
 
-        $products = Product::with(['category', 'warehouse'])
+        $products = Product::with(['category', 'warehouses'])
             ->when($q, fn($query) => $query->where('name', 'like', "%{$q}%")->orWhere('code', 'like', "%{$q}%"))
             ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
-            ->when($warehouseId, fn($query) => $query->where('warehouse_id', $warehouseId))
+            ->when($warehouseId, fn($query) => $query->whereHas('warehouses', function ($q) use ($warehouseId) {
+                $q->where('warehouse_id', $warehouseId);
+            }))
             ->when($status !== null, fn($query) => $query->where('status', $status))
             ->orderBy('name')
             ->paginate(20)
@@ -56,8 +58,13 @@ class ProductController extends Controller
             'status' => 'nullable|boolean',
         ]);
 
+        $warehouseId = $data['warehouse_id'];
+        $rackLocation = $data['rack_location'] ?? null;
+
+        // Remove warehouse-specific fields from product data
+        unset($data['warehouse_id'], $data['rack_location']);
+
         $data['status'] = $request->has('status');
-        $data['stock'] = 0; // initial stock is 0
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -67,14 +74,22 @@ class ProductController extends Controller
             $data['image'] = $path;
         }
 
-        Product::create($data);
+        // Create product
+        $product = Product::create($data);
+
+        // Attach to warehouse with initial stock of 0
+        $product->warehouses()->attach($warehouseId, [
+            'stock' => 0,
+            'rack_location' => $rackLocation,
+            'min_stock' => null // Use global min_stock
+        ]);
 
         return redirect()->route('products.index')->with('status', 'Product created successfully');
     }
 
     public function show(Product $product)
     {
-        $product->load('category');
+        $product->load(['category', 'warehouses']);
         return view('products.show', compact('product'));
     }
 
@@ -100,6 +115,11 @@ class ProductController extends Controller
             'status' => 'nullable|boolean',
         ]);
 
+        // Note: rack_location update should be handled separately per warehouse
+        // For now, just update the product global fields
+        $rackLocation = $data['rack_location'] ?? null;
+        unset($data['rack_location']);
+
         $data['status'] = $request->has('status');
 
         // Handle image upload
@@ -116,6 +136,15 @@ class ProductController extends Controller
         }
 
         $product->update($data);
+
+        // Update rack location for first warehouse (legacy compatibility)
+        // TODO: In future, allow updating rack location per warehouse via UI
+        if ($product->warehouses()->count() > 0 && $rackLocation !== null) {
+            $firstWarehouse = $product->warehouses()->first();
+            $product->warehouses()->updateExistingPivot($firstWarehouse->id, [
+                'rack_location' => $rackLocation
+            ]);
+        }
 
         return redirect()->route('products.index')->with('status', 'Product updated successfully');
     }

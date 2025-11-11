@@ -63,18 +63,20 @@ class StockOutController extends Controller
 
         DB::beginTransaction();
         try {
-            // Validate stock availability for the specific warehouse
+            // Validate stock availability in the pivot table for the specific warehouse
             foreach ($request->products as $item) {
-                $product = Product::where('id', $item['product_id'])
-                    ->where('warehouse_id', $request->warehouse_id)
-                    ->first();
+                $product = Product::findOrFail($item['product_id']);
 
-                if (!$product) {
-                    throw new \Exception("Product ID {$item['product_id']} not found in warehouse ID {$request->warehouse_id}");
+                // Check if product exists in this warehouse
+                if (!$product->warehouses()->where('warehouse_id', $request->warehouse_id)->exists()) {
+                    throw new \Exception("Product {$product->name} not found in selected warehouse");
                 }
 
-                if ($product->stock < $item['quantity']) {
-                    throw new \Exception("Insufficient stock for product: {$product->name}. Available: {$product->stock}, Requested: {$item['quantity']}");
+                // Get stock from pivot table
+                $stock = $product->getStockInWarehouse($request->warehouse_id);
+
+                if ($stock < $item['quantity']) {
+                    throw new \Exception("Insufficient stock for product: {$product->name}. Available: {$stock}, Requested: {$item['quantity']}");
                 }
             }
 
@@ -107,7 +109,7 @@ class StockOutController extends Controller
                 'notes' => $request->notes,
             ]);
 
-            // Create details and update product stock for the specific warehouse
+            // Create details and update product stock in pivot table for the specific warehouse
             foreach ($request->products as $item) {
                 $itemTotal = $item['quantity'] * $item['selling_price'];
 
@@ -119,14 +121,14 @@ class StockOutController extends Controller
                     'total' => $itemTotal,
                 ]);
 
-                // Update product stock for the specific warehouse
-                $product = Product::where('id', $item['product_id'])
-                    ->where('warehouse_id', $request->warehouse_id)
-                    ->first();
+                // Update product stock in pivot table for the specific warehouse
+                $product = Product::findOrFail($item['product_id']);
 
-                if ($product) {
-                    $product->stock -= $item['quantity'];
-                    $product->save();
+                if ($product->warehouses()->where('warehouse_id', $request->warehouse_id)->exists()) {
+                    // Decrease stock using DB::raw to prevent race conditions
+                    $product->warehouses()->updateExistingPivot($request->warehouse_id, [
+                        'stock' => DB::raw('stock - ' . (int)$item['quantity'])
+                    ]);
                 }
             }
 
@@ -148,15 +150,15 @@ class StockOutController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Revert product stock for the specific warehouse
+            // Revert product stock in pivot table for the specific warehouse
             foreach ($stockOut->details as $detail) {
-                $product = Product::where('id', $detail->product_id)
-                    ->where('warehouse_id', $stockOut->warehouse_id)
-                    ->first();
+                $product = Product::find($detail->product_id);
 
-                if ($product) {
-                    $product->stock += $detail->quantity;
-                    $product->save();
+                if ($product && $product->warehouses()->where('warehouse_id', $stockOut->warehouse_id)->exists()) {
+                    // Increase stock using DB::raw
+                    $product->warehouses()->updateExistingPivot($stockOut->warehouse_id, [
+                        'stock' => DB::raw('stock + ' . (int)$detail->quantity)
+                    ]);
                 }
             }
 
@@ -173,24 +175,50 @@ class StockOutController extends Controller
     public function getProductStock($productId)
     {
         $warehouseId = request('warehouse_id');
-        $product = Product::where('id', $productId)
-            ->where('warehouse_id', $warehouseId)
-            ->first();
+        $product = Product::find($productId);
+
+        if (!$product) {
+            return response()->json([
+                'stock' => 0,
+                'unit' => '',
+                'selling_price' => 0,
+            ]);
+        }
+
+        // Get stock from pivot table
+        $stock = $product->getStockInWarehouse($warehouseId);
 
         return response()->json([
-            'stock' => $product ? $product->stock : 0,
-            'unit' => $product ? $product->unit : '',
-            'selling_price' => $product ? $product->selling_price : 0,
+            'stock' => $stock,
+            'unit' => $product->unit,
+            'selling_price' => $product->selling_price,
         ]);
     }
 
     public function getWarehouseProducts($warehouseId)
     {
-        $products = Product::where('warehouse_id', $warehouseId)
+        // Get products that have stock in this warehouse via pivot table
+        $products = Product::whereHas('warehouses', function ($query) use ($warehouseId) {
+            $query->where('warehouse_id', $warehouseId)
+                ->where('product_warehouse.stock', '>', 0);
+        })
             ->where('status', true)
-            ->where('stock', '>', 0)
+            ->with(['warehouses' => function ($query) use ($warehouseId) {
+                $query->where('warehouse_id', $warehouseId);
+            }])
             ->orderBy('name')
-            ->get(['id', 'code', 'name', 'stock', 'unit', 'selling_price']);
+            ->get()
+            ->map(function ($product) {
+                $warehouse = $product->warehouses->first();
+                return [
+                    'id' => $product->id,
+                    'code' => $product->code,
+                    'name' => $product->name,
+                    'stock' => $warehouse ? $warehouse->pivot->stock : 0,
+                    'unit' => $product->unit,
+                    'selling_price' => $product->selling_price,
+                ];
+            });
 
         return response()->json($products);
     }
