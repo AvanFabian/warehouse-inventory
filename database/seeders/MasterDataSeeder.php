@@ -55,8 +55,8 @@ class MasterDataSeeder extends Seeder
             Supplier::create($supplier);
         }
 
-        // Seed Sample Products for each warehouse
-        $productsTemplate = [
+        // Seed Sample Products (ONE product, multiple warehouses via pivot)
+        $products = [
             [
                 'code' => 'ELC-001',
                 'name' => 'Laptop Dell Inspiron 15',
@@ -65,9 +65,10 @@ class MasterDataSeeder extends Seeder
                 'min_stock' => 5,
                 'purchase_price' => 8000000,
                 'selling_price' => 9500000,
-                'stock' => 0,
-                'rack_location' => 'A-01-01',
                 'status' => true,
+                'warehouses' => [
+                    ['warehouse_id' => null, 'stock' => 15, 'rack_location' => 'A-01-01'], // Will be assigned per warehouse
+                ]
             ],
             [
                 'code' => 'FRN-001',
@@ -77,9 +78,10 @@ class MasterDataSeeder extends Seeder
                 'min_stock' => 10,
                 'purchase_price' => 1500000,
                 'selling_price' => 1800000,
-                'stock' => 0,
-                'rack_location' => 'B-02-05',
                 'status' => true,
+                'warehouses' => [
+                    ['warehouse_id' => null, 'stock' => 25, 'rack_location' => 'B-02-05'],
+                ]
             ],
             [
                 'code' => 'STN-001',
@@ -89,21 +91,56 @@ class MasterDataSeeder extends Seeder
                 'min_stock' => 20,
                 'purchase_price' => 50000,
                 'selling_price' => 65000,
-                'stock' => 0,
-                'rack_location' => 'C-03-10',
                 'status' => true,
+                'warehouses' => [
+                    ['warehouse_id' => null, 'stock' => 50, 'rack_location' => 'C-03-10'],
+                ]
+            ],
+            [
+                'code' => 'ELC-002',
+                'name' => 'Mouse Wireless Logitech',
+                'category_id' => 1,
+                'unit' => 'pcs',
+                'min_stock' => 15,
+                'purchase_price' => 150000,
+                'selling_price' => 200000,
+                'status' => true,
+                'warehouses' => [
+                    ['warehouse_id' => null, 'stock' => 30, 'rack_location' => 'A-01-02'],
+                ]
+            ],
+            [
+                'code' => 'STN-002',
+                'name' => 'Paper A4 80gsm (Ream)',
+                'category_id' => 3,
+                'unit' => 'ream',
+                'min_stock' => 30,
+                'purchase_price' => 35000,
+                'selling_price' => 45000,
+                'status' => true,
+                'warehouses' => [
+                    ['warehouse_id' => null, 'stock' => 100, 'rack_location' => 'C-03-15'],
+                ]
             ],
         ];
 
-        // Create products for each warehouse
-        foreach ($warehouses as $warehouse) {
-            foreach ($productsTemplate as $productData) {
-                // Add warehouse-specific code suffix
-                $product = $productData;
-                $product['code'] = $productData['code'] . '-' . $warehouse->code;
-                $product['warehouse_id'] = $warehouse->id;
+        // Create products and assign to ALL warehouses via pivot table
+        foreach ($products as $productData) {
+            $warehouseData = $productData['warehouses'];
+            unset($productData['warehouses']);
 
-                Product::create($product);
+            // Create the product (once)
+            $product = Product::create($productData);
+
+            // Attach to all warehouses with initial stock
+            foreach ($warehouses as $warehouse) {
+                foreach ($warehouseData as $whData) {
+                    $product->warehouses()->attach($warehouse->id, [
+                        'stock' => $whData['stock'],
+                        'rack_location' => $whData['rack_location'],
+                        'min_stock' => null // Use global min_stock from product
+                    ]);
+                }
             }
         }
     }
