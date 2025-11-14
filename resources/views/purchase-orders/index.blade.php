@@ -6,7 +6,7 @@
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
          <div>
-            <h2 class="text-xl font-semibold">PO (Pesanan Pembelian)</h2>
+            <h2 class="text-xl font-semibold">PO (Purchase Order)</h2>
             <p class="text-sm text-gray-600">Kelola pemesanan barang dari supplier</p>
          </div>
          <a href="{{ route('purchase-orders.create') }}" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700">

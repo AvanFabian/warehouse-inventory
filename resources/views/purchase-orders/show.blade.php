@@ -6,7 +6,7 @@
    <div class="max-w-7xl mx-auto p-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
          <div>
-            <h2 class="text-2xl font-semibold text-gray-800">Detail PO (Pesanan Pembelian)</h2>
+            <h2 class="text-2xl font-semibold text-gray-800">Detail PO (Purchase Order)</h2>
             <p class="text-gray-600 text-lg font-semibold">{{ $purchaseOrder->po_number }}</p>
          </div>
          <div class="flex flex-wrap gap-2">

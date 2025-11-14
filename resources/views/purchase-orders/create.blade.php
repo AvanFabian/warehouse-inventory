@@ -5,8 +5,8 @@
 @section('content')
    <div class="max-w-7xl mx-auto p-6">
       <div class="mb-6">
-         <h2 class="text-2xl font-semibold text-gray-800">Buat PO (Pesanan Pembelian)</h2>
-         <p class="text-gray-600">Tambah PO (Pesanan Pembelian) baru</p>
+         <h2 class="text-2xl font-semibold text-gray-800">Buat PO (Purchase Order)</h2>
+         <p class="text-gray-600">Tambah PO (Purchase Order) baru</p>
       </div>
 
       <form action="{{ route('purchase-orders.store') }}" method="POST" id="poForm">

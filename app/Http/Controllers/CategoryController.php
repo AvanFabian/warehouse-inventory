@@ -26,15 +26,16 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:categories,name',
+            'name' => 'required|string|unique:categories,name,NULL,id,deleted_at,NULL',
             'description' => 'nullable|string',
-            'status' => 'nullable|boolean',
         ]);
 
-        $data['status'] = $request->has('status');
+        // Handle checkbox - if checked it sends 'on', if unchecked it sends nothing
+        $data['status'] = $request->has('status') ? true : false;
+
         Category::create($data);
 
-        return redirect()->route('categories.index')->with('status', 'Category created');
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dibuat');
     }
 
     public function edit(Category $category)
@@ -45,15 +46,16 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:categories,name,' . $category->id,
+            'name' => 'required|string|unique:categories,name,' . $category->id . ',id,deleted_at,NULL',
             'description' => 'nullable|string',
-            'status' => 'nullable|boolean',
         ]);
 
-        $data['status'] = $request->has('status');
+        // Handle checkbox - if checked it sends 'on', if unchecked it sends nothing
+        $data['status'] = $request->has('status') ? true : false;
+
         $category->update($data);
 
-        return redirect()->route('categories.index')->with('status', 'Category updated');
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui');
     }
 
     public function destroy(Category $category)

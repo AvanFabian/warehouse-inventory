@@ -5,8 +5,8 @@
 @section('content')
    <div class="max-w-7xl mx-auto p-6">
       <div class="mb-6">
-         <h2 class="text-2xl font-semibold text-gray-800">Edit PO (Pesanan Pembelian)</h2>
-         <p class="text-gray-600">Ubah data PO (Pesanan Pembelian)</p>
+         <h2 class="text-2xl font-semibold text-gray-800">Edit PO (Purchase Order)</h2>
+         <p class="text-gray-600">Ubah data PO (Purchase Order)</p>
       </div>
 
       <form action="{{ route('purchase-orders.update', $purchaseOrder) }}" method="POST" id="poForm">

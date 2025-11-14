@@ -7,11 +7,26 @@ document.addEventListener('DOMContentLoaded', function () {
     // Handle all forms
     document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', function (e) {
+            console.log('Form submit event triggered');
+
+            // Check form validity FIRST before doing anything else
+            const isValid = form.checkValidity();
+            console.log('Form validity:', isValid);
+
+            if (!isValid) {
+                // Let browser handle validation messages
+                console.log('Form invalid, browser will show validation errors');
+                return;
+            }
+
             // Check if form was already submitted
             if (submittedForms.has(form)) {
+                console.log('Form already submitted, preventing duplicate');
                 e.preventDefault();
                 return false;
             }
+
+            console.log('Form is valid and not yet submitted, proceeding...');
 
             // Mark form as submitted
             submittedForms.add(form);
@@ -43,26 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 button.style.cursor = 'not-allowed';
             });
 
-            // Re-enable if form validation fails or after timeout
-            setTimeout(() => {
-                if (!form.checkValidity()) {
-                    submittedForms.delete(form);
-                    submitButtons.forEach(button => {
-                        button.disabled = false;
-                        button.style.opacity = '1';
-                        button.style.cursor = 'pointer';
-
-                        // Restore original content
-                        if (button.dataset.originalContent) {
-                            if (button.tagName === 'BUTTON') {
-                                button.innerHTML = button.dataset.originalContent;
-                            } else {
-                                button.value = button.dataset.originalContent;
-                            }
-                        }
-                    });
-                }
-            }, 100);
+            console.log('Submit buttons disabled, form will now submit');
         });
     });
 

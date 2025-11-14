@@ -30,7 +30,7 @@
             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">Pembelian</p>
             <a href="{{ route('purchase-orders.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('purchase-orders.*') ? 'bg-primary text-white' : '' }}">
-               PO (Pesanan Pembelian)
+               PO (Purchase Order)
             </a>
             <a href="{{ route('stock-ins.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-ins.*') ? 'bg-primary text-white' : '' }}">
