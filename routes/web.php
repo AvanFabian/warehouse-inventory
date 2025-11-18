@@ -26,6 +26,11 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::post('products/import', [App\Http\Controllers\ProductController::class, 'import'])->name('products.import');
     Route::get('products-export', [App\Http\Controllers\ProductController::class, 'export'])->name('products.export');
 
+    // Product Variants (nested routes)
+    Route::resource('products.variants', App\Http\Controllers\ProductVariantController::class)
+        ->except(['show'])
+        ->shallow();
+
     // Warehouses
     Route::resource('warehouses', App\Http\Controllers\WarehouseController::class);
 

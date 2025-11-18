@@ -7,6 +7,16 @@
       <div class="flex items-center justify-between mb-4">
          <h2 class="text-xl font-semibold">Detail Produk</h2>
          <div class="flex gap-2">
+            <a href="{{ route('products.variants.index', $product) }}"
+               class="px-3 py-2 {{ $product->has_variants ? 'bg-purple-600' : 'bg-gray-500' }} text-white rounded"
+               title="{{ $product->has_variants ? 'Manage Variants' : 'Enable variants to use this feature' }}">
+               Variants
+               @if ($product->has_variants)
+                  <span class="ml-1 px-1.5 py-0.5 bg-white text-purple-600 rounded-full text-xs font-bold">
+                     {{ $product->variants()->count() }}
+                  </span>
+               @endif
+            </a>
             <a href="{{ route('products.edit', $product) }}" class="px-3 py-2 bg-primary text-white rounded">Edit</a>
             <a href="{{ route('products.index') }}" class="px-3 py-2 border rounded">Kembali</a>
          </div>

@@ -20,7 +20,13 @@ class Product extends Model
         'purchase_price',
         'selling_price',
         'image',
-        'status'
+        'status',
+        'has_variants'
+    ];
+
+    protected $casts = [
+        'has_variants' => 'boolean',
+        'status' => 'boolean',
     ];
 
     /**
@@ -51,10 +57,37 @@ class Product extends Model
     }
 
     /**
+     * Has many variants
+     */
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    /**
+     * Check if product has variants enabled and variants exist
+     */
+    public function hasVariants()
+    {
+        return $this->has_variants && $this->variants()->exists();
+    }
+
+    /**
      * Get total stock across all warehouses
+     * If product has variants, sum stock from all variants
+     * Otherwise, sum stock from direct product-warehouse relationship
      */
     public function getTotalStockAttribute()
     {
+        if ($this->has_variants) {
+            return $this->variants()
+                ->with('warehouses')
+                ->get()
+                ->sum(function ($variant) {
+                    return $variant->warehouses->sum('pivot.stock');
+                });
+        }
+
         return $this->warehouses()->sum('product_warehouse.stock');
     }
 

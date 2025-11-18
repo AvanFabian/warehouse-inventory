@@ -142,13 +142,24 @@
             @enderror
          </div>
 
-         <div class="mt-4">
-            <label class="inline-flex items-center">
-               <input type="checkbox" name="status" class="mr-2" checked /> Aktif
-            </label>
+         <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+               <label class="inline-flex items-center">
+                  <input type="checkbox" name="status" class="mr-2" checked /> Aktif
+               </label>
+            </div>
+            <div>
+               <label class="inline-flex items-center">
+                  <input type="checkbox" name="has_variants" class="mr-2"
+                     {{ old('has_variants') ? 'checked' : '' }} />
+                  Enable Product Variants
+               </label>
+               <p class="text-xs text-slate-500 mt-1">Check if this product will have multiple variants (e.g., sizes,
+                  colors, specs)</p>
+            </div>
          </div>
 
-         <div class="flex gap-2 mt-6">
+         <div class="mt-4 flex gap-2">
             <button type="submit" class="px-4 py-2 bg-primary text-white rounded">Save Product</button>
             <a href="{{ route('products.index') }}" class="px-4 py-2 border rounded">Batal</a>
          </div>

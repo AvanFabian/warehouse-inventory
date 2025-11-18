@@ -44,8 +44,10 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        $hasVariants = $request->has('has_variants');
+
         $data = $request->validate([
-            'warehouse_id' => 'required|exists:warehouses,id',
+            'warehouse_id' => $hasVariants ? 'nullable|exists:warehouses,id' : 'required|exists:warehouses,id',
             'code' => 'required|string|unique:products,code',
             'name' => 'required|string',
             'description' => 'nullable|string',
@@ -66,8 +68,9 @@ class ProductController extends Controller
         // Remove warehouse-specific fields from product data
         unset($data['warehouse_id'], $data['rack_location'], $data['stock']);
 
-        // Handle checkbox - if checked it sends 'on', if unchecked it sends nothing
+        // Handle checkboxes - if checked it sends 'on', if unchecked it sends nothing
         $data['status'] = $request->has('status') ? true : false;
+        $data['has_variants'] = $request->has('has_variants') ? true : false;
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -80,12 +83,21 @@ class ProductController extends Controller
         // Create product
         $product = Product::create($data);
 
-        // Attach to warehouse with initial stock
-        $product->warehouses()->attach($warehouseId, [
-            'stock' => $initialStock,
-            'rack_location' => $rackLocation,
-            'min_stock' => null // Use global min_stock
-        ]);
+        // Only attach to warehouse if NOT using variants
+        // If has_variants is true, stock will be managed through variants
+        if (!$data['has_variants']) {
+            $product->warehouses()->attach($warehouseId, [
+                'stock' => $initialStock,
+                'rack_location' => $rackLocation,
+                'min_stock' => null // Use global min_stock
+            ]);
+        }
+
+        // Redirect based on variant status
+        if ($data['has_variants']) {
+            return redirect()->route('products.variants.index', $product)
+                ->with('success', 'Product created! Now add variants for this product.');
+        }
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil dibuat');
     }
