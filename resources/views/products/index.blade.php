@@ -79,18 +79,22 @@
                </thead>
                <tbody>
                   @forelse($products as $p)
-                     <tr class="border-t hover:bg-gray-50 {{ $p->stock < $p->min_stock ? 'bg-red-50' : '' }}">
+                     @php
+                        $totalStock = $p->warehouses->sum('pivot.stock');
+                        $warehouseNames = $p->warehouses->pluck('name')->join(', ');
+                     @endphp
+                     <tr class="border-t hover:bg-gray-50 {{ $totalStock < $p->min_stock ? 'bg-red-50' : '' }}">
                         <td class="p-3">
                            <input type="checkbox" class="product-checkbox" value="{{ $p->id }}">
                         </td>
                         <td class="p-3">{{ $p->code }}</td>
                         <td class="p-3">{{ $p->name }}</td>
                         <td class="p-3">
-                           <span class="text-sm">{{ $p->warehouse?->name ?? '-' }}</span>
+                           <span class="text-sm" title="{{ $warehouseNames }}">{{ $warehouseNames ?: '-' }}</span>
                         </td>
                         <td class="p-3">{{ $p->category?->name ?? '-' }}</td>
-                        <td class="p-3 font-semibold {{ $p->stock < $p->min_stock ? 'text-red-600' : '' }}">
-                           {{ $p->stock }}</td>
+                        <td class="p-3 font-semibold {{ $totalStock < $p->min_stock ? 'text-red-600' : '' }}">
+                           {{ $totalStock }}</td>
                         <td class="p-3">{{ $p->min_stock }}</td>
                         <td class="p-3">{{ $p->unit }}</td>
                         <td class="p-3">

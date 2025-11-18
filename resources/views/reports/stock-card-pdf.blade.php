@@ -69,7 +69,10 @@
 
    <div class="product-info">
       <strong>Product:</strong> {{ $product->code }} - {{ $product->name }}<br>
-      <strong>Current Stock:</strong> {{ $product->stock }} {{ $product->unit }}
+      @php
+         $totalStock = $product->warehouses->sum('pivot.stock');
+      @endphp
+      <strong>Current Stock:</strong> {{ $totalStock }} {{ $product->unit }}
    </div>
 
    <table>

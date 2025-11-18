@@ -28,6 +28,16 @@
             </div>
          </div>
 
+         <div class="mt-4">
+            <label class="block text-sm mb-1">Description</label>
+            <textarea name="description" rows="3" class="w-full border rounded px-2 py-1"
+               placeholder="Product description or specifications">{{ old('description') }}</textarea>
+            <small class="text-gray-500">Optional: Add product details, specifications, or notes</small>
+            @error('description')
+               <div class="text-red-600 text-sm">{{ $message }}</div>
+            @enderror
+         </div>
+
          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
                <label class="block text-sm mb-1">Warehouse <span class="text-red-500">*</span></label>
@@ -62,6 +72,7 @@
             <div>
                <label class="block text-sm mb-1">Unit <span class="text-red-500">*</span></label>
                <input name="unit" value="{{ old('unit', 'pcs') }}" class="w-full border rounded px-2 py-1" required />
+               <small class="text-gray-500">e.g., pcs, box, kg, ream</small>
                @error('unit')
                   <div class="text-red-600 text-sm">{{ $message }}</div>
                @enderror
@@ -69,27 +80,43 @@
 
             <div>
                <label class="block text-sm mb-1">Rack Location</label>
-               <input name="rack_location" value="{{ old('rack_location') }}" class="w-full border rounded px-2 py-1" />
+               <input name="rack_location" value="{{ old('rack_location') }}" class="w-full border rounded px-2 py-1"
+                  placeholder="e.g., A-01-02" />
+               <small class="text-gray-500">Location in selected warehouse</small>
                @error('rack_location')
                   <div class="text-red-600 text-sm">{{ $message }}</div>
                @enderror
             </div>
          </div>
 
-         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
-               <label class="block text-sm mb-1">Min Stock <span class="text-red-500">*</span></label>
-               <input type="number" name="min_stock" value="{{ old('min_stock', 10) }}"
-                  class="w-full border rounded px-2 py-1" required min="0" />
-               @error('min_stock')
+               <label class="block text-sm mb-1">Initial Stock</label>
+               <input type="number" name="stock" value="{{ old('stock', 0) }}" class="w-full border rounded px-2 py-1"
+                  min="0" />
+               <small class="text-gray-500">Initial stock in selected warehouse (default: 0)</small>
+               @error('stock')
                   <div class="text-red-600 text-sm">{{ $message }}</div>
                @enderror
             </div>
 
             <div>
-               <label class="block text-sm mb-1">Purchase Price <span class="text-red-500">*</span></label>
-               <input type="number" step="0.01" name="purchase_price" value="{{ old('purchase_price', 0) }}"
+               <label class="block text-sm mb-1">Min Stock <span class="text-red-500">*</span></label>
+               <input type="number" name="min_stock" value="{{ old('min_stock', 10) }}"
                   class="w-full border rounded px-2 py-1" required min="0" />
+               <small class="text-gray-500">Alert threshold for low stock</small>
+               @error('min_stock')
+                  <div class="text-red-600 text-sm">{{ $message }}</div>
+               @enderror
+            </div>
+         </div>
+
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div>
+               <label class="block text-sm mb-1">Purchase Price <span class="text-red-500">*</span></label>
+               <input type="number" name="purchase_price" value="{{ old('purchase_price', 0) }}"
+                  class="w-full border rounded px-2 py-1" required min="0" />
+               <small class="text-gray-500">Enter whole number, e.g., 8000000 for Rp 8,000,000</small>
                @error('purchase_price')
                   <div class="text-red-600 text-sm">{{ $message }}</div>
                @enderror
@@ -97,21 +124,13 @@
 
             <div>
                <label class="block text-sm mb-1">Selling Price <span class="text-red-500">*</span></label>
-               <input type="number" step="0.01" name="selling_price" value="{{ old('selling_price', 0) }}"
+               <input type="number" name="selling_price" value="{{ old('selling_price', 0) }}"
                   class="w-full border rounded px-2 py-1" required min="0" />
+               <small class="text-gray-500">Enter whole number, e.g., 9500000 for Rp 9,500,000</small>
                @error('selling_price')
                   <div class="text-red-600 text-sm">{{ $message }}</div>
                @enderror
             </div>
-         </div>
-
-         <div class="mt-4">
-            <label class="block text-sm mb-1">Rack Location</label>
-            <input name="rack_location" value="{{ old('rack_location') }}" class="w-full border rounded px-2 py-1"
-               placeholder="e.g., A-01-02" />
-            @error('rack_location')
-               <div class="text-red-600 text-sm">{{ $message }}</div>
-            @enderror
          </div>
 
          <div class="mt-4">

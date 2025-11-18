@@ -44,14 +44,38 @@
                      <td class="py-2">{{ $product->unit }}</td>
                   </tr>
                   <tr class="border-b">
-                     <td class="py-2 text-sm text-slate-600">Current Stock</td>
+                     <td class="py-2 text-sm text-slate-600">Total Stock</td>
                      <td class="py-2">
+                        @php
+                           $totalStock = $product->warehouses->sum('pivot.stock');
+                        @endphp
                         <span
-                           class="font-semibold {{ $product->stock < $product->min_stock ? 'text-red-600' : 'text-green-600' }}">
-                           {{ $product->stock }} {{ $product->unit }}
+                           class="font-semibold {{ $totalStock < $product->min_stock ? 'text-red-600' : 'text-green-600' }}">
+                           {{ $totalStock }} {{ $product->unit }}
                         </span>
-                        @if ($product->stock < $product->min_stock)
+                        @if ($totalStock < $product->min_stock)
                            <span class="ml-2 px-2 py-1 text-xs bg-red-100 text-red-700 rounded">Low Stock</span>
+                        @endif
+                     </td>
+                  </tr>
+                  <tr class="border-b">
+                     <td class="py-2 text-sm text-slate-600">Stock by Warehouse</td>
+                     <td class="py-2">
+                        @if ($product->warehouses->count() > 0)
+                           <div class="space-y-1">
+                              @foreach ($product->warehouses as $warehouse)
+                                 <div class="text-sm">
+                                    <span class="font-medium">{{ $warehouse->name }}:</span>
+                                    <span class="ml-1">{{ $warehouse->pivot->stock }} {{ $product->unit }}</span>
+                                    @if ($warehouse->pivot->rack_location)
+                                       <span
+                                          class="text-slate-500 text-xs">({{ $warehouse->pivot->rack_location }})</span>
+                                    @endif
+                                 </div>
+                              @endforeach
+                           </div>
+                        @else
+                           <span class="text-slate-500 text-sm">No warehouse assigned</span>
                         @endif
                      </td>
                   </tr>
@@ -61,16 +85,13 @@
                   </tr>
                   <tr class="border-b">
                      <td class="py-2 text-sm text-slate-600">Purchase Price</td>
-                     <td class="py-2">Rp {{ number_format($product->purchase_price, 2) }}</td>
+                     <td class="py-2">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</td>
                   </tr>
                   <tr class="border-b">
                      <td class="py-2 text-sm text-slate-600">Selling Price</td>
-                     <td class="py-2">Rp {{ number_format($product->selling_price, 2) }}</td>
+                     <td class="py-2">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</td>
                   </tr>
-                  <tr class="border-b">
-                     <td class="py-2 text-sm text-slate-600">Rack Location</td>
-                     <td class="py-2">{{ $product->rack_location ?? '-' }}</td>
-                  </tr>
+
                   <tr class="border-b">
                      <td class="py-2 text-sm text-slate-600">Status</td>
                      <td class="py-2">

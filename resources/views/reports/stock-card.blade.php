@@ -72,7 +72,10 @@
                </div>
                <div>
                   <p class="text-sm text-gray-600">Stok Saat Ini</p>
-                  <p class="font-semibold text-gray-800">{{ $product->stock }} {{ $product->unit }}</p>
+                  @php
+                     $totalStock = $product->warehouses->sum('pivot.stock');
+                  @endphp
+                  <p class="font-semibold text-gray-800">{{ $totalStock }} {{ $product->unit }}</p>
                </div>
             </div>
          </div>

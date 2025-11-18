@@ -111,9 +111,12 @@
                <td>{{ $p->code }}</td>
                <td>{{ $p->name }}</td>
                <td>{{ $p->category?->name ?? '-' }}</td>
-               <td class="text-right">{{ $p->stock }} {{ $p->unit }}</td>
+               @php
+                  $totalStock = $p->warehouses->sum('pivot.stock');
+               @endphp
+               <td class="text-right">{{ $totalStock }} {{ $p->unit }}</td>
                <td class="text-right">Rp {{ number_format($p->purchase_price) }}</td>
-               <td class="text-right">Rp {{ number_format($p->stock * $p->purchase_price) }}</td>
+               <td class="text-right">Rp {{ number_format($totalStock * $p->purchase_price) }}</td>
             </tr>
          @endforeach
       </tbody>

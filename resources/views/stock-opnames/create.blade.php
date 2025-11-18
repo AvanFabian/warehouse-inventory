@@ -31,9 +31,12 @@
                onchange="updateSystemQty()">
                <option value="">-- Select Product --</option>
                @foreach ($products as $p)
-                  <option value="{{ $p->id }}" data-stock="{{ $p->stock }}" data-unit="{{ $p->unit }}"
+                  @php
+                     $totalStock = $p->warehouses->sum('pivot.stock');
+                  @endphp
+                  <option value="{{ $p->id }}" data-stock="{{ $totalStock }}" data-unit="{{ $p->unit }}"
                      {{ old('product_id') == $p->id ? 'selected' : '' }}>
-                     {{ $p->code }} - {{ $p->name }}
+                     {{ $p->code }} - {{ $p->name }} (Stock: {{ $totalStock }})
                   </option>
                @endforeach
             </select>

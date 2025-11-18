@@ -23,21 +23,33 @@ class ReportController extends Controller
     {
         $categoryId = $request->query('category_id');
         $lowStock = $request->query('low_stock');
+        $warehouseId = $request->query('warehouse_id');
 
-        $products = Product::with('category')
+        $products = Product::with(['category', 'warehouses'])
             ->when($categoryId, fn($query) => $query->where('category_id', $categoryId))
-            ->when($lowStock, fn($query) => $query->whereColumn('stock', '<', 'min_stock'))
+            ->when($warehouseId, fn($query) => $query->whereHas('warehouses', function ($q) use ($warehouseId) {
+                $q->where('warehouse_id', $warehouseId);
+            }))
             ->orderBy('name')
             ->get();
 
+        // Filter low stock after loading (since stock is in pivot table)
+        if ($lowStock) {
+            $products = $products->filter(function ($product) {
+                $totalStock = $product->warehouses->sum('pivot.stock');
+                return $totalStock < $product->min_stock;
+            });
+        }
+
         $categories = Category::where('status', true)->orderBy('name')->get();
+        $warehouses = \App\Models\Warehouse::active()->orderBy('name')->get();
 
         if ($request->query('export') === 'pdf') {
             $pdf = Pdf::loadView('reports.stock-pdf', compact('products'));
             return $pdf->download('stock-report-' . date('Y-m-d') . '.pdf');
         }
 
-        return view('reports.stock', compact('products', 'categories', 'categoryId', 'lowStock'));
+        return view('reports.stock', compact('products', 'categories', 'warehouses', 'categoryId', 'warehouseId', 'lowStock'));
     }
 
     // Transaction Reports
@@ -122,26 +134,30 @@ class ReportController extends Controller
     // Inventory Value Report
     public function inventoryValue(Request $request)
     {
-        $products = Product::with('category')
+        $products = Product::with(['category', 'warehouses'])
             ->where('status', true)
             ->paginate(50);
 
-        $totalValue = Product::where('status', true)
+        $totalValue = Product::with('warehouses')
+            ->where('status', true)
             ->get()
             ->sum(function ($product) {
-                return $product->stock * $product->purchase_price;
+                $totalStock = $product->warehouses->sum('pivot.stock');
+                return $totalStock * $product->purchase_price;
             });
 
         // Get categories with their total values
         $categories = Category::withCount('products')
             ->get()
             ->map(function ($category) {
-                $categoryProducts = Product::where('category_id', $category->id)
+                $categoryProducts = Product::with('warehouses')
+                    ->where('category_id', $category->id)
                     ->where('status', true)
                     ->get();
 
                 $total_value = $categoryProducts->sum(function ($product) {
-                    return $product->stock * $product->purchase_price;
+                    $totalStock = $product->warehouses->sum('pivot.stock');
+                    return $totalStock * $product->purchase_price;
                 });
 
                 $category->total_value = $total_value;
@@ -150,7 +166,7 @@ class ReportController extends Controller
             ->filter(fn($cat) => $cat->total_value > 0);
 
         if ($request->query('export') === 'pdf') {
-            $allProducts = Product::with('category')
+            $allProducts = Product::with(['category', 'warehouses'])
                 ->where('status', true)
                 ->get();
             $pdf = Pdf::loadView('reports.inventory-value-pdf', compact('allProducts', 'totalValue', 'categories'));
@@ -171,7 +187,7 @@ class ReportController extends Controller
         $movements = collect();
 
         if ($productId) {
-            $product = Product::with('category')->find($productId);
+            $product = Product::with(['category', 'warehouses'])->find($productId);
 
             if ($product) {
                 // Get stock in movements

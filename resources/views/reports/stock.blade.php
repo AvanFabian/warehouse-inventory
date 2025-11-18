@@ -56,19 +56,23 @@
                </thead>
                <tbody>
                   @forelse($products as $p)
-                     <tr class="border-t hover:bg-gray-50 {{ $p->stock < $p->min_stock ? 'bg-red-50' : '' }}">
+                     @php
+                        $totalStock = $p->warehouses->sum('pivot.stock');
+                        $warehouseList = $p->warehouses->pluck('name')->join(', ');
+                     @endphp
+                     <tr class="border-t hover:bg-gray-50 {{ $totalStock < $p->min_stock ? 'bg-red-50' : '' }}">
                         <td class="p-3">{{ $p->code }}</td>
                         <td class="p-3">{{ $p->name }}</td>
                         <td class="p-3">{{ $p->category?->name ?? '-' }}</td>
-                        <td class="p-3 text-right font-semibold {{ $p->stock < $p->min_stock ? 'text-red-600' : '' }}">
-                           {{ $p->stock }}</td>
+                        <td class="p-3 text-right font-semibold {{ $totalStock < $p->min_stock ? 'text-red-600' : '' }}">
+                           {{ $totalStock }}</td>
                         <td class="p-3 text-right">{{ $p->min_stock }}</td>
                         <td class="p-3">{{ $p->unit }}</td>
-                        <td class="p-3">{{ $p->rack_location ?? '-' }}</td>
+                        <td class="p-3" title="{{ $warehouseList }}">{{ $warehouseList ?: '-' }}</td>
                         <td class="p-3">
-                           @if ($p->stock < $p->min_stock)
+                           @if ($totalStock < $p->min_stock)
                               <span class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded">Rendah</span>
-                           @elseif($p->stock == 0)
+                           @elseif($totalStock == 0)
                               <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded">Kosong</span>
                            @else
                               <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">OK</span>

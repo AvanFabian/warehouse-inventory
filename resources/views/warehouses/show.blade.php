@@ -131,12 +131,17 @@
                         <td class="p-3">{{ $product->name }}</td>
                         <td class="p-3">{{ $product->category->name ?? '-' }}</td>
                         <td class="p-3">
-                           <span class="@if ($product->stock <= $product->min_stock) text-red-600 font-bold @endif">
-                              {{ $product->stock }}
+                           @php
+                              $stockInWarehouse = $product->pivot->stock ?? 0;
+                              $minStock = $product->pivot->min_stock ?? $product->min_stock;
+                           @endphp
+                           <span class="@if ($stockInWarehouse <= $minStock) text-red-600 font-bold @endif">
+                              {{ $stockInWarehouse }}
                            </span>
                         </td>
                         <td class="p-3">{{ $product->unit }}</td>
-                        <td class="p-3">Rp {{ number_format($product->stock * $product->purchase_price, 0, ',', '.') }}
+                        <td class="p-3">Rp
+                           {{ number_format($stockInWarehouse * $product->purchase_price, 0, ',', '.') }}
                         </td>
                      </tr>
                   @empty

@@ -66,14 +66,18 @@
       </thead>
       <tbody>
          @foreach ($products as $p)
-            <tr class="{{ $p->stock < $p->min_stock ? 'low-stock' : '' }}">
+            @php
+               $totalStock = $p->warehouses->sum('pivot.stock');
+               $warehouseList = $p->warehouses->pluck('name')->join(', ');
+            @endphp
+            <tr class="{{ $totalStock < $p->min_stock ? 'low-stock' : '' }}">
                <td>{{ $p->code }}</td>
                <td>{{ $p->name }}</td>
                <td>{{ $p->category?->name ?? '-' }}</td>
-               <td class="text-right">{{ $p->stock }}</td>
+               <td class="text-right">{{ $totalStock }}</td>
                <td class="text-right">{{ $p->min_stock }}</td>
                <td>{{ $p->unit }}</td>
-               <td>{{ $p->rack_location ?? '-' }}</td>
+               <td>{{ $warehouseList ?: '-' }}</td>
             </tr>
          @endforeach
       </tbody>

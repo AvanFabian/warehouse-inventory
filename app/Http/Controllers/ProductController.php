@@ -48,23 +48,26 @@ class ProductController extends Controller
             'warehouse_id' => 'required|exists:warehouses,id',
             'code' => 'required|string|unique:products,code',
             'name' => 'required|string',
+            'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id',
             'unit' => 'required|string',
             'min_stock' => 'required|integer|min:0',
             'purchase_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
+            'stock' => 'nullable|integer|min:0',
             'rack_location' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'status' => 'nullable|boolean',
         ]);
 
         $warehouseId = $data['warehouse_id'];
         $rackLocation = $data['rack_location'] ?? null;
+        $initialStock = $data['stock'] ?? 0;
 
         // Remove warehouse-specific fields from product data
-        unset($data['warehouse_id'], $data['rack_location']);
+        unset($data['warehouse_id'], $data['rack_location'], $data['stock']);
 
-        $data['status'] = $request->has('status');
+        // Handle checkbox - if checked it sends 'on', if unchecked it sends nothing
+        $data['status'] = $request->has('status') ? true : false;
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -77,14 +80,14 @@ class ProductController extends Controller
         // Create product
         $product = Product::create($data);
 
-        // Attach to warehouse with initial stock of 0
+        // Attach to warehouse with initial stock
         $product->warehouses()->attach($warehouseId, [
-            'stock' => 0,
+            'stock' => $initialStock,
             'rack_location' => $rackLocation,
             'min_stock' => null // Use global min_stock
         ]);
 
-        return redirect()->route('products.index')->with('status', 'Product created successfully');
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dibuat');
     }
 
     public function show(Product $product)
@@ -105,6 +108,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'code' => 'required|string|unique:products,code,' . $product->id,
             'name' => 'required|string',
+            'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id',
             'unit' => 'required|string',
             'min_stock' => 'required|integer|min:0',
@@ -112,7 +116,6 @@ class ProductController extends Controller
             'selling_price' => 'required|numeric|min:0',
             'rack_location' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'status' => 'nullable|boolean',
         ]);
 
         // Note: rack_location update should be handled separately per warehouse
@@ -120,7 +123,8 @@ class ProductController extends Controller
         $rackLocation = $data['rack_location'] ?? null;
         unset($data['rack_location']);
 
-        $data['status'] = $request->has('status');
+        // Handle checkbox - if checked it sends 'on', if unchecked it sends nothing
+        $data['status'] = $request->has('status') ? true : false;
 
         // Handle image upload
         if ($request->hasFile('image')) {

@@ -1,5 +1,6 @@
 import './bootstrap';
 import './button-protection';
+import './price-formatter';
 
 import Alpine from 'alpinejs';
 

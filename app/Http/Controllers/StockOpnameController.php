@@ -33,7 +33,7 @@ class StockOpnameController extends Controller
     public function create()
     {
         $warehouses = \App\Models\Warehouse::active()->orderBy('name')->get();
-        $products = Product::where('status', true)->orderBy('name')->get();
+        $products = Product::with('warehouses')->where('status', true)->orderBy('name')->get();
         return view('stock-opnames.create', compact('products', 'warehouses'));
     }
 
@@ -50,7 +50,7 @@ class StockOpnameController extends Controller
         DB::beginTransaction();
         try {
             $product = Product::findOrFail($request->product_id);
-            
+
             // Get current stock from pivot table for the specified warehouse
             $systemQty = $product->getStockInWarehouse($request->warehouse_id);
             $countedQty = $request->counted_qty;
