@@ -5,15 +5,15 @@
       <!-- Header -->
       <div class="mb-6 flex justify-between items-center">
          <div>
-            <h1 class="text-3xl font-bold text-gray-900">Pesanan Penjualan</h1>
-            <p class="mt-1 text-sm text-gray-600">Kelola pesanan penjualan</p>
+            <h1 class="text-3xl font-bold text-gray-900">{{ __('app.sales_orders') }}</h1>
+            <p class="mt-1 text-sm text-gray-600">{{ __('app.sales_order_management') }}</p>
          </div>
          <a href="{{ route('sales-orders.create') }}"
             class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition duration-150">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            Buat Pesanan
+            {{ __('app.add_sales_order') }}
          </a>
       </div>
 
@@ -34,43 +34,53 @@
       <div class="bg-white rounded-lg shadow-md p-6 mb-6">
          <form action="{{ route('sales-orders.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
-               <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Cari</label>
+               <label for="search" class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.search') }}</label>
                <input type="text" id="search" name="search" value="{{ request('search') }}"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="No. SO, pelanggan...">
+                  placeholder="{{ __('app.so_number') }}, {{ __('app.customer') }}...">
             </div>
 
             <div>
-               <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+               <label for="status" class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.status') }}</label>
                <select id="status" name="status"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="">Semua Status</option>
-                  <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                  <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>Dikonfirmasi</option>
-                  <option value="shipped" {{ request('status') === 'shipped' ? 'selected' : '' }}>Dikirim</option>
-                  <option value="delivered" {{ request('status') === 'delivered' ? 'selected' : '' }}>Diterima</option>
-                  <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                  <option value="">{{ __('app.all_statuses') }}</option>
+                  <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>{{ __('app.draft') }}
+                  </option>
+                  <option value="confirmed" {{ request('status') === 'confirmed' ? 'selected' : '' }}>
+                     {{ __('app.approved') }}</option>
+                  <option value="shipped" {{ request('status') === 'shipped' ? 'selected' : '' }}>
+                     {{ __('app.delivered') }}</option>
+                  <option value="delivered" {{ request('status') === 'delivered' ? 'selected' : '' }}>
+                     {{ __('app.delivered') }}</option>
+                  <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>
+                     {{ __('app.cancelled') }}</option>
                </select>
             </div>
 
             <div>
-               <label for="payment_status" class="block text-sm font-medium text-gray-700 mb-2">Pembayaran</label>
+               <label for="payment_status"
+                  class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.payment_status') }}</label>
                <select id="payment_status" name="payment_status"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="">Semua</option>
-                  <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>Belum Bayar
+                  <option value="">{{ __('app.all') }}</option>
+                  <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>
+                     {{ __('app.unpaid') }}
                   </option>
-                  <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>Sebagian
+                  <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>
+                     {{ __('app.partial') }}
                   </option>
-                  <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Lunas</option>
+                  <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>
+                     {{ __('app.paid') }}</option>
                </select>
             </div>
 
             <div>
-               <label for="customer_id" class="block text-sm font-medium text-gray-700 mb-2">Pelanggan</label>
+               <label for="customer_id"
+                  class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.customer') }}</label>
                <select id="customer_id" name="customer_id"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="">Semua Pelanggan</option>
+                  <option value="">{{ __('app.customers') }}</option>
                   @foreach ($customers as $customer)
                      <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
                         {{ $customer->name }}
@@ -82,11 +92,11 @@
             <div class="flex items-end gap-2">
                <button type="submit"
                   class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-150">
-                  Filter
+                  {{ __('app.filter') }}
                </button>
                <a href="{{ route('sales-orders.index') }}"
                   class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition duration-150">
-                  Reset
+                  {{ __('app.reset') }}
                </a>
             </div>
          </form>
@@ -98,16 +108,23 @@
             <table class="min-w-full divide-y divide-gray-200">
                <thead class="bg-gray-50">
                   <tr>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. SO</th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelanggan
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.so_number') }}</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.customer') }}
                      </th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.date') }}
                      </th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembayaran
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.total') }}</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.status') }}</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.payment') }}
                      </th>
-                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.actions') }}</th>
                   </tr>
                </thead>
                <tbody class="bg-white divide-y divide-gray-200">
@@ -136,11 +153,11 @@
                                   'cancelled' => 'bg-red-100 text-red-800',
                               ];
                               $statusLabels = [
-                                  'draft' => 'Draft',
-                                  'confirmed' => 'Dikonfirmasi',
-                                  'shipped' => 'Dikirim',
-                                  'delivered' => 'Diterima',
-                                  'cancelled' => 'Dibatalkan',
+                                  'draft' => __('app.draft'),
+                                  'confirmed' => __('app.approved'),
+                                  'shipped' => __('app.shipped'),
+                                  'delivered' => __('app.delivered'),
+                                  'cancelled' => __('app.cancelled'),
                               ];
                            @endphp
                            <span
@@ -156,9 +173,9 @@
                                   'paid' => 'bg-green-100 text-green-800',
                               ];
                               $paymentLabels = [
-                                  'unpaid' => 'Belum Bayar',
-                                  'partial' => 'Sebagian',
-                                  'paid' => 'Lunas',
+                                  'unpaid' => __('app.unpaid'),
+                                  'partial' => __('app.partial'),
+                                  'paid' => __('app.paid'),
                               ];
                            @endphp
                            <span
@@ -169,7 +186,7 @@
                         <td class="px-6 py-4 text-center text-sm font-medium">
                            <div class="flex justify-center gap-2">
                               <a href="{{ route('sales-orders.show', $order) }}" class="text-blue-600 hover:text-blue-900"
-                                 title="Lihat">
+                                 title="{{ __('app.view') }}">
                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -180,7 +197,7 @@
                               </a>
                               @if ($order->status === 'draft')
                                  <a href="{{ route('sales-orders.edit', $order) }}"
-                                    class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                    class="text-yellow-600 hover:text-yellow-900" title="{{ __('app.edit') }}">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -188,7 +205,7 @@
                                     </svg>
                                  </a>
                                  <button onclick="confirmDelete({{ $order->id }})"
-                                    class="text-red-600 hover:text-red-900" title="Hapus">
+                                    class="text-red-600 hover:text-red-900" title="{{ __('app.delete') }}">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
@@ -207,7 +224,7 @@
                   @empty
                      <tr>
                         <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                           Tidak ada data pesanan penjualan.
+                           {{ __('app.no_sales_orders_data') }}
                         </td>
                      </tr>
                   @endforelse
@@ -226,7 +243,7 @@
 
    <script>
       function confirmDelete(id) {
-         if (confirm('Apakah Anda yakin ingin menghapus pesanan penjualan ini?')) {
+         if (confirm('{{ __('app.confirm_delete_sales_order') }}')) {
             document.getElementById('delete-form-' + id).submit();
          }
       }

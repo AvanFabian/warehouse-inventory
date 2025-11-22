@@ -4,14 +4,14 @@
    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="mb-6">
-         <h1 class="text-3xl font-bold text-gray-900">Buat Faktur</h1>
-         <p class="mt-1 text-sm text-gray-600">Buat faktur dari pesanan yang sudah terkirim</p>
+         <h1 class="text-3xl font-bold text-gray-900">{{ __('app.create_invoice') }}</h1>
+         <p class="mt-1 text-sm text-gray-600">{{ __('app.create_invoice_desc') }}</p>
       </div>
 
       <!-- Error Messages -->
       @if ($errors->any())
          <div class="mb-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-            <div class="font-semibold mb-2">Terdapat kesalahan:</div>
+            <div class="font-semibold mb-2">{{ __('app.errors_found') }}:</div>
             <ul class="list-disc list-inside text-sm">
                @foreach ($errors->all() as $error)
                   <li>{{ $error }}</li>
@@ -26,45 +26,46 @@
 
          <!-- Sales Order Selection -->
          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Pilih Pesanan Penjualan</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('app.select_sales_order') }}</h2>
 
             <div>
                <label for="sales_order_id" class="block text-sm font-medium text-gray-700 mb-2">
-                  Pesanan Penjualan <span class="text-red-500">*</span>
+                  {{ __('app.sales_order') }} <span class="text-red-500">*</span>
                </label>
                <select id="sales_order_id" name="sales_order_id" required
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   onchange="updateOrderDetails()">
-                  <option value="">Pilih Pesanan</option>
+                  <option value="">{{ __('app.select_order') }}</option>
                   @foreach ($salesOrders as $so)
                      <option value="{{ $so->id }}" data-customer="{{ $so->customer->name }}"
                         data-so-number="{{ $so->so_number }}" data-order-date="{{ $so->order_date->format('d M Y') }}"
                         data-total="{{ number_format($so->total, 0, ',', '.') }}"
                         {{ old('sales_order_id', $salesOrder?->id) == $so->id ? 'selected' : '' }}>
-                        {{ $so->so_number }} - {{ $so->customer->name }} - Rp {{ number_format($so->total, 0, ',', '.') }}
+                        {{ $so->so_number }} - {{ $so->customer->name }} - Rp
+                        {{ number_format($so->total, 0, ',', '.') }}
                      </option>
                   @endforeach
                </select>
-               <p class="mt-1 text-xs text-gray-500">Hanya pesanan dengan status "Terkirim" dan belum memiliki faktur</p>
+               <p class="mt-1 text-xs text-gray-500">{{ __('app.delivered_orders_only') }}</p>
             </div>
 
             <!-- Order Details (shown after selection) -->
             <div id="orderDetails" class="mt-4 pt-4 border-t border-gray-200 hidden">
                <div class="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                     <span class="text-gray-600">Pelanggan:</span>
+                     <span class="text-gray-600">{{ __('app.customer') }}:</span>
                      <span id="detailCustomer" class="ml-2 font-semibold text-gray-900"></span>
                   </div>
                   <div>
-                     <span class="text-gray-600">Nomor SO:</span>
+                     <span class="text-gray-600">{{ __('app.so_number') }}:</span>
                      <span id="detailSoNumber" class="ml-2 font-semibold text-gray-900"></span>
                   </div>
                   <div>
-                     <span class="text-gray-600">Tanggal Pesanan:</span>
+                     <span class="text-gray-600">{{ __('app.order_date') }}:</span>
                      <span id="detailOrderDate" class="ml-2 font-semibold text-gray-900"></span>
                   </div>
                   <div>
-                     <span class="text-gray-600">Total:</span>
+                     <span class="text-gray-600">{{ __('app.total') }}:</span>
                      <span id="detailTotal" class="ml-2 font-semibold text-blue-600">Rp 0</span>
                   </div>
                </div>
@@ -73,12 +74,12 @@
 
          <!-- Invoice Details -->
          <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Detail Faktur</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ __('app.invoice_details') }}</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div>
                   <label for="invoice_date" class="block text-sm font-medium text-gray-700 mb-2">
-                     Tanggal Faktur <span class="text-red-500">*</span>
+                     {{ __('app.invoice_date') }} <span class="text-red-500">*</span>
                   </label>
                   <input type="date" id="invoice_date" name="invoice_date"
                      value="{{ old('invoice_date', date('Y-m-d')) }}" required
@@ -87,22 +88,22 @@
 
                <div>
                   <label for="due_date" class="block text-sm font-medium text-gray-700 mb-2">
-                     Tanggal Jatuh Tempo <span class="text-red-500">*</span>
+                     {{ __('app.due_date') }} <span class="text-red-500">*</span>
                   </label>
                   <input type="date" id="due_date" name="due_date"
                      value="{{ old('due_date', date('Y-m-d', strtotime('+30 days'))) }}" required
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <p class="mt-1 text-xs text-gray-500">Default: 30 hari dari tanggal faktur</p>
+                  <p class="mt-1 text-xs text-gray-500">{{ __('app.due_date_default_help') }}</p>
                </div>
             </div>
 
             <div class="mt-6">
                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
-                  Catatan
+                  {{ __('app.notes') }}
                </label>
                <textarea id="notes" name="notes" rows="3"
                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Catatan tambahan untuk faktur">{{ old('notes') }}</textarea>
+                  placeholder="{{ __('app.invoice_notes_placeholder') }}">{{ old('notes') }}</textarea>
             </div>
          </div>
 
@@ -110,11 +111,11 @@
          <div class="flex justify-end gap-3">
             <a href="{{ route('invoices.index') }}"
                class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition duration-150">
-               Batal
+               {{ __('app.cancel') }}
             </a>
             <button type="submit"
                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-150">
-               Buat Faktur
+               {{ __('app.create_invoice') }}
             </button>
          </div>
       </form>

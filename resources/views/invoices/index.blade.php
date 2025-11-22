@@ -5,12 +5,12 @@
       <!-- Header -->
       <div class="flex justify-between items-center mb-6">
          <div>
-            <h1 class="text-3xl font-bold text-gray-900">Faktur & Pembayaran</h1>
-            <p class="mt-1 text-sm text-gray-600">Kelola faktur dan pembayaran pelanggan</p>
+            <h1 class="text-3xl font-bold text-gray-900">{{ __('app.invoices_payments') }}</h1>
+            <p class="mt-1 text-sm text-gray-600">{{ __('app.invoice_payment_management') }}</p>
          </div>
          <a href="{{ route('invoices.create') }}"
             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-150">
-            + Buat Faktur
+            + {{ __('app.create_invoice') }}
          </a>
       </div>
 
@@ -34,33 +34,36 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                <!-- Search -->
                <div>
-                  <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Cari</label>
+                  <label for="search" class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.search') }}</label>
                   <input type="text" id="search" name="search" value="{{ request('search') }}"
-                     placeholder="Nomor faktur atau nama pelanggan"
+                     placeholder="{{ __('app.search_invoice_placeholder') }}"
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                </div>
 
                <!-- Payment Status -->
                <div>
-                  <label for="payment_status" class="block text-sm font-medium text-gray-700 mb-2">Status
-                     Pembayaran</label>
+                  <label for="payment_status"
+                     class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.payment_status') }}</label>
                   <select id="payment_status" name="payment_status"
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                     <option value="">Semua Status</option>
-                     <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>Belum Dibayar
+                     <option value="">{{ __('app.all_statuses') }}</option>
+                     <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>
+                        {{ __('app.unpaid') }}
                      </option>
-                     <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>Dibayar
-                        Sebagian</option>
-                     <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Lunas</option>
+                     <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>
+                        {{ __('app.paid_partially') }}</option>
+                     <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>
+                        {{ __('app.paid') }}</option>
                   </select>
                </div>
 
                <!-- Customer -->
                <div>
-                  <label for="customer_id" class="block text-sm font-medium text-gray-700 mb-2">Pelanggan</label>
+                  <label for="customer_id"
+                     class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.customer') }}</label>
                   <select id="customer_id" name="customer_id"
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                     <option value="">Semua Pelanggan</option>
+                     <option value="">{{ __('app.customers') }}</option>
                      @foreach ($customers as $customer)
                         <option value="{{ $customer->id }}"
                            {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
@@ -72,26 +75,30 @@
 
                <!-- Invoice Date Range -->
                <div>
-                  <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Faktur Dari</label>
+                  <label for="start_date"
+                     class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.invoice_date_from') }}</label>
                   <input type="date" id="start_date" name="start_date" value="{{ request('start_date') }}"
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                </div>
 
                <div>
-                  <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Faktur Sampai</label>
+                  <label for="end_date"
+                     class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.invoice_date_to') }}</label>
                   <input type="date" id="end_date" name="end_date" value="{{ request('end_date') }}"
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                </div>
 
                <!-- Due Date Range -->
                <div>
-                  <label for="due_start_date" class="block text-sm font-medium text-gray-700 mb-2">Jatuh Tempo Dari</label>
+                  <label for="due_start_date"
+                     class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.due_date_from') }}</label>
                   <input type="date" id="due_start_date" name="due_start_date" value="{{ request('due_start_date') }}"
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                </div>
 
                <div>
-                  <label for="due_end_date" class="block text-sm font-medium text-gray-700 mb-2">Jatuh Tempo Sampai</label>
+                  <label for="due_end_date"
+                     class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.due_date_to') }}</label>
                   <input type="date" id="due_end_date" name="due_end_date" value="{{ request('due_end_date') }}"
                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                </div>
@@ -100,11 +107,11 @@
             <div class="flex gap-3">
                <button type="submit"
                   class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-150">
-                  Filter
+                  {{ __('app.filter') }}
                </button>
                <a href="{{ route('invoices.index') }}"
                   class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition duration-150">
-                  Reset
+                  {{ __('app.reset') }}
                </a>
             </div>
          </form>
@@ -116,20 +123,27 @@
             <table class="min-w-full divide-y divide-gray-200">
                <thead class="bg-gray-50">
                   <tr>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor
-                        Faktur</th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelanggan
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.invoice_number') }}</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.customer') }}
                      </th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.date') }}
                      </th>
-                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jatuh Tempo
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.due_date') }}
                      </th>
-                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Terbayar
+                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.total') }}</th>
+                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.paid_amount') }}
                      </th>
-                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status
+                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.status') }}
                      </th>
-                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        {{ __('app.actions') }}</th>
                   </tr>
                </thead>
                <tbody class="bg-white divide-y divide-gray-200">
@@ -154,7 +168,7 @@
                               {{ $invoice->due_date->format('d M Y') }}
                            </span>
                            @if ($invoice->due_date->isPast() && $invoice->payment_status !== 'paid')
-                              <div class="text-xs text-red-600">Terlambat</div>
+                              <div class="text-xs text-red-600">{{ __('app.overdue') }}</div>
                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold text-gray-900">
@@ -167,24 +181,24 @@
                            @if ($invoice->payment_status === 'unpaid')
                               <span
                                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                 Belum Dibayar
+                                 {{ __('app.unpaid') }}
                               </span>
                            @elseif($invoice->payment_status === 'partial')
                               <span
                                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                 Sebagian
+                                 {{ __('app.partial') }}
                               </span>
                            @else
                               <span
                                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                 Lunas
+                                 {{ __('app.paid') }}
                               </span>
                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                            <div class="flex items-center justify-center gap-2">
                               <a href="{{ route('invoices.show', $invoice) }}" class="text-blue-600 hover:text-blue-900"
-                                 title="Detail">
+                                 title="{{ __('app.view') }}">
                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -196,7 +210,7 @@
 
                               @if ($invoice->payment_status === 'unpaid')
                                  <a href="{{ route('invoices.edit', $invoice) }}"
-                                    class="text-yellow-600 hover:text-yellow-900" title="Edit">
+                                    class="text-yellow-600 hover:text-yellow-900" title="{{ __('app.edit') }}">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -206,7 +220,7 @@
                               @endif
 
                               <a href="{{ route('invoices.pdf', $invoice) }}" target="_blank"
-                                 class="text-purple-600 hover:text-purple-900" title="Lihat PDF">
+                                 class="text-purple-600 hover:text-purple-900" title="{{ __('app.view_pdf') }}">
                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
@@ -216,10 +230,11 @@
 
                               @if ($invoice->payment_status === 'unpaid')
                                  <form action="{{ route('invoices.destroy', $invoice) }}" method="POST" class="inline"
-                                    onsubmit="return confirm('Hapus faktur ini?')">
+                                    onsubmit="return confirm('{{ __('app.confirm_delete_invoice') }}')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900" title="Hapus">
+                                    <button type="submit" class="text-red-600 hover:text-red-900"
+                                       title="{{ __('app.delete') }}">
                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
@@ -234,7 +249,7 @@
                   @empty
                      <tr>
                         <td colspan="8" class="px-6 py-8 text-center text-gray-500">
-                           Tidak ada data faktur.
+                           {{ __('app.no_invoice_data') }}
                         </td>
                      </tr>
                   @endforelse
