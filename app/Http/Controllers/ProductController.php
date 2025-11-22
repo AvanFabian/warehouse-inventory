@@ -47,7 +47,7 @@ class ProductController extends Controller
         $hasVariants = $request->has('has_variants');
 
         $data = $request->validate([
-            'warehouse_id' => $hasVariants ? 'nullable|exists:warehouses,id' : 'required|exists:warehouses,id',
+            'warehouse_id' => 'required|exists:warehouses,id',
             'code' => 'required|string|unique:products,code',
             'name' => 'required|string',
             'description' => 'nullable|string',
@@ -83,15 +83,14 @@ class ProductController extends Controller
         // Create product
         $product = Product::create($data);
 
-        // Only attach to warehouse if NOT using variants
-        // If has_variants is true, stock will be managed through variants
-        if (!$data['has_variants']) {
-            $product->warehouses()->attach($warehouseId, [
-                'stock' => $initialStock,
-                'rack_location' => $rackLocation,
-                'min_stock' => null // Use global min_stock
-            ]);
-        }
+        // Always attach to warehouse with the provided information
+        // For products with variants, this serves as the default/initial warehouse
+        // Stock will be 0 for variant products until variants are created
+        $product->warehouses()->attach($warehouseId, [
+            'stock' => $data['has_variants'] ? 0 : $initialStock,
+            'rack_location' => $rackLocation,
+            'min_stock' => null // Use global min_stock
+        ]);
 
         // Redirect based on variant status
         if ($data['has_variants']) {

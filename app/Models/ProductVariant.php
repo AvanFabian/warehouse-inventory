@@ -39,11 +39,12 @@ class ProductVariant extends Model
 
     /**
      * Many-to-Many relationship with Warehouse through pivot table
+     * Note: Uses product_variant_id as the foreign key in pivot table
      */
     public function warehouses()
     {
-        return $this->belongsToMany(Warehouse::class, 'product_warehouse')
-            ->withPivot(['stock', 'rack_location', 'min_stock'])
+        return $this->belongsToMany(Warehouse::class, 'product_warehouse', 'product_variant_id', 'warehouse_id')
+            ->withPivot(['product_id', 'stock', 'rack_location', 'min_stock'])
             ->withTimestamps();
     }
 
@@ -93,11 +94,22 @@ class ProductVariant extends Model
      */
     public function getFormattedAttributesAttribute()
     {
-        if (empty($this->attributes)) {
-            return '';
+        $attrs = $this->getAttributes()['attributes'] ?? null;
+        
+        if (empty($attrs) || $attrs === '[]' || $attrs === 'null') {
+            return '-';
         }
 
-        return collect($this->attributes)
+        // If it's a JSON string, decode it
+        if (is_string($attrs)) {
+            $attrs = json_decode($attrs, true);
+        }
+
+        if (empty($attrs) || !is_array($attrs)) {
+            return '-';
+        }
+
+        return collect($attrs)
             ->map(fn($value, $key) => ucfirst($key) . ': ' . $value)
             ->join(', ');
     }

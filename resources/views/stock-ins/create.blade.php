@@ -1,10 +1,10 @@
 ﻿@extends('layouts.app')
 
-@section('title', 'Buat Stok Masuk')
+@section('title', __('app.create_stock_in'))
 
 @section('content')
    <div class="max-w-6xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4">Create Stock In Transaction</h2>
+      <h2 class="text-xl font-semibold mb-4">{{ __('app.create_stock_in_transaction') }}</h2>
 
       @if ($errors->any())
          <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
@@ -21,19 +21,19 @@
 
          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-               <label class="block text-sm mb-1">Transaction Code</label>
+               <label class="block text-sm mb-1">{{ __('app.transaction_code') }}</label>
                <input type="text" value="{{ $transactionCode }}" class="w-full border rounded px-2 py-1 bg-gray-100"
                   readonly />
             </div>
             <div>
-               <label class="block text-sm mb-1">Date <span class="text-red-500">*</span></label>
+               <label class="block text-sm mb-1">{{ __('app.date') }} <span class="text-red-500">*</span></label>
                <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}"
                   class="w-full border rounded px-2 py-1" required />
             </div>
             <div>
-               <label class="block text-sm mb-1">Warehouse <span class="text-red-500">*</span></label>
+               <label class="block text-sm mb-1">{{ __('app.warehouse') }} <span class="text-red-500">*</span></label>
                <select name="warehouse_id" class="w-full border rounded px-2 py-1" required>
-                  <option value="">-- Pilih Gudang --</option>
+                  <option value="">{{ __('app.select_warehouse') }}</option>
                   @foreach ($warehouses as $warehouse)
                      <option value="{{ $warehouse->id }}" {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
                         {{ $warehouse->name }}</option>
@@ -41,9 +41,9 @@
                </select>
             </div>
             <div>
-               <label class="block text-sm mb-1">Supplier</label>
+               <label class="block text-sm mb-1">{{ __('app.supplier') }}</label>
                <select name="supplier_id" class="w-full border rounded px-2 py-1">
-                  <option value="">-- Pilih Pemasok --</option>
+                  <option value="">{{ __('app.select_supplier') }}</option>
                   @foreach ($suppliers as $sup)
                      <option value="{{ $sup->id }}" {{ old('supplier_id') == $sup->id ? 'selected' : '' }}>
                         {{ $sup->name }}</option>
@@ -53,25 +53,25 @@
          </div>
 
          <div class="mb-4">
-            <label class="block text-sm mb-1">Notes</label>
+            <label class="block text-sm mb-1">{{ __('app.notes') }}</label>
             <textarea name="notes" class="w-full border rounded px-2 py-1" rows="2">{{ old('notes') }}</textarea>
          </div>
 
          <div class="border-t pt-4">
             <div class="flex items-center justify-between mb-3">
-               <h3 class="font-semibold">Product Items <span class="text-red-500">*</span></h3>
+               <h3 class="font-semibold">{{ __('app.product_items') }} <span class="text-red-500">*</span></h3>
                <button type="button" onclick="addProductRow()" class="px-3 py-1 bg-success text-white rounded text-sm">+
-                  Add Item</button>
+                  {{ __('app.add_item') }}</button>
             </div>
 
             <div class="overflow-x-auto">
                <table class="min-w-full" id="productTable">
                   <thead class="bg-gray-50">
                      <tr>
-                        <th class="text-left p-3">Produk</th>
-                        <th class="text-right p-2 w-24">Qty</th>
-                        <th class="text-right p-2 w-32">Purchase Price</th>
-                        <th class="text-left p-3">Subtotal</th>
+                        <th class="text-left p-3">{{ __('app.product') }}</th>
+                        <th class="text-right p-2 w-24">{{ __('app.qty') }}</th>
+                        <th class="text-right p-2 w-32">{{ __('app.purchase_price') }}</th>
+                        <th class="text-left p-3">{{ __('app.subtotal') }}</th>
                         <th class="w-16 p-2"></th>
                      </tr>
                   </thead>
@@ -80,7 +80,7 @@
                   </tbody>
                   <tfoot>
                      <tr class="border-t-2">
-                        <td colspan="3" class="text-right p-2 font-semibold">Grand Total:</td>
+                        <td colspan="3" class="text-right p-2 font-semibold">{{ __('app.grand_total') }}:</td>
                         <td class="text-right p-2 font-bold" id="grandTotal">Rp 0</td>
                         <td></td>
                      </tr>
@@ -90,8 +90,9 @@
          </div>
 
          <div class="flex gap-2 mt-6">
-            <button type="submit" class="px-4 py-2 bg-primary text-white rounded">Save Transaction</button>
-            <a href="{{ route('stock-ins.index') }}" class="px-4 py-2 border rounded">Batal</a>
+            <button type="submit"
+               class="px-4 py-2 bg-primary text-white rounded">{{ __('app.save_transaction') }}</button>
+            <a href="{{ route('stock-ins.index') }}" class="px-4 py-2 border rounded">{{ __('app.cancel') }}</a>
          </div>
       </form>
    </div>
@@ -107,7 +108,7 @@
          row.innerHTML = `
         <td class="p-2">
           <select name="products[${rowIndex}][product_id]" class="w-full border rounded px-2 py-1" onchange="updatePrice(this, ${rowIndex})" required>
-            <option value="">-- Pilih Produk --</option>
+            <option value="">{{ __('app.select_product') }}</option>
             ${products.map(p => `<option value="${p.id}" data-price="${p.purchase_price}">${p.code} - ${p.name}</option>`).join('')}
           </select>
         </td>

@@ -19,7 +19,7 @@ return [
     'not_registered' => 'Belum punya akun?',
 
     'You\'re logged in!' => 'Anda telah masuk!',
-    'Dashboard' => 'Dasbor',
+    'Dashboard' => 'Dashboard',
     'Profile' => 'Profil',
     'Log Out' => 'Keluar',
 ];

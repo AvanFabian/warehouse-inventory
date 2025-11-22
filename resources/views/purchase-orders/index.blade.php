@@ -6,14 +6,14 @@
    <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between mb-4">
          <div>
-            <h2 class="text-xl font-semibold">PO (Purchase Order)</h2>
-            <p class="text-sm text-gray-600">Kelola pemesanan barang dari supplier</p>
+            <h2 class="text-xl font-semibold">{{ __('app.purchase_orders') }}</h2>
+            <p class="text-sm text-gray-600">{{ __('app.manage_purchase_orders') }}</p>
          </div>
          <a href="{{ route('purchase-orders.create') }}" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700">
             <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            Buat PO Baru
+            {{ __('app.create_new_po') }}
          </a>
       </div>
 
@@ -21,14 +21,14 @@
       <form method="GET" action="{{ route('purchase-orders.index') }}" class="mb-4 bg-white p-4 rounded shadow">
          <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-1">Cari PO</label>
-               <input type="text" name="q" value="{{ request('q') }}" placeholder="Nomor PO..."
-                  class="w-full border rounded px-3 py-2" />
+               <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('app.search_po') }}</label>
+               <input type="text" name="q" value="{{ request('q') }}"
+                  placeholder="{{ __('app.po_number_placeholder') }}" class="w-full border rounded px-3 py-2" />
             </div>
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-1">Gudang</label>
+               <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('app.warehouse') }}</label>
                <select name="warehouse_id" class="w-full border rounded px-3 py-2">
-                  <option value="">Semua Gudang</option>
+                  <option value="">{{ __('app.all_warehouses') }}</option>
                   @foreach ($warehouses as $warehouse)
                      <option value="{{ $warehouse->id }}"
                         {{ request('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
@@ -38,9 +38,9 @@
                </select>
             </div>
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+               <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('app.supplier') }}</label>
                <select name="supplier_id" class="w-full border rounded px-3 py-2">
-                  <option value="">Semua Supplier</option>
+                  <option value="">{{ __('app.all_suppliers') }}</option>
                   @foreach ($suppliers as $supplier)
                      <option value="{{ $supplier->id }}" {{ request('supplier_id') == $supplier->id ? 'selected' : '' }}>
                         {{ $supplier->name }}
@@ -49,16 +49,21 @@
                </select>
             </div>
             <div>
-               <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+               <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('app.status') }}</label>
                <select name="status" class="w-full border rounded px-3 py-2">
-                  <option value="">Semua Status</option>
-                  <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                  <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                  <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Disetujui</option>
+                  <option value="">{{ __('app.all_statuses') }}</option>
+                  <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>{{ __('app.draft') }}
+                  </option>
+                  <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('app.pending') }}
+                  </option>
+                  <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
+                     {{ __('app.approved') }}</option>
                   <option value="partially_received" {{ request('status') == 'partially_received' ? 'selected' : '' }}>
-                     Sebagian Diterima</option>
-                  <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
-                  <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                     {{ __('app.partially_received') }}</option>
+                  <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>
+                     {{ __('app.completed') }}</option>
+                  <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>
+                     {{ __('app.cancelled') }}</option>
                </select>
             </div>
             <div class="flex items-end gap-2">
@@ -67,7 +72,7 @@
                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
-                  Cari
+                  {{ __('app.search') }}
                </button>
                <a href="{{ route('purchase-orders.index') }}"
                   class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
@@ -99,14 +104,14 @@
             <table class="min-w-full">
                <thead class="bg-gray-50">
                   <tr>
-                     <th class="text-left p-3 font-semibold">No. PO</th>
-                     <th class="text-left p-3 font-semibold">Tanggal</th>
-                     <th class="text-left p-3 font-semibold">Gudang</th>
-                     <th class="text-left p-3 font-semibold">Supplier</th>
-                     <th class="text-left p-3 font-semibold">Total</th>
-                     <th class="text-left p-3 font-semibold">Status</th>
-                     <th class="text-left p-3 font-semibold">Dibuat Oleh</th>
-                     <th class="text-left p-3 font-semibold">Aksi</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.po_number') }}</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.date') }}</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.warehouse') }}</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.supplier') }}</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.total') }}</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.status') }}</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.created_by') }}</th>
+                     <th class="text-left p-3 font-semibold">{{ __('app.actions') }}</th>
                   </tr>
                </thead>
                <tbody>
@@ -121,24 +126,31 @@
                         <td class="p-3">Rp {{ number_format($po->total_amount, 0, ',', '.') }}</td>
                         <td class="p-3">
                            @if ($po->status === 'draft')
-                              <span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">Draft</span>
+                              <span
+                                 class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">{{ __('app.draft') }}</span>
                            @elseif($po->status === 'pending')
-                              <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">Pending</span>
+                              <span
+                                 class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">{{ __('app.pending') }}</span>
                            @elseif($po->status === 'approved')
-                              <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">Disetujui</span>
+                              <span
+                                 class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">{{ __('app.approved') }}</span>
                            @elseif($po->status === 'partially_received')
-                              <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">Sebagian Diterima</span>
+                              <span
+                                 class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">{{ __('app.partially_received') }}</span>
                            @elseif($po->status === 'completed')
-                              <span class="px-2 py-1 text-xs rounded bg-purple-100 text-purple-700">Selesai</span>
+                              <span
+                                 class="px-2 py-1 text-xs rounded bg-purple-100 text-purple-700">{{ __('app.completed') }}</span>
                            @elseif($po->status === 'cancelled')
-                              <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">Dibatalkan</span>
+                              <span
+                                 class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">{{ __('app.cancelled') }}</span>
                            @endif
                         </td>
                         <td class="p-3">{{ $po->createdBy->name }}</td>
                         <td class="p-3">
                            <div class="flex gap-1">
                               <a href="{{ route('purchase-orders.show', $po) }}"
-                                 class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm" title="Detail">
+                                 class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                                 title="{{ __('app.view') }}">
                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -150,7 +162,7 @@
                               @if ($po->canBeEdited())
                                  <a href="{{ route('purchase-orders.edit', $po) }}"
                                     class="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
-                                    title="Edit">
+                                    title="{{ __('app.edit') }}">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -158,12 +170,13 @@
                                     </svg>
                                  </a>
                                  <form action="{{ route('purchase-orders.destroy', $po) }}" method="POST"
-                                    class="inline-block" onsubmit="return confirm('Yakin ingin menghapus PO ini?')">
+                                    class="inline-block"
+                                    onsubmit="return confirm('{{ __('app.confirm_delete', ['item' => __('app.purchase_order')]) }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
                                        class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
-                                       title="Hapus">
+                                       title="{{ __('app.delete') }}">
                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
@@ -184,7 +197,7 @@
                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                               </path>
                            </svg>
-                           <p>Tidak ada data PO</p>
+                           <p>{{ __('app.no_po_data') }}</p>
                         </td>
                      </tr>
                   @endforelse

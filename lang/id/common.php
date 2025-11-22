@@ -2,7 +2,7 @@
 
 return [
     // Navigation
-    'dashboard' => 'Dasbor',
+    'dashboard' => 'Dashboard',
     'products' => 'Produk',
     'categories' => 'Kategori',
     'suppliers' => 'Pemasok',

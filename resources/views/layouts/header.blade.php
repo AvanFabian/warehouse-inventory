@@ -4,20 +4,50 @@
          <div class="flex items-center gap-4">
             <button id="sidebarToggle" class="md:hidden p-2 rounded hover:bg-gray-100">☰</button>
             <a href="{{ url('/') }}" class="flex items-center gap-3">
-               <img src="{{ asset('storage/avandigital-logo-2.png') }}"
-                  alt="Avan Digital Logo" class="h-8 w-8 rounded-full">
+               <img src="{{ asset('storage/avandigital-logo-2.png') }}" alt="Avan Digital Logo"
+                  class="h-8 w-8 rounded-full">
                <span class="text-lg font-semibold text-gray-800">Warehouse Inventory Management</span>
             </a>
          </div>
 
          <div class="flex items-center gap-4">
+            <!-- Language Switcher -->
+            <div class="relative" x-data="{ open: false }">
+               <button @click="open = !open"
+                  class="flex items-center gap-2 px-3 py-2 text-sm border rounded hover:bg-gray-50">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129">
+                     </path>
+                  </svg>
+                  <span>{{ app()->getLocale() === 'id' ? 'ID' : 'EN' }}</span>
+                  <svg class="w-4 h-4" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+               </button>
+               <div x-show="open" @click.away="open = false" x-transition
+                  class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
+                  <a href="{{ route('locale.switch', 'en') }}"
+                     class="block px-4 py-2 text-sm hover:bg-gray-100 {{ app()->getLocale() === 'en' ? 'bg-blue-50 text-blue-600 font-semibold' : '' }}">
+                     🇬🇧 English
+                  </a>
+                  <a href="{{ route('locale.switch', 'id') }}"
+                     class="block px-4 py-2 text-sm hover:bg-gray-100 {{ app()->getLocale() === 'id' ? 'bg-blue-50 text-blue-600 font-semibold' : '' }}">
+                     🇮🇩 Bahasa Indonesia
+                  </a>
+               </div>
+            </div>
+
             <div class="hidden sm:block">
                <span class="text-sm text-slate-600">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</span>
             </div>
             @auth
                <form method="POST" action="{{ route('logout') }}">
                   @csrf
-                  <button type="submit" class="text-sm text-red-600 hover:underline">Logout</button>
+                  <button type="submit" class="text-sm text-red-600 hover:underline">
+                     {{ __('app.logout') }}
+                  </button>
                </form>
             @endauth
          </div>

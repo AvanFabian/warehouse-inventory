@@ -3,7 +3,7 @@
 // Translation mappings for warehouse inventory system
 $translations = [
     // Navigation & Menu
-    'Dashboard' => 'Dasbor',
+    'Dashboard' => 'Dashboard',
     'Products' => 'Produk',
     'Categories' => 'Kategori',
     'Suppliers' => 'Pemasok',

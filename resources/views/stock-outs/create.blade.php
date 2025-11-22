@@ -4,7 +4,7 @@
 
 @section('content')
    <div class="max-w-6xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4">Create Stock Out Transaction</h2>
+      <h2 class="text-xl font-semibold mb-4">{{ __('app.create_stock_out_transaction') }}</h2>
 
       @if ($errors->any())
          <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
@@ -21,20 +21,20 @@
 
          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-               <label class="block text-sm mb-1">Transaction Code</label>
+               <label class="block text-sm mb-1">{{ __('app.transaction_code') }}</label>
                <input type="text" value="{{ $transactionCode }}" class="w-full border rounded px-2 py-1 bg-gray-100"
                   readonly />
             </div>
             <div>
-               <label class="block text-sm mb-1">Date <span class="text-red-500">*</span></label>
+               <label class="block text-sm mb-1">{{ __('app.date') }} <span class="text-red-500">*</span></label>
                <input type="date" name="date" value="{{ old('date', date('Y-m-d')) }}"
                   class="w-full border rounded px-2 py-1" required />
             </div>
             <div>
-               <label class="block text-sm mb-1">Warehouse <span class="text-red-500">*</span></label>
+               <label class="block text-sm mb-1">{{ __('app.warehouse') }} <span class="text-red-500">*</span></label>
                <select name="warehouse_id" id="warehouseSelect" class="w-full border rounded px-2 py-1"
                   onchange="loadWarehouseProducts()" required>
-                  <option value="">-- Pilih Gudang --</option>
+                  <option value="">{{ __('app.choose_warehouse_first') }}</option>
                   @foreach ($warehouses as $warehouse)
                      <option value="{{ $warehouse->id }}" {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
                         {{ $warehouse->name }}</option>
@@ -42,33 +42,33 @@
                </select>
             </div>
             <div>
-               <label class="block text-sm mb-1">Customer/Destination</label>
+               <label class="block text-sm mb-1">{{ __('app.customer_destination') }}</label>
                <input type="text" name="customer" value="{{ old('customer') }}" class="w-full border rounded px-2 py-1"
-                  placeholder="Optional" />
+                  placeholder="{{ __('app.optional') }}" />
             </div>
          </div>
 
          <div class="mb-4">
-            <label class="block text-sm mb-1">Notes</label>
+            <label class="block text-sm mb-1">{{ __('app.notes') }}</label>
             <textarea name="notes" class="w-full border rounded px-2 py-1" rows="2">{{ old('notes') }}</textarea>
          </div>
 
          <div class="border-t pt-4">
             <div class="flex items-center justify-between mb-3">
-               <h3 class="font-semibold">Product Items <span class="text-red-500">*</span></h3>
+               <h3 class="font-semibold">{{ __('app.product_items') }} <span class="text-red-500">*</span></h3>
                <button type="button" onclick="addProductRow()" class="px-3 py-1 bg-success text-white rounded text-sm">+
-                  Add Item</button>
+                  {{ __('app.add_item') }}</button>
             </div>
 
             <div class="overflow-x-auto">
                <table class="min-w-full" id="productTable">
                   <thead class="bg-gray-50">
                      <tr>
-                        <th class="text-left p-3">Produk</th>
-                        <th class="text-right p-2 w-24">Available</th>
-                        <th class="text-right p-2 w-24">Qty</th>
-                        <th class="text-right p-2 w-32">Selling Price</th>
-                        <th class="text-left p-3">Subtotal</th>
+                        <th class="text-left p-3">{{ __('app.product') }}</th>
+                        <th class="text-right p-2 w-24">{{ __('app.available_stock') }}</th>
+                        <th class="text-right p-2 w-24">{{ __('app.qty') }}</th>
+                        <th class="text-right p-2 w-32">{{ __('app.selling_price') }}</th>
+                        <th class="text-left p-3">{{ __('app.subtotal') }}</th>
                         <th class="w-16 p-2"></th>
                      </tr>
                   </thead>
@@ -77,7 +77,7 @@
                   </tbody>
                   <tfoot>
                      <tr class="border-t-2">
-                        <td colspan="4" class="text-right p-2 font-semibold">Grand Total:</td>
+                        <td colspan="4" class="text-right p-2 font-semibold">{{ __('app.grand_total') }}:</td>
                         <td class="text-right p-2 font-bold" id="grandTotal">Rp 0</td>
                         <td></td>
                      </tr>
@@ -87,8 +87,9 @@
          </div>
 
          <div class="flex gap-2 mt-6">
-            <button type="submit" class="px-4 py-2 bg-danger text-white rounded">Save Transaction</button>
-            <a href="{{ route('stock-outs.index') }}" class="px-4 py-2 border rounded">Batal</a>
+            <button type="submit"
+               class="px-4 py-2 bg-danger text-white rounded">{{ __('app.save_transaction') }}</button>
+            <a href="{{ route('stock-outs.index') }}" class="px-4 py-2 border rounded">{{ __('app.cancel') }}</a>
          </div>
       </form>
    </div>
@@ -128,7 +129,7 @@
          row.innerHTML = `
         <td class="p-2">
           <select name="products[${rowIndex}][product_id]" class="w-full border rounded px-2 py-1" onchange="updateProductInfo(this, ${rowIndex})" required>
-            <option value="">-- Pilih Produk --</option>
+            <option value="">{{ __('app.select_product') }}</option>
             ${products.map(p => `<option value="${p.id}" data-stock="${p.stock}" data-unit="${p.unit}" data-price="${p.selling_price}">${p.code} - ${p.name}</option>`).join('')}
           </select>
         </td>
@@ -166,7 +167,7 @@
          const max = parseFloat(qtyInput.max) || 0;
 
          if (qty > max) {
-            alert(`Quantity exceeds available stock (${max})`);
+            alert(`{{ __('app.insufficient_stock') }} (${max})`);
             qtyInput.value = max;
          }
 

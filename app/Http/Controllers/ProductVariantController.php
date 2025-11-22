@@ -89,7 +89,9 @@ class ProductVariantController extends Controller
         ]);
 
         // Attach to warehouse with initial stock
+        // Must include product_id since product_warehouse table requires it
         $variant->warehouses()->attach($warehouseId, [
+            'product_id' => $product->id,
             'stock' => $initialStock,
             'rack_location' => $rackLocation,
             'min_stock' => null

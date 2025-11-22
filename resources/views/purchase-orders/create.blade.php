@@ -5,8 +5,8 @@
 @section('content')
    <div class="max-w-7xl mx-auto p-6">
       <div class="mb-6">
-         <h2 class="text-2xl font-semibold text-gray-800">Buat PO (Purchase Order)</h2>
-         <p class="text-gray-600">Tambah PO (Purchase Order) baru</p>
+         <h2 class="text-2xl font-semibold text-gray-800">{{ __('app.create_purchase_order') }}</h2>
+         <p class="text-gray-600">{{ __('app.add_new_po') }}</p>
       </div>
 
       <form action="{{ route('purchase-orders.store') }}" method="POST" id="poForm">
@@ -15,7 +15,7 @@
          <!-- PO Information Card -->
          <div class="bg-white rounded shadow mb-6">
             <div class="px-6 py-4 border-b border-gray-200">
-               <h3 class="text-lg font-semibold text-gray-800">Informasi PO</h3>
+               <h3 class="text-lg font-semibold text-gray-800">{{ __('app.po_information') }}</h3>
             </div>
             <div class="p-6">
                @if (session('error'))
@@ -27,11 +27,11 @@
                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Gudang <span class="text-red-600">*</span>
+                        {{ __('app.warehouse') }} <span class="text-red-600">*</span>
                      </label>
                      <select name="warehouse_id"
                         class="w-full border rounded px-3 py-2 @error('warehouse_id') border-red-500 @enderror" required>
-                        <option value="">Pilih Gudang</option>
+                        <option value="">{{ __('app.choose_warehouse') }}</option>
                         @foreach ($warehouses as $warehouse)
                            <option value="{{ $warehouse->id }}"
                               {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>
@@ -46,13 +46,14 @@
 
                   <div>
                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Supplier <span class="text-red-600">*</span>
+                        {{ __('app.supplier') }} <span class="text-red-600">*</span>
                      </label>
                      <select name="supplier_id"
                         class="w-full border rounded px-3 py-2 @error('supplier_id') border-red-500 @enderror" required>
-                        <option value="">Pilih Supplier</option>
+                        <option value="">{{ __('app.choose_supplier') }}</option>
                         @foreach ($suppliers as $supplier)
-                           <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
+                           <option value="{{ $supplier->id }}"
+                              {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>
                               {{ $supplier->name }}
                            </option>
                         @endforeach
@@ -64,7 +65,7 @@
 
                   <div>
                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Tanggal Order <span class="text-red-600">*</span>
+                        {{ __('app.order_date') }} <span class="text-red-600">*</span>
                      </label>
                      <input type="date" name="order_date"
                         class="w-full border rounded px-3 py-2 @error('order_date') border-red-500 @enderror"
@@ -76,7 +77,7 @@
 
                   <div>
                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Tanggal Pengiriman Diharapkan
+                        {{ __('app.expected_delivery_date') }}
                      </label>
                      <input type="date" name="expected_delivery_date"
                         class="w-full border rounded px-3 py-2 @error('expected_delivery_date') border-red-500 @enderror"
@@ -88,9 +89,9 @@
                </div>
 
                <div class="mt-4">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('app.notes') }}</label>
                   <textarea name="notes" class="w-full border rounded px-3 py-2 @error('notes') border-red-500 @enderror" rows="3"
-                     placeholder="Catatan tambahan (opsional)">{{ old('notes') }}</textarea>
+                     placeholder="{{ __('app.additional_notes') }}">{{ old('notes') }}</textarea>
                   @error('notes')
                      <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                   @enderror
@@ -101,13 +102,13 @@
          <!-- Product Details Card -->
          <div class="bg-white rounded shadow mb-6">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-               <h3 class="text-lg font-semibold text-gray-800">Detail Produk</h3>
+               <h3 class="text-lg font-semibold text-gray-800">{{ __('app.product_details') }}</h3>
                <button type="button" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                   id="addProductBtn">
                   <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                   </svg>
-                  Tambah Produk
+                  {{ __('app.add_product_button') }}
                </button>
             </div>
             <div class="p-6">
@@ -115,17 +116,17 @@
                   <table class="min-w-full border" id="productsTable">
                      <thead class="bg-gray-50">
                         <tr>
-                           <th class="text-left p-3 font-semibold border-b">Produk</th>
-                           <th class="text-left p-3 font-semibold border-b w-32">Jumlah</th>
-                           <th class="text-left p-3 font-semibold border-b w-40">Harga Satuan</th>
-                           <th class="text-left p-3 font-semibold border-b w-40">Subtotal</th>
-                           <th class="text-left p-3 font-semibold border-b w-20">Aksi</th>
+                           <th class="text-left p-3 font-semibold border-b">{{ __('app.product') }}</th>
+                           <th class="text-left p-3 font-semibold border-b w-32">{{ __('app.quantity') }}</th>
+                           <th class="text-left p-3 font-semibold border-b w-40">{{ __('app.unit_price') }}</th>
+                           <th class="text-left p-3 font-semibold border-b w-40">{{ __('app.subtotal') }}</th>
+                           <th class="text-left p-3 font-semibold border-b w-20">{{ __('app.actions') }}</th>
                         </tr>
                      </thead>
                      <tbody id="productRows"></tbody>
                      <tfoot class="bg-gray-50">
                         <tr>
-                           <td colspan="3" class="text-right p-3 font-bold border-t">Total:</td>
+                           <td colspan="3" class="text-right p-3 font-bold border-t">{{ __('app.total') }}:</td>
                            <td colspan="2" class="p-3 border-t">
                               <input type="text" id="totalAmount" class="w-full border rounded px-3 py-2 bg-gray-100"
                                  readonly>
@@ -139,7 +140,7 @@
                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
-                  Klik tombol "Tambah Produk" untuk menambahkan produk ke dalam PO
+                  {{ __('app.add_product_note') }}
                </div>
             </div>
          </div>
@@ -152,7 +153,7 @@
                      d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4">
                   </path>
                </svg>
-               Simpan
+               {{ __('app.save') }}
             </button>
             <a href="{{ route('purchase-orders.index') }}"
                class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
@@ -160,7 +161,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
                   </path>
                </svg>
-               Kembali
+               {{ __('app.back') }}
             </a>
          </div>
       </form>
@@ -170,7 +171,7 @@
    <div id="productModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
       <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
          <div class="flex justify-between items-center pb-3 border-b">
-            <h3 class="text-xl font-semibold">Pilih Produk</h3>
+            <h3 class="text-xl font-semibold">{{ __('app.select_product_modal') }}</h3>
             <button type="button" class="text-gray-400 hover:text-gray-600" onclick="closeProductModal()">
                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -180,16 +181,16 @@
          <div class="mt-4">
             <div class="mb-4">
                <input type="text" class="w-full border rounded px-3 py-2" id="searchProduct"
-                  placeholder="Cari produk berdasarkan kode atau nama...">
+                  placeholder="{{ __('app.search_by_code_name') }}">
             </div>
             <div class="overflow-x-auto max-h-96">
                <table class="min-w-full">
                   <thead class="bg-gray-50 sticky top-0">
                      <tr>
-                        <th class="text-left p-3 font-semibold">Kode</th>
-                        <th class="text-left p-3 font-semibold">Nama</th>
-                        <th class="text-left p-3 font-semibold">Kategori</th>
-                        <th class="text-left p-3 font-semibold">Aksi</th>
+                        <th class="text-left p-3 font-semibold">{{ __('app.code') }}</th>
+                        <th class="text-left p-3 font-semibold">{{ __('app.name') }}</th>
+                        <th class="text-left p-3 font-semibold">{{ __('app.category') }}</th>
+                        <th class="text-left p-3 font-semibold">{{ __('app.actions') }}</th>
                      </tr>
                   </thead>
                   <tbody id="productList"></tbody>
@@ -284,7 +285,7 @@
             });
 
             if (exists) {
-               alert('Produk sudah ditambahkan');
+               alert('{{ __('app.product_already_added') }}');
                return;
             }
 
@@ -361,7 +362,7 @@
       document.getElementById('poForm').addEventListener('submit', function(e) {
          if (document.querySelectorAll('.product-row').length === 0) {
             e.preventDefault();
-            alert('Minimal harus ada 1 produk');
+            alert('{{ __('app.min_one_product') }}');
             return false;
          }
       });
