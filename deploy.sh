@@ -1,69 +1,82 @@
 #!/bin/bash
 
-# Deployment Script for Warehouse Inventory System
-# Run this script after uploading files to server
+# Warehouse Inventory Deployment Script
+echo "🚀 Starting deployment of Warehouse Inventory System..."
 
-echo "🚀 Starting deployment process..."
+# Configuration
+DOMAIN="gudangbiasa.avandigital.id"
+CPANEL_USER="avanfabi"
+DB_NAME="avandigital_warehouse_management_db"
 
-# 1. Set proper permissions
-echo "📁 Setting file permissions..."
-chmod -R 755 storage bootstrap/cache
-chmod -R 775 storage
-chmod -R 775 bootstrap/cache
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-# 2. Install/Update Composer dependencies (production only)
-echo "📦 Installing Composer dependencies..."
-composer install --optimize-autoloader --no-dev
+# Functions
+print_status() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
 
-# 3. Clear and cache config
-echo "⚙️ Optimizing configuration..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan event:cache
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
 
-# 4. Run migrations
-echo "🗄️ Running database migrations..."
-php artisan migrate --force
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
 
-# 5. Create symbolic link for storage
-echo "🔗 Creating storage link..."
-php artisan storage:link
+# Pre-deployment checks
+print_status "Running pre-deployment checks..."
 
-# 6. Install NPM dependencies and build assets
-echo "🎨 Building frontend assets..."
-npm ci --production
+# Check if .env.production exists
+if [ ! -f ".env.production" ]; then
+    print_error ".env.production file not found!"
+    exit 1
+fi
+
+# Run tests
+print_status "Running tests..."
+if ! vendor/bin/phpunit; then
+    print_error "Tests failed! Deployment aborted."
+    exit 1
+fi
+
+# Build assets
+print_status "Building production assets..."
 npm run build
 
-# 7. Clear all caches
-echo "🧹 Clearing application cache..."
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+# Create optimized vendor
+print_status "Installing production dependencies..."
+composer install --no-dev --optimize-autoloader
 
-# 8. Re-cache for production
-echo "💾 Caching for production..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+# Create deployment package
+print_status "Creating deployment package..."
+tar -czf warehouse-deploy.tar.gz \
+    --exclude='node_modules' \
+    --exclude='.git' \
+    --exclude='tests' \
+    --exclude='storage/logs/*' \
+    --exclude='storage/framework/cache/*' \
+    --exclude='storage/framework/sessions/*' \
+    --exclude='storage/framework/views/*' \
+    .
 
-# 9. Optimize autoloader
-echo "⚡ Optimizing autoloader..."
-composer dump-autoload --optimize
+print_status "Deployment package created: warehouse-deploy.tar.gz"
+print_warning "Now upload this package to your cPanel and extract it."
 
-# 10. Set final permissions
-echo "🔒 Setting final permissions..."
-chmod -R 755 .
-chmod -R 775 storage bootstrap/cache
-
-echo "✅ Deployment completed successfully!"
 echo ""
-echo "⚠️  Important: Please verify:"
-echo "   1. .env file is configured correctly"
-echo "   2. Database credentials are correct"
-echo "   3. APP_KEY is set"
-echo "   4. APP_DEBUG=false"
-echo "   5. HTTPS is working"
-echo ""
-echo "🎉 Your application is ready!"
+print_status "Post-deployment checklist:"
+echo "1. Upload warehouse-deploy.tar.gz to cPanel"
+echo "2. Extract to private/warehouse-inventory/"
+echo "3. Copy .env.production to .env"
+echo "4. Run: php artisan migrate --force"
+echo "5. Run: php artisan config:cache"
+echo "6. Run: php artisan route:cache"
+echo "7. Run: php artisan view:cache"
+echo "8. Run: php artisan storage:link"
+echo "9. Set proper file permissions"
+echo "10. Test the application"
+
+print_status "Deployment preparation completed!"
