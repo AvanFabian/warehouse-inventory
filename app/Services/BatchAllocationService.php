@@ -125,7 +125,7 @@ class BatchAllocationService
                         'batch' => $batch,
                         'batch_id' => $batch->id,
                         'quantity' => $allocateQuantity,
-                        'bin_id' => $location->bin_id,
+                        'bin' => $location->bin,
                     ]);
 
                     $remainingQuantity -= $allocateQuantity;

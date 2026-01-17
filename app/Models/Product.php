@@ -23,7 +23,9 @@ class Product extends Model
         'selling_price',
         'image',
         'status',
-        'has_variants'
+        'has_variants',
+        'enable_batch_tracking',
+        'batch_method',
     ];
 
     protected $casts = [

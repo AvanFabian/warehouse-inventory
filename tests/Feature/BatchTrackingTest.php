@@ -11,6 +11,8 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Batch;
 use App\Models\StockLocation;
+use App\Models\AuditLog;
+use App\Models\BatchMovement;
 use App\Services\BatchInboundService;
 use App\Services\BatchAllocationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -464,7 +466,7 @@ class BatchTrackingTest extends TestCase
         // Should consolidate into existing bin
         $this->assertCount(1, $batch->fresh()->stockLocations);
         $this->assertEquals(50, $batch->fresh()->total_quantity);
-        $this->assertEquals($bin->id, $result->first()['bin_id']);
+        $this->assertEquals($bin->id, $result->first()['bin']->id);
     }
 
     public function test_putaway_finds_new_bin_when_batch_is_new(): void
@@ -706,5 +708,220 @@ class BatchTrackingTest extends TestCase
         $this->assertEquals(50, $bin->fresh()->current_occupancy);
         $this->assertTrue($bin->fresh()->hasCapacity(50)); // 50 remaining
         $this->assertFalse($bin->fresh()->hasCapacity(51)); // Would exceed
+    }
+
+    // ============================================
+    // API TESTS (Phase D)
+    // ============================================
+
+    /**
+     * Test API stock-in creates batch, stock location, and audit log.
+     */
+    public function test_api_stock_in_creates_batch_and_audit_log(): void
+    {
+        // Create a bin for stock placement
+        $bin = WarehouseBin::create([
+            'rack_id' => $this->rack->id,
+            'code' => 'BIN-API-IN',
+            'max_capacity' => 100,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->user);
+
+        $response = $this->postJson('/api/v1/stock-in', [
+            'warehouse_id' => $this->warehouse->id,
+            'items' => [
+                [
+                    'product_id' => $this->product->id,
+                    'quantity' => 25,
+                    'purchase_price' => 100,
+                ],
+            ],
+            'notes' => 'API Test Stock In',
+        ]);
+        
+        $response->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Stock in created successfully',
+            ]);
+
+        // Verify batch was created
+        $this->assertDatabaseHas('batches', [
+            'product_id' => $this->product->id,
+        ]);
+
+        // Verify stock location was created
+        $batch = Batch::where('product_id', $this->product->id)->first();
+        $this->assertNotNull($batch);
+        $this->assertDatabaseHas('stock_locations', [
+            'batch_id' => $batch->id,
+        ]);
+
+        // Verify audit log was created for the batch
+        $this->assertDatabaseHas('audit_logs', [
+            'auditable_type' => Batch::class,
+            'auditable_id' => $batch->id,
+            'event' => 'created',
+        ]);
+
+        // Verify batch movement was created
+        $this->assertDatabaseHas('batch_movements', [
+            'batch_id' => $batch->id,
+            'movement_type' => 'stock_in',
+        ]);
+    }
+
+    /**
+     * Test API stock-out uses allocation service and creates audit log.
+     */
+    public function test_api_stock_out_uses_allocation_service(): void
+    {
+        // Setup: Create bin and existing batch with stock
+        $bin = WarehouseBin::create([
+            'rack_id' => $this->rack->id,
+            'code' => 'BIN-API-OUT',
+            'max_capacity' => 100,
+            'is_active' => true,
+        ]);
+
+        $batch = Batch::create([
+            'batch_number' => 'BATCH-API-OUT',
+            'product_id' => $this->product->id,
+            'cost_price' => 100,
+            'status' => 'active',
+        ]);
+
+        StockLocation::create([
+            'batch_id' => $batch->id,
+            'bin_id' => $bin->id,
+            'quantity' => 50,
+            'reserved_quantity' => 0,
+        ]);
+
+        $this->actingAs($this->user);
+
+        $response = $this->postJson('/api/v1/stock-out', [
+            'warehouse_id' => $this->warehouse->id,
+            'items' => [
+                [
+                    'product_id' => $this->product->id,
+                    'quantity' => 20,
+                    'selling_price' => 150,
+                ],
+            ],
+            'customer' => 'API Test Customer',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Stock out created successfully',
+            ]);
+
+        // Verify stock was reduced
+        $stockLocation = StockLocation::where('batch_id', $batch->id)->first();
+        $this->assertEquals(30, $stockLocation->quantity); // 50 - 20 = 30
+
+        // Verify batch movement was created for stock out
+        $this->assertDatabaseHas('batch_movements', [
+            'batch_id' => $batch->id,
+            'movement_type' => 'stock_out',
+        ]);
+    }
+
+    /**
+     * Test API get batches returns inventory data.
+     */
+    public function test_api_get_batches_returns_inventory(): void
+    {
+        // Create bin and batch with stock
+        $bin = WarehouseBin::create([
+            'rack_id' => $this->rack->id,
+            'code' => 'BIN-API-LIST',
+            'max_capacity' => 100,
+            'is_active' => true,
+        ]);
+
+        $batch = Batch::create([
+            'batch_number' => 'BATCH-API-LIST',
+            'product_id' => $this->product->id,
+            'cost_price' => 100,
+            'status' => 'active',
+        ]);
+
+        StockLocation::create([
+            'batch_id' => $batch->id,
+            'bin_id' => $bin->id,
+            'quantity' => 75,
+            'reserved_quantity' => 10,
+        ]);
+
+        $this->actingAs($this->user);
+
+        $response = $this->getJson('/api/v1/inventory/batches');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        // Verify response contains batch data
+        $responseData = $response->json('data');
+        $this->assertNotEmpty($responseData);
+        
+        $foundBatch = collect($responseData)->firstWhere('batch_number', 'BATCH-API-LIST');
+        $this->assertNotNull($foundBatch);
+        $this->assertEquals(75, $foundBatch['total_quantity']);
+        $this->assertEquals(10, $foundBatch['reserved_quantity']);
+        $this->assertEquals(65, $foundBatch['available_quantity']); // 75 - 10
+    }
+
+    /**
+     * Test API stock-out returns error for insufficient stock.
+     */
+    public function test_api_stock_out_returns_error_for_insufficient_stock(): void
+    {
+        // Setup: Create bin and existing batch with limited stock
+        $bin = WarehouseBin::create([
+            'rack_id' => $this->rack->id,
+            'code' => 'BIN-API-ERR',
+            'max_capacity' => 100,
+            'is_active' => true,
+        ]);
+
+        $batch = Batch::create([
+            'batch_number' => 'BATCH-LIMITED',
+            'product_id' => $this->product->id,
+            'cost_price' => 100,
+            'status' => 'active',
+        ]);
+
+        StockLocation::create([
+            'batch_id' => $batch->id,
+            'bin_id' => $bin->id,
+            'quantity' => 10,
+            'reserved_quantity' => 0,
+        ]);
+
+        $this->actingAs($this->user);
+
+        $response = $this->postJson('/api/v1/stock-out', [
+            'warehouse_id' => $this->warehouse->id,
+            'items' => [
+                [
+                    'product_id' => $this->product->id,
+                    'quantity' => 50, // More than available
+                    'selling_price' => 150,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'success' => false,
+                'error' => 'insufficient_stock',
+            ]);
     }
 }

@@ -174,7 +174,7 @@ class BatchInboundService
                     );
 
                     $placements->push([
-                        'bin_id' => $bin->id,
+                        'bin' => $bin,
                         'quantity' => $fillQuantity,
                         'is_consolidation' => true,
                     ]);
@@ -217,7 +217,7 @@ class BatchInboundService
                     );
 
                     $placements->push([
-                        'bin_id' => $bin->id,
+                        'bin' => $bin,
                         'quantity' => $fillQuantity,
                         'is_consolidation' => false,
                     ]);
