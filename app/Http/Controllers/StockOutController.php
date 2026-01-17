@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StockOut;
 use App\Models\StockOutDetail;
 use App\Models\Product;
+use App\Services\LegacyStockAuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -129,6 +130,15 @@ class StockOutController extends Controller
                     $product->warehouses()->updateExistingPivot($request->warehouse_id, [
                         'stock' => DB::raw('stock - ' . (int)$item['quantity'])
                     ]);
+                    
+                    // Bridge logging for legacy stock update
+                    LegacyStockAuditService::logPivotStockChange(
+                        $item['product_id'],
+                        $request->warehouse_id,
+                        -(int)$item['quantity'],
+                        'stock_out',
+                        ['transaction_code' => $stockOut->transaction_code, 'stock_out_id' => $stockOut->id]
+                    );
                 }
             }
 
@@ -159,6 +169,15 @@ class StockOutController extends Controller
                     $product->warehouses()->updateExistingPivot($stockOut->warehouse_id, [
                         'stock' => DB::raw('stock + ' . (int)$detail->quantity)
                     ]);
+                    
+                    // Bridge logging for legacy stock reversal
+                    LegacyStockAuditService::logPivotStockChange(
+                        $detail->product_id,
+                        $stockOut->warehouse_id,
+                        (int)$detail->quantity,
+                        'stock_out_delete',
+                        ['transaction_code' => $stockOut->transaction_code, 'stock_out_id' => $stockOut->id]
+                    );
                 }
             }
 

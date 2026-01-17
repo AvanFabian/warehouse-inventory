@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class StockOutDetail extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = ['stock_out_id', 'product_id', 'quantity', 'selling_price', 'total'];
 

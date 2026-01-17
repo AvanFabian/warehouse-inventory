@@ -7,6 +7,7 @@ use App\Models\StockInDetail;
 use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\Warehouse;
+use App\Services\LegacyStockAuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -127,6 +128,15 @@ class StockInController extends Controller
                     $product->warehouses()->updateExistingPivot($request->warehouse_id, [
                         'stock' => DB::raw('stock + ' . (int)$item['quantity'])
                     ]);
+                    
+                    // Bridge logging for legacy stock update
+                    LegacyStockAuditService::logPivotStockChange(
+                        $item['product_id'],
+                        $request->warehouse_id,
+                        (int)$item['quantity'],
+                        'stock_in',
+                        ['transaction_code' => $stockIn->transaction_code, 'stock_in_id' => $stockIn->id]
+                    );
                 } else {
                     // Attach product to warehouse with initial stock
                     $product->warehouses()->attach($request->warehouse_id, [
@@ -134,6 +144,15 @@ class StockInController extends Controller
                         'rack_location' => null,
                         'min_stock' => null
                     ]);
+                    
+                    // Bridge logging for legacy stock update (new product-warehouse association)
+                    LegacyStockAuditService::logPivotStockChange(
+                        $item['product_id'],
+                        $request->warehouse_id,
+                        (int)$item['quantity'],
+                        'stock_in_attach',
+                        ['transaction_code' => $stockIn->transaction_code, 'stock_in_id' => $stockIn->id]
+                    );
                 }
             }
 
@@ -164,6 +183,15 @@ class StockInController extends Controller
                     $product->warehouses()->updateExistingPivot($stockIn->warehouse_id, [
                         'stock' => DB::raw('stock - ' . (int)$detail->quantity)
                     ]);
+                    
+                    // Bridge logging for legacy stock reversal
+                    LegacyStockAuditService::logPivotStockChange(
+                        $detail->product_id,
+                        $stockIn->warehouse_id,
+                        -(int)$detail->quantity,
+                        'stock_in_delete',
+                        ['transaction_code' => $stockIn->transaction_code, 'stock_in_id' => $stockIn->id]
+                    );
                 }
             }
 
