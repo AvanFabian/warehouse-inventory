@@ -70,14 +70,19 @@ class WarehouseBin extends Model
     }
 
     /**
-     * Get current occupancy from stock_locations (will be implemented in Phase B)
-     * For now, returns 0 as stock_locations table doesn't exist yet
+     * Bin has many stock locations (batches stored here)
+     */
+    public function stockLocations(): HasMany
+    {
+        return $this->hasMany(StockLocation::class, 'bin_id');
+    }
+
+    /**
+     * Get current occupancy from stock_locations
      */
     public function getCurrentOccupancyAttribute(): int
     {
-        // This will be updated in Phase B when stock_locations table is created
-        // return $this->stockLocations()->sum('quantity');
-        return 0;
+        return $this->stockLocations()->sum('quantity');
     }
 
     /**
