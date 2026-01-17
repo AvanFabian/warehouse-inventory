@@ -71,10 +71,12 @@
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('transfers.*') ? 'bg-primary text-white' : '' }}">
                {{ __('app.warehouse_transfers') }}
             </a>
-            <a href="{{ route('stock-opnames.index') }}"
-               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-opnames.*') ? 'bg-primary text-white' : '' }}">
-               {{ __('app.stock_opname') }}
-            </a>
+            @if (auth()->user()->isAdmin() || auth()->user()->isManager())
+               <a href="{{ route('stock-opnames.index') }}"
+                  class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('stock-opnames.*') ? 'bg-primary text-white' : '' }}">
+                  📋 {{ __('app.stock_opname') }}
+               </a>
+            @endif
          </div>
 
          <div class="mt-2">

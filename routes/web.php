@@ -57,8 +57,10 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::post('transfers/{transfer}/start-transit', [App\Http\Controllers\InterWarehouseTransferController::class, 'startTransit'])->name('transfers.start-transit');
     Route::post('transfers/{transfer}/complete', [App\Http\Controllers\InterWarehouseTransferController::class, 'complete'])->name('transfers.complete');
 
-    // Stock Opname
-    Route::resource('stock-opnames', App\Http\Controllers\StockOpnameController::class)->except(['edit', 'update', 'show']);
+    // Stock Opname (Owner only)
+    Route::middleware('owner')->group(function () {
+        Route::resource('stock-opnames', App\Http\Controllers\StockOpnameController::class)->except(['edit', 'update', 'show']);
+    });
 
     // Purchase Orders
     Route::resource('purchase-orders', App\Http\Controllers\PurchaseOrderController::class);
