@@ -1,351 +1,333 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Executive Dashboard')
 
 @section('content')
-   <div class="p-4 md:p-6">
-      <h1 class="text-2xl font-bold text-gray-800 mb-6">Dashboard</h1>
+<div class="p-4 md:p-6">
+    {{-- Header --}}
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Executive Dashboard</h1>
+            <p class="text-sm text-gray-500">Commodity Export Operations Overview</p>
+        </div>
+        <div class="text-xs text-gray-400">
+            Data cached for performance • USD Rate: Rp {{ number_format($usdRate ?? 15850, 2) }}
+        </div>
+    </div>
 
-      <!-- Inventory Stats -->
-      <div class="mb-6">
-         <h2 class="text-lg font-semibold text-gray-700 mb-3">📦 Inventory Overview</h2>
-         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-lg shadow-md p-6">
-               <div class="flex items-center justify-between">
-                  <div>
-                     <p class="text-sm text-gray-600">Total Products</p>
-                     <p class="text-2xl font-bold text-gray-800">{{ $totalProducts ?? 0 }}</p>
-                  </div>
-                  <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                     <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                     </svg>
-                  </div>
-               </div>
+    {{-- Summary Widgets --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {{-- Widget 1: Total Stock Value --}}
+        <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-lg p-6 text-white">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-blue-200 text-sm font-medium">Total Stock Value</span>
+                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4z"/>
+                        <path fill-rule="evenodd" d="M6 10a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm2 0v4h8v-4H8z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
             </div>
+            <p class="text-2xl font-bold">Rp {{ number_format($stockValue['idr'] ?? 0, 0, ',', '.') }}</p>
+            <p class="text-blue-200 text-sm mt-1">
+                ≈ ${{ number_format($stockValue['usd'] ?? 0, 2) }} USD
+            </p>
+        </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-               <div class="flex items-center justify-between">
-                  <div>
-                     <p class="text-sm text-gray-600">Low Stock Alert</p>
-                     <p class="text-2xl font-bold text-danger">{{ $lowStockCount ?? 0 }}</p>
-                  </div>
-                  <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                     <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
-                        </path>
-                     </svg>
-                  </div>
-               </div>
+        {{-- Widget 2: Active Alerts --}}
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 {{ ($activeAlerts['total'] ?? 0) > 0 ? 'border-red-500' : 'border-green-500' }}">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-gray-600 text-sm font-medium">Active Alerts</span>
+                <div class="w-10 h-10 {{ ($activeAlerts['total'] ?? 0) > 0 ? 'bg-red-100' : 'bg-green-100' }} rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 {{ ($activeAlerts['total'] ?? 0) > 0 ? 'text-red-600' : 'text-green-600' }}" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
             </div>
+            <p class="text-3xl font-bold text-gray-900">{{ $activeAlerts['total'] ?? 0 }}</p>
+            <div class="flex gap-4 mt-2 text-xs text-gray-500">
+                <span class="flex items-center gap-1">
+                    <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                    Low Stock: {{ $activeAlerts['low_stock'] ?? 0 }}
+                </span>
+                <span class="flex items-center gap-1">
+                    <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                    Expiring: {{ $activeAlerts['expiring'] ?? 0 }}
+                </span>
+            </div>
+        </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-               <div class="flex items-center justify-between">
-                  <div>
-                     <p class="text-sm text-gray-600">Transactions This Month</p>
-                     <p class="text-2xl font-bold text-success">{{ $transactionsThisMonth ?? 0 }}</p>
-                  </div>
-                  <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                     <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                        </path>
-                     </svg>
-                  </div>
-               </div>
+        {{-- Widget 3: Monthly Fees --}}
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-gray-600 text-sm font-medium">Monthly Fees</span>
+                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
             </div>
-         </div>
-      </div>
+            <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($monthlyFees['total'] ?? 0, 0, ',', '.') }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ now()->format('F Y') }}</p>
+        </div>
 
-      <!-- Sales Stats -->
-      <div class="mb-6">
-         <h2 class="text-lg font-semibold text-gray-700 mb-3">💰 Sales Overview</h2>
-         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md p-6 text-white">
-               <div class="flex items-center justify-between">
-                  <div>
-                     <p class="text-sm text-blue-100">Sales This Month</p>
-                     <p class="text-2xl font-bold">Rp {{ number_format($salesThisMonth ?? 0, 0, ',', '.') }}</p>
-                  </div>
-                  <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                        </path>
-                     </svg>
-                  </div>
-               </div>
+        {{-- Widget 4: Warehouse Fill Rate --}}
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-gray-600 text-sm font-medium">Warehouse Fill Rate</span>
+                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm2.5 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6.207.293a1 1 0 00-1.414 0l-6 6a1 1 0 101.414 1.414l6-6a1 1 0 000-1.414zM12.5 10a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
             </div>
+            <div class="flex items-end gap-2">
+                <p class="text-3xl font-bold text-gray-900">{{ $fillRate['percentage'] ?? 0 }}%</p>
+                <p class="text-sm text-gray-500 pb-1">filled</p>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+                {{ $fillRate['occupied_bins'] ?? 0 }} / {{ $fillRate['total_bins'] ?? 0 }} bins occupied
+            </p>
+        </div>
+    </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-               <div class="flex items-center justify-between">
-                  <div>
-                     <p class="text-sm text-gray-600">Active Customers</p>
-                     <p class="text-2xl font-bold text-gray-800">{{ $totalCustomers ?? 0 }}</p>
-                  </div>
-                  <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                     <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                        </path>
-                     </svg>
-                  </div>
-               </div>
+    {{-- Charts Row --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        {{-- Stock Trends Chart (2/3 width) --}}
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Stock Movement Trend (14 Days)</h3>
+            <div class="h-64">
+                <canvas id="stockTrendsChart"></canvas>
             </div>
+        </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-               <div class="flex items-center justify-between">
-                  <div>
-                     <p class="text-sm text-gray-600">Pending Orders</p>
-                     <p class="text-2xl font-bold text-yellow-600">{{ $pendingOrdersCount ?? 0 }}</p>
-                  </div>
-                  <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                     <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                     </svg>
-                  </div>
-               </div>
+        {{-- Zone Distribution Chart (1/3 width) --}}
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Stock by Zone</h3>
+            <div class="h-64">
+                <canvas id="zoneDistributionChart"></canvas>
             </div>
+        </div>
+    </div>
 
-            <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-md p-6 text-white">
-               <div class="flex items-center justify-between">
-                  <div>
-                     <p class="text-sm text-red-100">Unpaid Invoices</p>
-                     <p class="text-xl font-bold">Rp {{ number_format($totalUnpaidInvoices ?? 0, 0, ',', '.') }}</p>
-                     @if ($overdueInvoicesCount > 0)
-                        <p class="text-xs text-red-100 mt-1">{{ $overdueInvoicesCount }} overdue</p>
-                     @endif
-                  </div>
-                  <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                        </path>
-                     </svg>
-                  </div>
-               </div>
+    {{-- Operational Lists --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {{-- Expiring Soon --}}
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="px-6 py-4 bg-orange-50 border-b border-orange-100">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-orange-800 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                        </svg>
+                        Expiring Soon
+                    </h3>
+                    <a href="{{ route('batches.index', ['expiring' => 30]) }}" class="text-sm text-orange-600 hover:text-orange-800">View All →</a>
+                </div>
             </div>
-         </div>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-         <!-- Recent Sales Orders -->
-         <div class="bg-white rounded-lg shadow-md">
-            <div class="px-6 py-4 border-b border-gray-200">
-               <div class="flex justify-between items-center">
-                  <h3 class="text-lg font-semibold text-gray-800">Recent Sales Orders</h3>
-                  <a href="{{ route('sales-orders.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View All
-                     →</a>
-               </div>
-            </div>
-            <div class="p-6">
-               @if (isset($recentOrders) && $recentOrders->count() > 0)
-                  <div class="space-y-3">
-                     @foreach ($recentOrders as $order)
-                        <div
-                           class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                           <div class="flex-1">
-                              <a href="{{ route('sales-orders.show', $order) }}"
-                                 class="font-medium text-blue-600 hover:text-blue-800">
-                                 {{ $order->so_number }}
-                              </a>
-                              <p class="text-sm text-gray-600">{{ $order->customer->name }}</p>
-                              <p class="text-xs text-gray-500">{{ $order->created_at->diffForHumans() }}</p>
-                           </div>
-                           <div class="text-right">
-                              <p class="font-semibold text-gray-900">Rp {{ number_format($order->total, 0, ',', '.') }}
-                              </p>
-                              @if ($order->status === 'draft')
-                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">Draft</span>
-                              @elseif($order->status === 'confirmed')
-                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">Confirmed</span>
-                              @elseif($order->status === 'shipped')
-                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">Shipped</span>
-                              @elseif($order->status === 'delivered')
-                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Delivered</span>
-                              @endif
-                           </div>
+            <div class="divide-y divide-gray-100">
+                @forelse($expiringSoon as $batch)
+                    @php $daysLeft = now()->diffInDays($batch->expiry_date, false); @endphp
+                    <div class="px-6 py-3 flex items-center justify-between hover:bg-gray-50">
+                        <div>
+                            <a href="{{ route('batches.show', $batch) }}" class="font-medium text-gray-900 hover:text-blue-600">
+                                {{ $batch->batch_number }}
+                            </a>
+                            <p class="text-sm text-gray-500">{{ $batch->product->name ?? '-' }}</p>
                         </div>
-                     @endforeach
-                  </div>
-               @else
-                  <p class="text-gray-500 text-center py-8">No recent orders</p>
-               @endif
-            </div>
-         </div>
-
-         <!-- Recent Invoices -->
-         <div class="bg-white rounded-lg shadow-md">
-            <div class="px-6 py-4 border-b border-gray-200">
-               <div class="flex justify-between items-center">
-                  <h3 class="text-lg font-semibold text-gray-800">Recent Invoices</h3>
-                  <a href="{{ route('invoices.index') }}" class="text-sm text-blue-600 hover:text-blue-800">View All
-                     →</a>
-               </div>
-            </div>
-            <div class="p-6">
-               @if (isset($recentInvoices) && $recentInvoices->count() > 0)
-                  <div class="space-y-3">
-                     @foreach ($recentInvoices as $invoice)
-                        <div
-                           class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                           <div class="flex-1">
-                              <a href="{{ route('invoices.show', $invoice) }}"
-                                 class="font-medium text-blue-600 hover:text-blue-800">
-                                 {{ $invoice->invoice_number }}
-                              </a>
-                              <p class="text-sm text-gray-600">{{ $invoice->salesOrder->customer->name }}</p>
-                              <p class="text-xs text-gray-500">Due: {{ $invoice->due_date->format('d M Y') }}</p>
-                           </div>
-                           <div class="text-right">
-                              <p class="font-semibold text-gray-900">Rp
-                                 {{ number_format($invoice->total_amount, 0, ',', '.') }}</p>
-                              @if ($invoice->payment_status === 'unpaid')
-                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">Unpaid</span>
-                              @elseif($invoice->payment_status === 'partial')
-                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">Partial</span>
-                              @else
-                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">Paid</span>
-                              @endif
-                           </div>
+                        <div class="text-right">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {{ $daysLeft <= 7 ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800' }}">
+                                {{ $daysLeft }} days
+                            </span>
+                            <p class="text-xs text-gray-500 mt-1">{{ $batch->expiry_date->format('d M Y') }}</p>
                         </div>
-                     @endforeach
-                  </div>
-               @else
-                  <p class="text-gray-500 text-center py-8">No recent invoices</p>
-               @endif
+                    </div>
+                @empty
+                    <div class="px-6 py-8 text-center text-gray-500">
+                        <svg class="w-12 h-12 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p>No batches expiring soon</p>
+                    </div>
+                @endforelse
             </div>
-         </div>
-      </div>
+        </div>
 
-      <!-- Low Stock Alert -->
-      @if (isset($lowStockProducts) && $lowStockProducts->count() > 0)
-         <div class="bg-white rounded-lg shadow-md mb-6">
-            <div class="px-6 py-4 bg-red-50 border-b border-red-100 rounded-t-lg">
-               <h3 class="text-lg font-bold text-danger flex items-center">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
-                     </path>
-                  </svg>
-                  Low Stock Alert
-               </h3>
+        {{-- Recent Activity --}}
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                        </svg>
+                        Recent Activity
+                    </h3>
+                </div>
             </div>
-            <div class="overflow-x-auto">
-               <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
-                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                           Category
-                        </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Stock
-                        </th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Min
-                           Stock</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                           Action
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                     @foreach ($lowStockProducts as $p)
-                        <tr class="hover:bg-gray-50">
-                           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $p->code }}</td>
-                           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $p->name }}
-                           </td>
-                           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $p->category?->name ?? '-' }}
-                           </td>
-                           <td class="px-6 py-4 whitespace-nowrap text-sm text-right">
-                              <span
-                                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                 {{ $p->stock }} {{ $p->unit }}
-                              </span>
-                           </td>
-                           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{{ $p->min_stock }}
-                           </td>
-                           <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                              <a href="{{ route('stock-ins.create') }}" class="text-primary hover:text-blue-900">
-                                 Restock
-                              </a>
-                           </td>
-                        </tr>
-                     @endforeach
-                  </tbody>
-               </table>
+            <div class="divide-y divide-gray-100 max-h-80 overflow-y-auto">
+                @forelse($recentActivity as $log)
+                    <div class="px-6 py-3 flex items-start gap-3 hover:bg-gray-50">
+                        @switch($log->action)
+                            @case('created')
+                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                </span>
+                                @break
+                            @case('updated')
+                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                </span>
+                                @break
+                            @case('deleted')
+                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+                                    <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                </span>
+                                @break
+                            @default
+                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
+                                </span>
+                        @endswitch
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm text-gray-900">
+                                <span class="font-medium capitalize">{{ $log->action }}</span>
+                                <span class="text-gray-500">{{ class_basename($log->auditable_type) }}</span>
+                                @if($log->user)
+                                    <span class="text-gray-500">by</span>
+                                    <span class="font-medium">{{ $log->user->name }}</span>
+                                @endif
+                            </p>
+                            <p class="text-xs text-gray-500">{{ $log->created_at->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <div class="px-6 py-8 text-center text-gray-500">
+                        <p>No recent activity</p>
+                    </div>
+                @endforelse
             </div>
-         </div>
-      @endif
+        </div>
+    </div>
 
-      <!-- Quick Actions -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-         <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
-         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            <a href="{{ route('products.create') }}"
-               class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-primary hover:bg-blue-50 transition">
-               <svg class="w-8 h-8 text-primary mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
-                  </path>
-               </svg>
-               <span class="text-sm font-medium text-gray-700">Add Product</span>
+    {{-- Quick Actions --}}
+    <div class="bg-white rounded-xl shadow-lg p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <a href="{{ route('batches.index') }}"
+                class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                <svg class="w-8 h-8 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                <span class="text-sm font-medium text-gray-700">Batches</span>
             </a>
             <a href="{{ route('stock-ins.create') }}"
-               class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-success hover:bg-green-50 transition">
-               <svg class="w-8 h-8 text-success mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-               </svg>
-               <span class="text-sm font-medium text-gray-700">Stock In</span>
-            </a>
-            <a href="{{ route('customers.create') }}"
-               class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition">
-               <svg class="w-8 h-8 text-purple-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-               </svg>
-               <span class="text-sm font-medium text-gray-700">New Customer</span>
+                class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition">
+                <svg class="w-8 h-8 text-green-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+                <span class="text-sm font-medium text-gray-700">Stock In</span>
             </a>
             <a href="{{ route('sales-orders.create') }}"
-               class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
-               <svg class="w-8 h-8 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-               </svg>
-               <span class="text-sm font-medium text-gray-700">New Order</span>
+                class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition">
+                <svg class="w-8 h-8 text-purple-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+                <span class="text-sm font-medium text-gray-700">New Order</span>
             </a>
-            <a href="{{ route('invoices.create') }}"
-               class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-teal-500 hover:bg-teal-50 transition">
-               <svg class="w-8 h-8 text-teal-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                  </path>
-               </svg>
-               <span class="text-sm font-medium text-gray-700">New Invoice</span>
+            <a href="{{ route('currencies.index') }}"
+                class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition">
+                <svg class="w-8 h-8 text-yellow-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="text-sm font-medium text-gray-700">Currencies</span>
+            </a>
+            <a href="{{ route('notifications.index') }}"
+                class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-red-500 hover:bg-red-50 transition">
+                <svg class="w-8 h-8 text-red-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span class="text-sm font-medium text-gray-700">Alerts</span>
             </a>
             <a href="{{ route('reports.index') }}"
-               class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-secondary hover:bg-gray-50 transition">
-               <svg class="w-8 h-8 text-secondary mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                  </path>
-               </svg>
-               <span class="text-sm font-medium text-gray-700">Reports</span>
+                class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-500 hover:bg-gray-50 transition">
+                <svg class="w-8 h-8 text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="text-sm font-medium text-gray-700">Reports</span>
             </a>
-         </div>
-      </div>
-   </div>
+        </div>
+    </div>
+</div>
+
+{{-- Chart.js CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Stock Trends Line Chart
+    const stockTrendsCtx = document.getElementById('stockTrendsChart').getContext('2d');
+    new Chart(stockTrendsCtx, {
+        type: 'line',
+        data: {
+            labels: @json($stockTrends['labels'] ?? []),
+            datasets: [
+                {
+                    label: 'Stock In',
+                    data: @json($stockTrends['stockIn'] ?? []),
+                    borderColor: 'rgb(34, 197, 94)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                },
+                {
+                    label: 'Stock Out',
+                    data: @json($stockTrends['stockOut'] ?? []),
+                    borderColor: 'rgb(239, 68, 68)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Zone Distribution Doughnut Chart
+    const zoneCtx = document.getElementById('zoneDistributionChart').getContext('2d');
+    new Chart(zoneCtx, {
+        type: 'doughnut',
+        data: {
+            labels: @json($zoneDistribution['labels'] ?? []),
+            datasets: [{
+                data: @json($zoneDistribution['data'] ?? []),
+                backgroundColor: [
+                    'rgb(59, 130, 246)',
+                    'rgb(34, 197, 94)',
+                    'rgb(249, 115, 22)',
+                    'rgb(139, 92, 246)',
+                    'rgb(236, 72, 153)',
+                    'rgb(20, 184, 166)',
+                ],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12 } }
+            }
+        }
+    });
+});
+</script>
 @endsection

@@ -39,8 +39,15 @@
                </div>
             </div>
 
-            <div class="hidden sm:block">
-               <span class="text-sm text-slate-600">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</span>
+            <div class="flex items-center gap-4">
+                {{-- Notification Bell --}}
+                @auth
+                    <x-notification-bell />
+                @endauth
+
+                <div class="hidden sm:block">
+                    <span class="text-sm text-slate-600">{{ Auth::check() ? Auth::user()->name : 'Guest' }}</span>
+                </div>
             </div>
             @auth
                <form method="POST" action="{{ route('logout') }}">

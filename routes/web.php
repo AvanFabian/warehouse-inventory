@@ -96,6 +96,15 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::get('reports/inventory-value', [App\Http\Controllers\ReportController::class, 'inventoryValue'])->name('reports.inventory-value');
     Route::get('reports/stock-card', [App\Http\Controllers\ReportController::class, 'stockCard'])->name('reports.stock-card');
 
+    // Batch Management (Phase B UI)
+    Route::get('batches', [App\Http\Controllers\BatchController::class, 'index'])->name('batches.index');
+    Route::get('batches/{batch}', [App\Http\Controllers\BatchController::class, 'show'])->name('batches.show');
+
+    // Notifications
+    Route::get('notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+    Route::post('notifications/{id}/mark-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+
     // User Management (Admin only)
     Route::middleware('admin')->group(function () {
         Route::resource('users', App\Http\Controllers\UserController::class);
@@ -103,6 +112,12 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
         // Settings (Admin only)
         Route::get('settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
         Route::put('settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+
+        // Currency Management (Admin only)
+        Route::get('currencies', [App\Http\Controllers\CurrencyController::class, 'index'])->name('currencies.index');
+        Route::post('currencies', [App\Http\Controllers\CurrencyController::class, 'store'])->name('currencies.store');
+        Route::put('currencies/{currency}', [App\Http\Controllers\CurrencyController::class, 'update'])->name('currencies.update');
+        Route::post('currencies/sync', [App\Http\Controllers\CurrencyController::class, 'syncRates'])->name('currencies.sync');
     });
 });
 

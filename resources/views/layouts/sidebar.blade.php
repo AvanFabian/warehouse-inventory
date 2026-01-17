@@ -63,6 +63,10 @@
          <div class="mt-2">
             <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">{{ __('app.warehouse') }}
             </p>
+            <a href="{{ route('batches.index') }}"
+               class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('batches.*') ? 'bg-primary text-white' : '' }}">
+               📦 Batch Inventory
+            </a>
             <a href="{{ route('transfers.index') }}"
                class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('transfers.*') ? 'bg-primary text-white' : '' }}">
                {{ __('app.warehouse_transfers') }}
@@ -89,6 +93,10 @@
                <a href="{{ route('users.index') }}"
                   class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('users.*') ? 'bg-primary text-white' : '' }}">
                   {{ __('app.user_management') }}
+               </a>
+               <a href="{{ route('currencies.index') }}"
+                  class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('currencies.*') ? 'bg-primary text-white' : '' }}">
+                  💱 Currency Settings
                </a>
                <a href="{{ route('settings.index') }}"
                   class="block py-2 px-3 rounded hover:bg-gray-100 {{ request()->routeIs('settings.*') ? 'bg-primary text-white' : '' }}">

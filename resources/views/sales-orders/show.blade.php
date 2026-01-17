@@ -162,10 +162,21 @@
                                  {{ number_format($item->unit_price, 0, ',', '.') }}</td>
                               <td class="px-4 py-3 text-right text-sm font-semibold text-gray-900">Rp
                                  {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                           </tr>
+                        </tr>
                         @endforeach
                      </tbody>
                      <tfoot class="bg-gray-50">
+                        {{-- Currency Badge --}}
+                        @if($salesOrder->currency_code && $salesOrder->currency_code !== 'IDR')
+                           <tr class="bg-blue-50">
+                              <td colspan="4" class="px-4 py-2 text-sm text-blue-800">
+                                 <div class="flex items-center gap-2">
+                                    <x-currency-badge :code="$salesOrder->currency_code" :rate="$salesOrder->exchange_rate_at_transaction" />
+                                    <span class="text-xs">Rate locked at transaction time</span>
+                                 </div>
+                              </td>
+                           </tr>
+                        @endif
                         <tr>
                            <td colspan="3" class="px-4 py-3 text-right text-sm font-medium text-gray-700">Subtotal:</td>
                            <td class="px-4 py-3 text-right text-sm font-semibold text-gray-900">Rp
@@ -189,6 +200,24 @@
                            <td class="px-4 py-3 text-right text-base font-bold text-blue-600">Rp
                               {{ number_format($salesOrder->total, 0, ',', '.') }}</td>
                         </tr>
+                        {{-- Transaction Fees & Net Amount --}}
+                        @if($salesOrder->transaction_fees > 0)
+                           <tr class="bg-yellow-50">
+                              <td colspan="3" class="px-4 py-3 text-right text-sm font-medium text-yellow-800">
+                                 Transaction Fees
+                                 @if($salesOrder->fee_currency_code)
+                                    ({{ $salesOrder->fee_currency_code }})
+                                 @endif:
+                              </td>
+                              <td class="px-4 py-3 text-right text-sm font-semibold text-yellow-800">- Rp
+                                 {{ number_format($salesOrder->transaction_fees, 0, ',', '.') }}</td>
+                           </tr>
+                           <tr class="bg-green-50">
+                              <td colspan="3" class="px-4 py-3 text-right text-base font-bold text-green-800">Net Amount:</td>
+                              <td class="px-4 py-3 text-right text-base font-bold text-green-600">Rp
+                                 {{ number_format($salesOrder->net_amount, 0, ',', '.') }}</td>
+                           </tr>
+                        @endif
                      </tfoot>
                   </table>
                </div>
