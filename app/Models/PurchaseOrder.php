@@ -23,6 +23,12 @@ class PurchaseOrder extends Model
         'created_by',
         'approved_by',
         'approved_at',
+        // Currency fields
+        'currency_code',
+        'exchange_rate_at_transaction',
+        'transaction_fees',
+        'fee_currency_code',
+        'net_amount',
     ];
 
     protected $casts = [
@@ -30,7 +36,54 @@ class PurchaseOrder extends Model
         'expected_delivery_date' => 'date',
         'approved_at' => 'datetime',
         'total_amount' => 'decimal:2',
+        'exchange_rate_at_transaction' => 'decimal:8',
+        'transaction_fees' => 'decimal:2',
+        'net_amount' => 'decimal:2',
     ];
+
+    /**
+     * Boot method for model events.
+     */
+    protected static function booted(): void
+    {
+        // Auto-set exchange rate and calculate net amount on creating
+        static::creating(function (PurchaseOrder $order) {
+            static::setExchangeRateAndNetAmount($order);
+        });
+
+        // Recalculate net amount on updating
+        static::updating(function (PurchaseOrder $order) {
+            static::recalculateNetAmount($order);
+        });
+    }
+
+    /**
+     * Set exchange rate from current currency rate and calculate net amount.
+     */
+    protected static function setExchangeRateAndNetAmount(PurchaseOrder $order): void
+    {
+        // Set exchange rate if currency is provided and rate not already set
+        if ($order->currency_code && !$order->exchange_rate_at_transaction) {
+            $currency = Currency::findByCode($order->currency_code);
+            if ($currency) {
+                $order->exchange_rate_at_transaction = $currency->exchange_rate;
+            }
+        }
+
+        // Calculate net amount
+        static::recalculateNetAmount($order);
+    }
+
+    /**
+     * Recalculate net amount: total_amount - transaction_fees
+     */
+    protected static function recalculateNetAmount(PurchaseOrder $order): void
+    {
+        $total = (float) ($order->total_amount ?? 0);
+        $fees = (float) ($order->transaction_fees ?? 0);
+        
+        $order->net_amount = $total - $fees;
+    }
 
     public function warehouse(): BelongsTo
     {
