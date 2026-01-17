@@ -83,6 +83,12 @@ Route::middleware(['auth', 'throttle:web'])->group(function () {
     Route::get('invoices/{invoice}/pdf', [App\Http\Controllers\InvoiceController::class, 'viewPdf'])->name('invoices.pdf');
     Route::get('invoices/{invoice}/download', [App\Http\Controllers\InvoiceController::class, 'downloadPdf'])->name('invoices.download');
 
+    // Location Management (Zones, Racks, Bins)
+    Route::resource('zones', App\Http\Controllers\WarehouseZoneController::class);
+    Route::resource('racks', App\Http\Controllers\WarehouseRackController::class);
+    Route::resource('bins', App\Http\Controllers\WarehouseBinController::class);
+    Route::get('bins/{bin}/qrcode', [App\Http\Controllers\WarehouseBinController::class, 'generateQrCode'])->name('bins.qrcode');
+
     // Reports
     Route::get('reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/stock', [App\Http\Controllers\ReportController::class, 'stock'])->name('reports.stock');
